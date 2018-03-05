@@ -16,9 +16,12 @@
 
 package com.sebastienbalard.bicycle.repositories
 
+import android.location.Location
+import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.sebastienbalard.bicycle.BICApplication
+import com.sebastienbalard.bicycle.extensions.distanceTo
 import com.sebastienbalard.bicycle.io.WSFacade
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.models.BICContract
@@ -38,6 +41,33 @@ class BICContractRepository {
 
     init {
         loadContracts()
+    }
+
+    fun getContractFor(location: Location): BICContract? {
+        return getContractFor(LatLng(location.latitude, location.longitude))
+    }
+
+    fun getContractFor(latLng: LatLng): BICContract? {
+        val filteredList = allContracts.filter { contract -> contract.bounds.contains(latLng) }
+        var rightContract: BICContract? = null
+        if (filteredList.isNotEmpty()) {
+            rightContract = filteredList.first()
+            if (filteredList.size > 1) {
+                var minDistance: Float? = null
+                var distanceFromCenter: Float?
+                for (filtered in filteredList) {
+                    distanceFromCenter = latLng.distanceTo(filtered.center)
+                    if (minDistance == null) {
+                        minDistance = distanceFromCenter
+                        rightContract = filtered
+                    } else if (minDistance > distanceFromCenter) {
+                        minDistance = distanceFromCenter
+                        rightContract = filtered
+                    }
+                }
+            }
+        }
+        return rightContract
     }
 
     fun getStationsFor(contract: BICContract): Single<List<BICStation>> {

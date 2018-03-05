@@ -19,11 +19,13 @@ package com.sebastienbalard.bicycle.viewmodels
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.sebastienbalard.bicycle.extensions.distanceTo
+import com.sebastienbalard.bicycle.extensions.listToObservable
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.models.BICPlace
 import com.sebastienbalard.bicycle.models.BICStation
 import com.sebastienbalard.bicycle.repositories.BICContractRepository
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
@@ -47,36 +49,47 @@ class BICRideViewModel(private val contractRepository: BICContractRepository) : 
 
     fun determineNearestStations() {
 
+        departure.contract = contractRepository.getContractFor(departure.location)
+        departure.contract?.let {
+            v("departure place contract is ${it.name}")
+        }
+        arrival.contract = contractRepository.getContractFor(arrival.location)
+        arrival.contract?.let {
+            v("arrival place contract is ${it.name}")
+        }
+
         var radius = departure.location.distanceTo(arrival.location)
         if (radius > 500f) {
             radius = 500f
         }
-        disposables.add(contractRepository.refreshStationsFor(departure.contract!!)
-                .toObservable().flatMap { stations -> Observable.fromIterable(stations) }
+
+        val observableStations = contractRepository.refreshStationsFor(departure.contract!!)
+                .listToObservable()
+
+        disposables.add(observableStations
                 .filter { station -> station.location.distanceTo(departure.location) <= radius && station.availableBikesCount >= bikesCount }
                 .toSortedList { station1, station2 ->
                     station1.location.distanceTo(departure.location).compareTo(station2.location.distanceTo(departure.location))
                 }
-                .doOnSuccess { stations -> v("take 3 nearest on ${stations.size}") }
-                .toObservable().take(3)
-                .observeOn(Schedulers.computation())
+                .doOnSuccess { sortedStations -> v("take 3 nearest from departure on ${sortedStations.size}") }
+                .listToObservable().take(3).toList()
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe( {
-                    stations -> departureNearestStations.value = stations
+                    nearestStations -> departureNearestStations.value = nearestStations
                 }, {
                     _ -> departureNearestStations.value = null
                 })
         )
-        disposables.add(contractRepository.refreshStationsFor(arrival.contract!!)
-                .toObservable().flatMap { stations -> Observable.fromIterable(stations) }
+        disposables.add(observableStations
                 .filter { station -> station.location.distanceTo(arrival.location) <= radius && station.freeStandsCount >= freeSlotsCount }
                 .toSortedList { station1, station2 ->
                     station1.location.distanceTo(arrival.location).compareTo(station2.location.distanceTo(arrival.location))
                 }
-                .doOnSuccess { stations -> v("take 3 nearest on ${stations.size}") }
-                .toObservable().take(3)
-                .observeOn(Schedulers.computation())
+                .doOnSuccess { sortedStations -> v("take 3 nearest from arrival on ${sortedStations.size}") }
+                .listToObservable().take(3).toList()
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe( {
-                    stations -> arrivalNearestStations.value = stations
+                    nearestStations -> arrivalNearestStations.value = nearestStations
                 }, {
                     _ -> arrivalNearestStations.value = null
                 })

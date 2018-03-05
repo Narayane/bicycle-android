@@ -20,8 +20,9 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.models.BICPlace
+import com.sebastienbalard.bicycle.repositories.BICContractRepository
 
-class BICSearchViewModel : ViewModel() {
+class BICSearchViewModel(private val contractRepository: BICContractRepository) : ViewModel() {
 
     companion object : SBLog()
 
@@ -30,11 +31,19 @@ class BICSearchViewModel : ViewModel() {
     var departure: BICPlace? = null
         set(value) {
             field = value
+            field?.let {
+                it.contract = contractRepository.getContractFor(it.location)
+                v("departure place contract is ${it.contract?.name}")
+            }
             isSearchButtonEnabled.value = departure != null && arrival != null
         }
     var arrival: BICPlace? = null
         set(value) {
             field = value
+            field?.let {
+                it.contract = contractRepository.getContractFor(it.location)
+                v("arrival place contract is ${it.contract?.name}")
+            }
             isSearchButtonEnabled.value = departure != null && arrival != null
         }
     var bikesCount: Int = 1

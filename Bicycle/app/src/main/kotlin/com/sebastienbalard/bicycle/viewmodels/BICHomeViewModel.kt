@@ -34,6 +34,7 @@ import com.sebastienbalard.bicycle.models.BICStation
 import com.sebastienbalard.bicycle.models.SBLocationLiveData
 import com.sebastienbalard.bicycle.repositories.BICContractRepository
 import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Consumer
 import io.reactivex.internal.util.ExceptionHelper
@@ -61,13 +62,13 @@ class BICHomeViewModel(application: Application, private val contractRepository:
     }
 
     fun loadCurrentContractStations() {
-        disposables.add(contractRepository.getStationsFor(currentContract.value!!).observeOn(Schedulers.computation()).subscribe({
+        disposables.add(contractRepository.getStationsFor(currentContract.value!!).observeOn(AndroidSchedulers.mainThread()).subscribe({
             stations -> currentStations.value = stations
         }, { _ -> currentStations.value = null }))
     }
 
     fun refreshContractStations(contract: BICContract) {
-        disposables.add(contractRepository.refreshStationsFor(contract).observeOn(Schedulers.computation()).subscribe({
+        disposables.add(contractRepository.refreshStationsFor(contract).observeOn(AndroidSchedulers.mainThread()).subscribe({
             stations -> currentStations.value = stations
         }, { _ -> currentStations.value = null }))
     }
@@ -87,7 +88,7 @@ class BICHomeViewModel(application: Application, private val contractRepository:
         }
 
         if (current == null || invalidateCurrentContract) {
-            current = getContractFor(visibleBounds.center)
+            current = contractRepository.getContractFor(visibleBounds.center)
             hasChanged = hasChanged || current != null
         }
 
@@ -101,32 +102,5 @@ class BICHomeViewModel(application: Application, private val contractRepository:
             // someone is null
             currentContract.value = current
         }
-    }
-
-    fun getContractFor(location: Location): BICContract? {
-        return getContractFor(LatLng(location.latitude, location.longitude))
-    }
-
-    fun getContractFor(latLng: LatLng): BICContract? {
-        val filteredList = contractRepository.allContracts.filter { contract -> contract.bounds.contains(latLng) }
-        var rightContract: BICContract? = null
-        if (filteredList.isNotEmpty()) {
-            rightContract = filteredList.first()
-            if (filteredList.size > 1) {
-                var minDistance: Float? = null
-                var distanceFromCenter: Float?
-                for (filtered in filteredList) {
-                    distanceFromCenter = latLng.distanceTo(filtered.center)
-                    if (minDistance == null) {
-                        minDistance = distanceFromCenter
-                        rightContract = filtered
-                    } else if (minDistance > distanceFromCenter) {
-                        minDistance = distanceFromCenter
-                        rightContract = filtered
-                    }
-                }
-            }
-        }
-        return rightContract
     }
 }

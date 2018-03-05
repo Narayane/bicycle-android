@@ -70,8 +70,10 @@ class BICRideActivity : SBMapActivity() {
 
         viewModelRide.departure = BICPlace(intent.extras.getDouble("departure_latitude"),
                 intent.extras.getDouble("departure_longitude"))
+        viewModelRide.bikesCount = intent.extras.getInt("bikes_count")
         viewModelRide.arrival = BICPlace(intent.extras.getDouble("arrival_latitude"),
                 intent.extras.getDouble("arrival_longitude"))
+        viewModelRide.freeSlotsCount = intent.extras.getInt("free_slots_count")
 
         listDepartureNearestStationsAnnotations = mutableListOf()
         listArrivalNearestStationsAnnotations = mutableListOf()

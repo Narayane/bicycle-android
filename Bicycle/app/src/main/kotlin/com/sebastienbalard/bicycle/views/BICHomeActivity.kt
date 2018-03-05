@@ -353,9 +353,8 @@ class BICHomeActivity : SBMapActivity() {
         autoCompleteTextViewDepartureAddress.setOnItemClickListener { _, _, _, _ ->
             geocode(autoCompleteTextViewDepartureAddress.text.toString().trim())?.let {
                 val place = BICPlace(it)
-                place.contract = viewModelHome.getContractFor(it)
-                v("set departure place with autocompletion (${place.contract?.name})")
                 viewModelSearch.departure = place
+                v("set departure place with autocompletion")
                 editTextDepartureBikesCount.requestFocus()
             } ?: autoCompleteTextViewDepartureAddress.setText("")
         }
@@ -363,9 +362,8 @@ class BICHomeActivity : SBMapActivity() {
             viewModelMap.userLocation.value?.let {
                 autoCompleteTextViewDepartureAddress.text.clear()
                 val place = BICPlace(it)
-                place.contract = viewModelHome.getContractFor(it)
-                v("set departure place with user location (${place.contract?.name})")
                 viewModelSearch.departure = place
+                v("set departure place with user location")
                 autoCompleteTextViewDepartureAddress.setText(geocodeReverse(viewModelSearch.departure!!.location))
                 editTextDepartureBikesCount.requestFocus()
             }
@@ -398,9 +396,8 @@ class BICHomeActivity : SBMapActivity() {
         autoCompleteTextViewArrivalAddress.setOnItemClickListener { _, _, _, _ ->
             geocode(autoCompleteTextViewArrivalAddress.text.toString().trim())?.let {
                 val place = BICPlace(it)
-                place.contract = viewModelHome.getContractFor(it)
-                v("set arrival place with autocompletion (${place.contract?.name})")
                 viewModelSearch.arrival = place
+                v("set arrival place with autocompletion")
                 editTextArrivalFreeSlotsCount.requestFocus()
             } ?: autoCompleteTextViewArrivalAddress.setText("")
         }
@@ -408,9 +405,8 @@ class BICHomeActivity : SBMapActivity() {
             viewModelMap.userLocation.value?.let {
                 autoCompleteTextViewArrivalAddress.text.clear()
                 val place = BICPlace(it)
-                place.contract = viewModelHome.getContractFor(it)
-                v("set arrival place with user location (${place.contract?.name})")
                 viewModelSearch.arrival = place
+                v("set arrival place with user location")
                 autoCompleteTextViewArrivalAddress.setText(geocodeReverse(viewModelSearch.arrival!!.location))
                 editTextArrivalFreeSlotsCount.requestFocus()
             }
