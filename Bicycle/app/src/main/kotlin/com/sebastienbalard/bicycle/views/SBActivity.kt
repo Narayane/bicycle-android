@@ -19,9 +19,13 @@ package com.sebastienbalard.bicycle.views
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 
 
 open class SBActivity : AppCompatActivity() {
+
+    private val disposables: CompositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,5 +44,14 @@ open class SBActivity : AppCompatActivity() {
             }*/
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposables.clear()
+    }
+
+    protected fun dispose(disposable: Disposable) {
+        disposables.add(disposable)
     }
 }

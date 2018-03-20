@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle.extensions
+package com.sebastienbalard.bicycle.io.dtos
 
-import io.reactivex.Observable
-import io.reactivex.Single
+import com.google.gson.annotations.SerializedName
 
-fun <T> Single<List<T>>.flatMapToObservable(): Observable<T> {
-    return this.toObservable().flatMap { elements -> Observable.fromIterable(elements) }
-}
+class GMDirectionsRouteDto(val distance: GMDirectionsDistanceDto, val duration: GMDirectionsDurationDto, val legs: Array<GMDirectionsLegDto>, @SerializedName("overview_polyline") val overviewPolyline: GMDirectionsPolylineDto)

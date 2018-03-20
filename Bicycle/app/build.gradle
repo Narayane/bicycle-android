@@ -17,7 +17,8 @@ android {
         multiDexEnabled true
 
         resValue "string", "fabric_key", (project.findProperty("fabric.api.key") ?: "")
-        resValue "string", "google_maps_key", (project.findProperty("google.maps.api.key") ?: "")
+        resValue "string", "google_maps_key", (project.findProperty("google.maps.api.android.key") ?: "")
+        resValue "string", "google_maps_directions_key", (project.findProperty("google.maps.directions.api.web.key") ?: "")
     }
     buildTypes {
         debug {

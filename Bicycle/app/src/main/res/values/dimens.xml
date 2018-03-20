@@ -27,4 +27,6 @@
     <dimen name="bic_size_font_subhead">17sp</dimen>
     <dimen name="bic_size_font_body">14sp</dimen>
     <dimen name="bic_size_font_caption">11sp</dimen>
+
+    <dimen name="bic_width_polyline">5dp</dimen>
 </resources>

@@ -21,18 +21,24 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.*
+import com.sebastienbalard.bicycle.BuildConfig
 import com.sebastienbalard.bicycle.R
+import com.sebastienbalard.bicycle.extensions.fromPolyline
 import com.sebastienbalard.bicycle.extensions.getBitmap
+import com.sebastienbalard.bicycle.io.WSFacade
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.models.BICPlace
 import com.sebastienbalard.bicycle.viewmodels.BICHomeViewModel
 import com.sebastienbalard.bicycle.viewmodels.BICRideViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.bic_widget_appbar.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.run
 import org.koin.android.architecture.ext.viewModel
 
 class BICRideActivity : SBMapActivity() {
@@ -92,7 +98,7 @@ class BICRideActivity : SBMapActivity() {
                     options.position(station.location)
                     options.icon(BitmapDescriptorFactory.fromBitmap(station.icon))
                     options.title(station.name)
-                    kotlinx.coroutines.experimental.run(UI) {
+                    run(UI) {
                         googleMap?.addMarker(options)?.let {
                             listDepartureNearestStationsAnnotations?.add(it)
                         }
@@ -108,7 +114,7 @@ class BICRideActivity : SBMapActivity() {
                     options.position(station.location)
                     options.icon(BitmapDescriptorFactory.fromBitmap(station.icon))
                     options.title(station.name)
-                    kotlinx.coroutines.experimental.run(UI) {
+                    run(UI) {
                         googleMap?.addMarker(options)?.let {
                             listArrivalNearestStationsAnnotations?.add(it)
                         }
@@ -116,9 +122,32 @@ class BICRideActivity : SBMapActivity() {
                 }
             }
         })
+        viewModelRide.hasRoute.observe(this, Observer { hasRoute ->
+            hasRoute?.let {
+                if (it) {
+                    determineRoute()
+                } else {
+                    //TODO: clear route
+                }
+            } //TODO: clear route
+        })
     }
 
     //endregion
+
+    private fun determineRoute() {
+        dispose(WSFacade.getDirections("bicycling", viewModelRide.departure.location, viewModelRide.arrival.location)
+                .observeOn(AndroidSchedulers.mainThread()).subscribe { response ->
+                    val listPoints = response.routes[0].overviewPolyline.points.fromPolyline()
+                    listPoints.add(0, viewModelRide.departure.location)
+                    listPoints.add(viewModelRide.arrival.location)
+                    var options = PolylineOptions().addAll(listPoints)
+                            .width(resources.getDimensionPixelSize(R.dimen.bic_width_polyline).toFloat())
+                            .color(ContextCompat.getColor(this, R.color.bic_color_orange))
+                            .geodesic(true)
+                    googleMap?.addPolyline(options)
+                })
+    }
 
     //region Map events
 

@@ -16,7 +16,11 @@
 
 package com.sebastienbalard.bicycle.io
 
+import com.google.android.gms.maps.model.LatLng
+import com.sebastienbalard.bicycle.BICApplication
+import com.sebastienbalard.bicycle.R
 import com.sebastienbalard.bicycle.io.dtos.CBContractResponseDto
+import com.sebastienbalard.bicycle.io.dtos.GMDirectionsResponseDto
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.models.BICContract
 import com.sebastienbalard.bicycle.models.BICStation
@@ -38,27 +42,15 @@ class WSFacade {
             return CityBikesApi.instance.getStations(contractName).map { response -> response.network.stations }
         }
 
-        /*fun getStationsByContract(contract: BICContract, success: (List<BICStation>?) -> Unit, failure: (Throwable?) -> Unit) {
-            val contractName = contract.url.substring(contract.url.lastIndexOf('/') + 1)
-            d("contract endpoint: $contractName")
-            CityBikesApi.instance.getStations(contractName).enqueue(object : Callback<CBContractResponseDto> {
-
-                override fun onResponse(call: Call<CBContractResponseDto>?, response: Response<CBContractResponseDto>?) {
-                    response?.let {
-                        if (it.isSuccessful) {
-                            it.body()?.let {
-                                success(it.network.stations)
-                            }
-                        } else {
-                            failure(RuntimeException("network error - code ${it.code()}"))
-                        }
-                    }
-                }
-
-                override fun onFailure(call: Call<CBContractResponseDto>?, t: Throwable?) {
-                    failure(t)
-                }
-            })
-        }*/
+        fun getDirections(mode: String, from: LatLng, to: LatLng, vararg steps: LatLng): Single<GMDirectionsResponseDto> {
+            return if (steps.isEmpty()) {
+                GoogleMapsApi.instance.getDirections("${from.latitude},${from.longitude}", "${to.latitude},${to.longitude}",
+                        mode, BICApplication.context.getString(R.string.google_maps_directions_key))
+            } else {
+                GoogleMapsApi.instance.getDirectionsViaWaypoints("${from.latitude},${from.longitude}", "${to.latitude},${to.longitude}",
+                        steps.joinToString(separator = "|", transform = { latLng -> "${latLng.latitude},${latLng.longitude}" }),
+                        mode, BICApplication.context.getString(R.string.google_maps_directions_key))
+            }
+        }
     }
 }

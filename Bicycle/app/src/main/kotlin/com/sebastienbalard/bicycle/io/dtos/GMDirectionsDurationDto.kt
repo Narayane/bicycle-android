@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle.extensions
+package com.sebastienbalard.bicycle.io.dtos
 
-import io.reactivex.Observable
-import io.reactivex.Single
-
-fun <T> Single<List<T>>.flatMapToObservable(): Observable<T> {
-    return this.toObservable().flatMap { elements -> Observable.fromIterable(elements) }
-}
+class GMDirectionsDurationDto(val value: Long, val text: String)
