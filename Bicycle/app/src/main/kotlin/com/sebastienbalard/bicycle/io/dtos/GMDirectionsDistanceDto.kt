@@ -16,4 +16,10 @@
 
 package com.sebastienbalard.bicycle.io.dtos
 
-class GMDirectionsDistanceDto(val value: Long, val text: String)
+class GMDirectionsDistanceDto(val value: Long, val text: String) : Comparable<GMDirectionsDistanceDto> {
+
+    override fun compareTo(other: GMDirectionsDistanceDto): Int {
+        return value.compareTo(other.value)
+    }
+
+}

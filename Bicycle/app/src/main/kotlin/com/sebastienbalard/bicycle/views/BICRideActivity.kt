@@ -29,6 +29,7 @@ import com.sebastienbalard.bicycle.R
 import com.sebastienbalard.bicycle.extensions.fromPolyline
 import com.sebastienbalard.bicycle.extensions.getBitmap
 import com.sebastienbalard.bicycle.io.WSFacade
+import com.sebastienbalard.bicycle.io.dtos.GMDirectionsRouteDto
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.models.BICPlace
 import com.sebastienbalard.bicycle.viewmodels.BICHomeViewModel
@@ -138,7 +139,8 @@ class BICRideActivity : SBMapActivity() {
     private fun determineRoute() {
         dispose(WSFacade.getDirections("bicycling", viewModelRide.departure.location, viewModelRide.arrival.location)
                 .observeOn(AndroidSchedulers.mainThread()).subscribe { response ->
-                    val listPoints = response.routes[0].overviewPolyline.points.fromPolyline()
+                    val routes: List<GMDirectionsRouteDto> = response.routes.sortedWith(compareBy({ it.legs[0].distance }))
+                    val listPoints = routes[0].overviewPolyline.points.fromPolyline()
                     listPoints.add(0, viewModelRide.departure.location)
                     listPoints.add(viewModelRide.arrival.location)
                     var options = PolylineOptions().addAll(listPoints)

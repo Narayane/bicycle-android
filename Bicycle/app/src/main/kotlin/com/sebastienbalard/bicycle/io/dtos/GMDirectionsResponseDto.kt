@@ -16,4 +16,4 @@
 
 package com.sebastienbalard.bicycle.io.dtos
 
-class GMDirectionsResponseDto(val status: String, val routes: Array<GMDirectionsRouteDto>)
+class GMDirectionsResponseDto(val status: String, val routes: ArrayList<GMDirectionsRouteDto>)

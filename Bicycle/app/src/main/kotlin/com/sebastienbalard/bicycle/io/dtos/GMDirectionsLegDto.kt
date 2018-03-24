@@ -18,4 +18,4 @@ package com.sebastienbalard.bicycle.io.dtos
 
 import com.google.gson.annotations.SerializedName
 
-class GMDirectionsLegDto(@SerializedName("polyline") val polyline: GMDirectionsPolylineDto)
+class GMDirectionsLegDto(val distance: GMDirectionsDistanceDto, val duration: GMDirectionsDurationDto)

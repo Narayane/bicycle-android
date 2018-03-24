@@ -59,6 +59,7 @@ interface GoogleMapsApi {
     fun getDirections(@Query("origin") origin: String,
                       @Query("destination") destination: String,
                       @Query("mode") mode: String,
+                      @Query("alternatives") withAlternatives: Boolean,
                       @Query("key") key: String): Single<GMDirectionsResponseDto>
 
     @GET("directions/json")
@@ -66,5 +67,6 @@ interface GoogleMapsApi {
                                   @Query("destination") destination: String,
                                   @Query("waypoints") waypoints: String,
                                   @Query("mode") mode: String,
+                                  @Query("alternatives") withAlternatives: Boolean,
                                   @Query("key") key: String): Single<GMDirectionsResponseDto>
 }
