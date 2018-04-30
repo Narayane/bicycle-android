@@ -37,7 +37,7 @@ val commonModule = applicationContext {
 
 val homeModule = applicationContext {
 
-    viewModel { BICHomeViewModel(androidApplication(), get()) }
+    viewModel { BICHomeViewModel(get()) }
     viewModel { BICSearchViewModel(get()) }
 }
 

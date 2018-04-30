@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle.views
+package com.sebastienbalard.bicycle
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity

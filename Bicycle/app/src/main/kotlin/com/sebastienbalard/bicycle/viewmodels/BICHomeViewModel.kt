@@ -16,91 +16,76 @@
 
 package com.sebastienbalard.bicycle.viewmodels
 
-import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import android.location.Location
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.sebastienbalard.bicycle.BICApplication
-import com.sebastienbalard.bicycle.extensions.distanceTo
+import com.sebastienbalard.bicycle.*
 import com.sebastienbalard.bicycle.extensions.intersect
-import com.sebastienbalard.bicycle.io.WSFacade
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.models.BICContract
-import com.sebastienbalard.bicycle.models.BICStation
-import com.sebastienbalard.bicycle.models.SBLocationLiveData
 import com.sebastienbalard.bicycle.repositories.BICContractRepository
-import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.Consumer
-import io.reactivex.internal.util.ExceptionHelper
-import io.reactivex.schedulers.Schedulers
-import java.io.IOException
-import java.nio.charset.Charset
 
-class BICHomeViewModel(application: Application, private val contractRepository: BICContractRepository) : AndroidViewModel(application) {
+class BICHomeViewModel(private val contractRepository: BICContractRepository) : SBViewModel() {
 
     companion object : SBLog()
 
-    private val disposables: CompositeDisposable = CompositeDisposable()
+    private val _states = MutableLiveData<State>()
+    val states: LiveData<State>
+        get() = _states
 
-    var currentContract = MutableLiveData<BICContract>()
-    var hasCurrentContractChanged = MutableLiveData<Boolean>()
-    var currentStations = MutableLiveData<List<BICStation>>()
-
-    override fun onCleared() {
-        super.onCleared()
-        disposables.clear()
-    }
+    private val _events = MutableLiveData<Event>()
+    val events: LiveData<Event>
+        get() = _events
 
     fun getAllContracts(): List<BICContract> {
         return contractRepository.allContracts
     }
 
-    fun loadCurrentContractStations() {
-        disposables.add(contractRepository.getStationsFor(currentContract.value!!).observeOn(AndroidSchedulers.mainThread()).subscribe({
-            stations -> currentStations.value = stations
-        }, { _ -> currentStations.value = null }))
+    fun loadContractStations(contract: BICContract) {
+        _states.value = LoadingState
+        launch {
+            contractRepository.getStationsFor(contract)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            { stations -> _events.value = StationListEvent(stations) },
+                            { error -> _events.value = FailureEvent(error) })
+        }
     }
 
     fun refreshContractStations(contract: BICContract) {
-        disposables.add(contractRepository.refreshStationsFor(contract).observeOn(AndroidSchedulers.mainThread()).subscribe({
-            stations -> currentStations.value = stations
-        }, { _ -> currentStations.value = null }))
+        _states.value = LoadingState
+        launch {
+            contractRepository.refreshStationsFor(contract)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            { stations -> _events.value = StationListEvent(stations) },
+                            { error -> _events.value = FailureEvent(error) })
+        }
     }
 
-    fun determineCurrentContract(visibleBounds: LatLngBounds) {
+    fun determineCurrentContract(from: LatLngBounds, with: BICContract? = null) {
 
         var invalidateCurrentContract = false
         var hasChanged = false
-        var current = currentContract.value
+        var current: BICContract? = null
 
-        current?.let {
-            if (!it.bounds.intersect(visibleBounds)) {
+        with?.let {
+            if (!it.bounds.intersect(from)) {
                 invalidateCurrentContract = true
                 hasChanged = true
-                current = null
             }
         }
 
-        if (current == null || invalidateCurrentContract) {
-            current = contractRepository.getContractFor(visibleBounds.center)
+        if (with == null || invalidateCurrentContract) {
+            current = contractRepository.getContractFor(from.center)
             hasChanged = hasChanged || current != null
         }
 
-        hasCurrentContractChanged.value = hasChanged
-        if (currentContract.value != null && current != null) {
-            if (!currentContract.value!!.equals(current!!)) {
-                // current has changed
-                currentContract.value = current
-            }
-        } else {
-            // someone is null
-            currentContract.value = current
+        when {
+            current != null -> _states.value = ContractState(current, hasChanged)
+            with != null -> _states.value = ContractState(with, false)
+            else -> _states.value = OutOfContractState
         }
     }
 }

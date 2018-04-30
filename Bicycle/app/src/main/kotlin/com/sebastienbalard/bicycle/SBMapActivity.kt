@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle.views
+package com.sebastienbalard.bicycle
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -26,7 +26,6 @@ import android.support.v4.content.ContextCompat
 import android.widget.TextView
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.Marker
-import com.sebastienbalard.bicycle.R
 import com.sebastienbalard.bicycle.extensions.getIntentForApplicationSettings
 import com.sebastienbalard.bicycle.extensions.hasPermissions
 import com.sebastienbalard.bicycle.extensions.processPermissionsResults
@@ -34,6 +33,7 @@ import com.sebastienbalard.bicycle.extensions.requestLocationPermissionsIfNeeded
 import com.sebastienbalard.bicycle.misc.NOTIFICATION_REQUEST_PERMISSION_LOCATION
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.viewmodels.BICMapViewModel
+import com.sebastienbalard.bicycle.views.BICHomeActivity
 import kotlinx.android.synthetic.main.bic_activity_home.*
 import kotlinx.android.synthetic.main.bic_widget_appbar.*
 import org.koin.android.architecture.ext.viewModel

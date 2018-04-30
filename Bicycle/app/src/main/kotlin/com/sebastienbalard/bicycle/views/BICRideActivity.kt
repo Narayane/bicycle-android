@@ -24,15 +24,14 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.*
-import com.sebastienbalard.bicycle.BuildConfig
 import com.sebastienbalard.bicycle.R
+import com.sebastienbalard.bicycle.SBMapActivity
 import com.sebastienbalard.bicycle.extensions.fromPolyline
 import com.sebastienbalard.bicycle.extensions.getBitmap
 import com.sebastienbalard.bicycle.io.WSFacade
 import com.sebastienbalard.bicycle.io.dtos.GMDirectionsRouteDto
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.models.BICPlace
-import com.sebastienbalard.bicycle.viewmodels.BICHomeViewModel
 import com.sebastienbalard.bicycle.viewmodels.BICRideViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.bic_widget_appbar.*

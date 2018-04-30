@@ -19,6 +19,7 @@ package com.sebastienbalard.bicycle.views
 import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
 import android.content.Context
+import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.support.design.widget.CoordinatorLayout
@@ -35,8 +36,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.clustering.ClusterManager
-import com.sebastienbalard.bicycle.BuildConfig
-import com.sebastienbalard.bicycle.R
+import com.sebastienbalard.bicycle.*
 import com.sebastienbalard.bicycle.extensions.*
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.models.BICPlace
@@ -51,8 +51,6 @@ import kotlinx.coroutines.experimental.run
 import org.koin.android.architecture.ext.viewModel
 import java.util.*
 import kotlin.concurrent.timerTask
-import android.content.Intent
-
 
 class BICHomeActivity : SBMapActivity() {
 
@@ -83,8 +81,68 @@ class BICHomeActivity : SBMapActivity() {
 
         initMap(savedInstanceState)
         initSearchView()
+        //fabSearch.setOnClickListener({
+            /*int x = layoutContent.getRight();
+            int y = layoutContent.getBottom();
+
+            int startRadius = 0;
+            int endRadius = (int) Math.hypot(layoutMain.getWidth(), layoutMain.getHeight());
+
+            Animator anim = ViewAnimationUtils.createCircularReveal(layoutButtons, x, y, startRadius, endRadius);
+
+            layoutButtons.setVisibility(View.VISIBLE);
+            anim.start();*/
+        //})
 
         //layoutSearch.animate().translationYBy(0f).translationY(layoutSearch.measuredHeight.toFloat() * -1).start()
+        viewModelHome.states.observe(this, Observer { state ->
+            state?.let {
+                when (it) {
+                    LoadingState ->  {}
+                    OutOfContractState -> {
+                        d("current bounds is out of contracts cover")
+                        stopTimer()
+                    }
+                    is ContractState -> {
+                        if (!it.hasChanged) {
+                            v("current contract has not changed")
+                            // reload clustering
+                            clusterManager?.cluster()
+                        } else {
+                            stopTimer()
+                            d("refresh contract stations: ${it.current.name} (${it.current.provider.tag})")
+                            // refresh current contract stations data
+                            viewModelHome.loadContractStations(it.current)
+                            startTimer()
+                        }
+                    }
+                    else -> w("unexpected case")
+                }
+            }
+        })
+        viewModelHome.events.observe(this, Observer { event ->
+            event?.let {
+                when (it) {
+                    is StationListEvent -> {
+                        clusterManager?.clearItems()
+                        it.stations.map { station ->
+                            clusterManager?.addItem(BICStationAnnotation(station))
+                        }
+                        clusterManager?.cluster()
+                    }
+                    is FailureEvent -> {
+                        clusterManager?.clearItems()
+                        showErrorForCurrentContractStation()
+                    }
+                    else -> w("unexpected case")
+                }
+            }
+        })
+        viewModelSearch.isSearchButtonEnabled.observe(this, Observer { enabled ->
+            enabled?.let {
+                buttonSearch.isEnabled = it
+            }
+        })
     }
 
     override fun onStart() {
@@ -121,53 +179,6 @@ class BICHomeActivity : SBMapActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        v("onResume")
-        viewModelHome.hasCurrentContractChanged.observe(this, Observer { hasChanged ->
-            hasChanged?.let {
-                if (!it) {
-                    v("current contract has not changed")
-                    // reload clustering
-                    clusterManager?.cluster()
-                }
-            }
-        })
-        viewModelHome.currentContract.observe(this, Observer { contract ->
-            if (contract == null) {
-                d("current bounds is out of contracts covers")
-                stopTimer()
-            } else {
-                stopTimer()
-                d("refresh contract stations: ${contract.name} (${contract.provider.tag})")
-                // refresh current contract stations data
-                viewModelHome.loadCurrentContractStations()
-                startTimer()
-            }
-        })
-        viewModelHome.currentStations.observe(this, Observer { stations ->
-            clusterManager?.clearItems()
-            stations?.map { station ->
-                clusterManager?.addItem(BICStationAnnotation(station))
-            }
-            if (stations ==  null) {
-                showErrorForCurrentContractStation()
-            }
-            clusterManager?.cluster()
-        })
-        viewModelSearch.isSearchButtonEnabled.observe(this, Observer { enabled ->
-            enabled?.let {
-                buttonSearch.isEnabled = it
-            }
-        })
-    }
-
-    override fun onPause() {
-        super.onPause()
-        v("onPause")
-        viewModelHome.currentContract.removeObservers(this)
-    }
-
     override fun onStop() {
         super.onStop()
         v("onStop")
@@ -180,6 +191,7 @@ class BICHomeActivity : SBMapActivity() {
     //region Map events
 
     override fun onMapInitialized() {
+        mapView.alignTopZoomControls(this)
         clusterManager = ClusterManager(this, googleMap!!)
         clusterManager?.renderer = BICStationAnnotation.Renderer(this, googleMap!!, clusterManager!!)
         googleMap!!.setOnInfoWindowClickListener(clusterManager)
@@ -257,14 +269,15 @@ class BICHomeActivity : SBMapActivity() {
 
     private fun startTimer() {
         val zoomLevel = googleMap?.cameraPosition?.zoom?.toInt()
-        if (timer == null && viewModelHome.currentContract.value != null && zoomLevel != null && zoomLevel >= 10) {
+        if (timer == null && viewModelHome.states.value is ContractState && zoomLevel != null && zoomLevel >= 10) {
             val delay = BuildConfig.TIME_BEFORE_REFRESH_STATIONS_DATA_IN_SECONDS * 1000
             d("start timer")
             timer = Timer()
             timer!!.scheduleAtFixedRate(timerTask {
                 d("timer fired")
-                viewModelHome.currentContract.value?.let {
-                    viewModelHome.refreshContractStations(it)
+                val state = viewModelHome.states.value as? ContractState
+                state?.let {
+                    viewModelHome.refreshContractStations(it.current)
                 }
             }, delay, delay)
         }
@@ -276,8 +289,6 @@ class BICHomeActivity : SBMapActivity() {
             it.cancel()
             timer = null
         }
-        var array = DoubleArray(7)
-        array.map { element -> element + 1 }
     }
 
     private fun refreshMarkers() {
@@ -288,7 +299,6 @@ class BICHomeActivity : SBMapActivity() {
                 deleteContractsAnnotations()
                 viewModelHome.determineCurrentContract(googleMap!!.projection.visibleRegion.latLngBounds)
             } else {
-                viewModelHome.currentContract.value = null
                 stopTimer()
                 createContractsAnnotations()
             }
@@ -308,7 +318,6 @@ class BICHomeActivity : SBMapActivity() {
     }
 
     private fun createContractsAnnotations() {
-        d("create contracts annotations")
         val size = resources.getDimensionPixelSize(R.dimen.bic_size_annotation)
         val imageContract = getBitmapDescriptor(R.drawable.bic_img_contract, size, size)
         val hasMarkers = clusterManager?.markerCollection?.markers?.isNotEmpty()?.or(false)!!
@@ -318,6 +327,7 @@ class BICHomeActivity : SBMapActivity() {
             clusterManager?.cluster()
         }
         if (listContractsAnnotations?.size == 0) {
+            d("create contracts annotations")
             async(CommonPool) {
                 var options: MarkerOptions
                 viewModelHome.getAllContracts().map { contract ->

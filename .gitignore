@@ -67,3 +67,5 @@ fabric.properties
 gradle.properties
 kotlinc.xml
 contracts.json
+Bicycle/.idea/caches
+Bicycle/.idea/codeStyles
