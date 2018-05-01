@@ -23,13 +23,11 @@ import android.location.Location
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
+import android.widget.RelativeLayout
 import android.widget.TextView
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.Marker
-import com.sebastienbalard.bicycle.extensions.getIntentForApplicationSettings
-import com.sebastienbalard.bicycle.extensions.hasPermissions
-import com.sebastienbalard.bicycle.extensions.processPermissionsResults
-import com.sebastienbalard.bicycle.extensions.requestLocationPermissionsIfNeeded
+import com.sebastienbalard.bicycle.extensions.*
 import com.sebastienbalard.bicycle.misc.NOTIFICATION_REQUEST_PERMISSION_LOCATION
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.viewmodels.BICMapViewModel
@@ -51,11 +49,12 @@ abstract class SBMapActivity : SBActivity() {
     override fun onStart() {
         super.onStart()
         mapView.onStart()
-        requestLocationPermissionsIfNeeded(NOTIFICATION_REQUEST_PERMISSION_LOCATION, onGranted = {
-            viewModelMap.userLocation.observe(this, Observer { location ->
-                refreshMap()
-                onUserLocationChanged(location)
-            })
+        requestLocationPermissionsIfNeeded(NOTIFICATION_REQUEST_PERMISSION_LOCATION,
+                onGranted = {
+                    viewModelMap.userLocation.observe(this, Observer { location ->
+                    refreshMap()
+                    onUserLocationChanged(location)
+                })
         })
     }
 
@@ -119,6 +118,7 @@ abstract class SBMapActivity : SBActivity() {
 
     protected fun initMap(savedInstanceState: Bundle?) {
         mapView.onCreate(savedInstanceState)
+        mapView.alignZoomControls(this, RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.ALIGN_PARENT_RIGHT)
         mapView.getMapAsync { map ->
 
             googleMap = map

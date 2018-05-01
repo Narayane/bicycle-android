@@ -20,8 +20,8 @@ import com.sebastienbalard.bicycle.models.BICStation
 
 open class Event
 
-object SuccessEvent : Event()
+object EventSuccess : Event()
 
-data class FailureEvent(val error: Throwable) : Event()
+data class EventFailure(val error: Throwable) : Event()
 
-data class StationListEvent(val stations: List<BICStation>) : Event()
+data class EventStationList(val stations: List<BICStation>) : Event()

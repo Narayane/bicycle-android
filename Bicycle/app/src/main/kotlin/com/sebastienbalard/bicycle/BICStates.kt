@@ -17,14 +17,13 @@
 package com.sebastienbalard.bicycle
 
 import com.sebastienbalard.bicycle.models.BICContract
-import com.sebastienbalard.bicycle.models.BICStation
 
 open class State
 
-object LoadingState : State()
+object StateLoading : State()
 
-data class ErrorState(val error: Throwable) : State()
+data class StateError(val error: Throwable) : State()
 
-object OutOfContractState : State()
+object StateOutOfContract : State()
 
-data class ContractState(val current: BICContract, val hasChanged: Boolean) : State()
+data class StateContract(val current: BICContract, val hasChanged: Boolean) : State()

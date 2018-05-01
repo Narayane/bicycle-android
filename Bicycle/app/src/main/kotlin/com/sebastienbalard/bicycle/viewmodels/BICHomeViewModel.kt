@@ -30,37 +30,31 @@ class BICHomeViewModel(private val contractRepository: BICContractRepository) : 
 
     companion object : SBLog()
 
-    private val _states = MutableLiveData<State>()
-    val states: LiveData<State>
-        get() = _states
-
-    private val _events = MutableLiveData<Event>()
-    val events: LiveData<Event>
-        get() = _events
+    var currentContract: BICContract? = null
 
     fun getAllContracts(): List<BICContract> {
         return contractRepository.allContracts
     }
 
     fun loadContractStations(contract: BICContract) {
-        _states.value = LoadingState
+        _states.value = StateLoading
         launch {
             contractRepository.getStationsFor(contract)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
-                            { stations -> _events.value = StationListEvent(stations) },
-                            { error -> _events.value = FailureEvent(error) })
+                            { stations -> _events.value = EventStationList(stations) },
+                            { error -> _events.value = EventFailure(error) })
         }
     }
 
     fun refreshContractStations(contract: BICContract) {
-        _states.value = LoadingState
+        _states.postValue(StateLoading)
         launch {
             contractRepository.refreshStationsFor(contract)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
-                            { stations -> _events.value = StationListEvent(stations) },
-                            { error -> _events.value = FailureEvent(error) })
+                            { stations -> _events.postValue(EventStationList(stations)) },
+                            { error -> _events.postValue(EventFailure(error)) })
         }
     }
 
@@ -83,9 +77,18 @@ class BICHomeViewModel(private val contractRepository: BICContractRepository) : 
         }
 
         when {
-            current != null -> _states.value = ContractState(current, hasChanged)
-            with != null -> _states.value = ContractState(with, false)
-            else -> _states.value = OutOfContractState
+            current != null ->  {
+                currentContract = current
+                _states.value = StateContract(current, hasChanged)
+            }
+            with != null -> {
+                currentContract = with
+                _states.value = StateContract(with, false)
+            }
+            else ->  {
+                currentContract = null
+                _states.value = StateOutOfContract
+            }
         }
     }
 }

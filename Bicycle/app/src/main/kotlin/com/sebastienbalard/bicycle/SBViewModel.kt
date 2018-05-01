@@ -16,6 +16,8 @@
 
 package com.sebastienbalard.bicycle
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.support.annotation.CallSuper
 import io.reactivex.disposables.CompositeDisposable
@@ -24,6 +26,14 @@ import io.reactivex.disposables.Disposable
 abstract class SBViewModel : ViewModel() {
 
     private val disposables = CompositeDisposable()
+
+    protected var _states = MutableLiveData<State>()
+    val states: LiveData<State>
+        get() = _states
+
+    protected var _events = MutableLiveData<Event>()
+    val events: LiveData<Event>
+        get() = _events
 
     fun launch(rx: () -> Disposable) {
         disposables.add(rx())

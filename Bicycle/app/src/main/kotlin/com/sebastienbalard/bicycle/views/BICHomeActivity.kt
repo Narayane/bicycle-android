@@ -17,6 +17,7 @@
 package com.sebastienbalard.bicycle.views
 
 import android.annotation.SuppressLint
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
@@ -39,6 +40,7 @@ import com.google.maps.android.clustering.ClusterManager
 import com.sebastienbalard.bicycle.*
 import com.sebastienbalard.bicycle.extensions.*
 import com.sebastienbalard.bicycle.misc.SBLog
+import com.sebastienbalard.bicycle.models.BICContract
 import com.sebastienbalard.bicycle.models.BICPlace
 import com.sebastienbalard.bicycle.viewmodels.BICHomeViewModel
 import com.sebastienbalard.bicycle.viewmodels.BICSearchViewModel
@@ -98,12 +100,12 @@ class BICHomeActivity : SBMapActivity() {
         viewModelHome.states.observe(this, Observer { state ->
             state?.let {
                 when (it) {
-                    LoadingState ->  {}
-                    OutOfContractState -> {
+                    StateLoading ->  {}
+                    StateOutOfContract -> {
                         d("current bounds is out of contracts cover")
                         stopTimer()
                     }
-                    is ContractState -> {
+                    is StateContract -> {
                         if (!it.hasChanged) {
                             v("current contract has not changed")
                             // reload clustering
@@ -123,14 +125,14 @@ class BICHomeActivity : SBMapActivity() {
         viewModelHome.events.observe(this, Observer { event ->
             event?.let {
                 when (it) {
-                    is StationListEvent -> {
+                    is EventStationList -> {
                         clusterManager?.clearItems()
                         it.stations.map { station ->
                             clusterManager?.addItem(BICStationAnnotation(station))
                         }
                         clusterManager?.cluster()
                     }
-                    is FailureEvent -> {
+                    is EventFailure -> {
                         clusterManager?.clearItems()
                         showErrorForCurrentContractStation()
                     }
@@ -191,7 +193,6 @@ class BICHomeActivity : SBMapActivity() {
     //region Map events
 
     override fun onMapInitialized() {
-        mapView.alignTopZoomControls(this)
         clusterManager = ClusterManager(this, googleMap!!)
         clusterManager?.renderer = BICStationAnnotation.Renderer(this, googleMap!!, clusterManager!!)
         googleMap!!.setOnInfoWindowClickListener(clusterManager)
@@ -269,15 +270,14 @@ class BICHomeActivity : SBMapActivity() {
 
     private fun startTimer() {
         val zoomLevel = googleMap?.cameraPosition?.zoom?.toInt()
-        if (timer == null && viewModelHome.states.value is ContractState && zoomLevel != null && zoomLevel >= 10) {
+        if (timer == null && viewModelHome.currentContract != null && zoomLevel != null && zoomLevel >= 10) {
             val delay = BuildConfig.TIME_BEFORE_REFRESH_STATIONS_DATA_IN_SECONDS * 1000
             d("start timer")
             timer = Timer()
             timer!!.scheduleAtFixedRate(timerTask {
                 d("timer fired")
-                val state = viewModelHome.states.value as? ContractState
-                state?.let {
-                    viewModelHome.refreshContractStations(it.current)
+                viewModelHome.currentContract?.let {
+                    viewModelHome.refreshContractStations(it)
                 }
             }, delay, delay)
         }
@@ -297,7 +297,7 @@ class BICHomeActivity : SBMapActivity() {
             d("current zoom level: $level")
             if (it >= 10) {
                 deleteContractsAnnotations()
-                viewModelHome.determineCurrentContract(googleMap!!.projection.visibleRegion.latLngBounds)
+                viewModelHome.determineCurrentContract(googleMap!!.projection.visibleRegion.latLngBounds, viewModelHome.currentContract)
             } else {
                 stopTimer()
                 createContractsAnnotations()

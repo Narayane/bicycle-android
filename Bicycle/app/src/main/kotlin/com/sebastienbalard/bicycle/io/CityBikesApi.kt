@@ -39,7 +39,7 @@ interface CityBikesApi {
 
             // logger
             val vInterceptor = HttpLoggingInterceptor()
-            vInterceptor.level = HttpLoggingInterceptor.Level.BODY
+            vInterceptor.level = HttpLoggingInterceptor.Level.BASIC
 
             // http client
             val httpClient = OkHttpClient.Builder().addInterceptor(vInterceptor).build()

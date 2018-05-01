@@ -26,22 +26,19 @@ const val ZOOM_CONTROL_ID = 0x1
 const val MY_LOCATION_CONTROL_ID = 0x2
 const val NAVIGATION_CONTROL_ID = 0x4
 
-fun MapView.alignTopZoomControls(context: Context) {
+fun MapView.alignZoomControls(context: Context, vararg to: Int, marginTop: Float = 60f) {
 
     val zoomControls = this.findViewById(ZOOM_CONTROL_ID) as View
     if (zoomControls.layoutParams is RelativeLayout.LayoutParams) {
+
         // zoom controls are inside of relative layout
         val params= zoomControls.layoutParams as RelativeLayout.LayoutParams
+        to.map { rule -> params.addRule(rule) }
 
-        // Align it to - parent top|right
-        params.addRule(RelativeLayout.ALIGN_PARENT_TOP)
-        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT)
-
-        // Update margins, set to 10dp
-        val margin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10f,
+        val default = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10f,
                 context.resources.displayMetrics).toInt()
-        val margin2 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60f,
+        val top = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, marginTop,
                 context.resources.displayMetrics).toInt()
-        params.setMargins(margin, margin2, margin, margin)
+        params.setMargins(default, top, default, default)
     }
 }

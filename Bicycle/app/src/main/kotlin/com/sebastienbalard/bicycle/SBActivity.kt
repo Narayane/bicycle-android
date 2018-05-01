@@ -17,6 +17,7 @@
 package com.sebastienbalard.bicycle
 
 import android.os.Bundle
+import android.support.annotation.CallSuper
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import io.reactivex.disposables.CompositeDisposable
@@ -46,6 +47,11 @@ open class SBActivity : AppCompatActivity() {
         }
     }
 
+    fun launch(rx: () -> Disposable) {
+        disposables.add(rx())
+    }
+
+    @CallSuper
     override fun onDestroy() {
         super.onDestroy()
         disposables.clear()

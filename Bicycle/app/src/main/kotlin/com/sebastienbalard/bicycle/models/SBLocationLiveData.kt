@@ -20,24 +20,26 @@ import android.annotation.SuppressLint
 import android.arch.lifecycle.MutableLiveData
 import android.content.Context
 import android.location.Location
-import android.os.Bundle
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.location.LocationListener
+import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.sebastienbalard.bicycle.misc.SBLog
 
-class SBLocationLiveData(context: Context) : MutableLiveData<Location>(), LocationListener,
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+class SBLocationLiveData(context: Context) : MutableLiveData<Location>() {
 
     companion object : SBLog()
 
-    private val googleApiClient: GoogleApiClient = GoogleApiClient.Builder(context)
-            .addConnectionCallbacks(this)
-            .addApi(LocationServices.API)
-            .build()
+    private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+
+    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult?) {
+            locationResult ?: return
+            val last = locationResult.locations.last()
+            d("receive location update: (${last.latitude},${last.longitude})")
+            value = last
+        }
+    }
 
     private val locationRequest = LocationRequest.create().apply {
         priority = LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -46,42 +48,23 @@ class SBLocationLiveData(context: Context) : MutableLiveData<Location>(), Locati
         setExpirationDuration(300000)
     }
 
+    @SuppressLint("MissingPermission")
     override fun onActive() {
         super.onActive()
-        googleApiClient.connect()
+        if (hasObservers()) {
+            fusedLocationClient.lastLocation
+                    .addOnSuccessListener { location ->
+                        location?.let {
+                            d("get last known location: (${it.latitude},${it.longitude})")
+                            value = it
+                        }
+                    }
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
+        }
     }
 
     override fun onInactive() {
         super.onInactive()
-        if (googleApiClient.isConnected) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this)
-            googleApiClient.disconnect()
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    override fun onConnected(bundle: Bundle?) {
-        d("google api client is connected")
-        LocationServices.FusedLocationApi.getLastLocation(googleApiClient)?.let {
-            value = it
-        }
-        if (hasObservers()) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this)
-        }
-    }
-
-    override fun onConnectionSuspended(cause: Int) {
-        w("google api client connection suspended, trying to reconnect...")
-    }
-
-    override fun onConnectionFailed(result: ConnectionResult) {
-        e("google api client connection failed")
-    }
-
-    override fun onLocationChanged(location: Location?) {
-        location?.let {
-            d("receive location update: (${it.latitude},${it.longitude})")
-            value = it
-        }
+        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 }

@@ -136,18 +136,21 @@ class BICRideActivity : SBMapActivity() {
     //endregion
 
     private fun determineRoute() {
-        dispose(WSFacade.getDirections("bicycling", viewModelRide.departure.location, viewModelRide.arrival.location)
-                .observeOn(AndroidSchedulers.mainThread()).subscribe { response ->
-                    val routes: List<GMDirectionsRouteDto> = response.routes.sortedWith(compareBy({ it.legs[0].distance }))
-                    val listPoints = routes[0].overviewPolyline.points.fromPolyline()
-                    listPoints.add(0, viewModelRide.departure.location)
-                    listPoints.add(viewModelRide.arrival.location)
-                    var options = PolylineOptions().addAll(listPoints)
-                            .width(resources.getDimensionPixelSize(R.dimen.bic_width_polyline).toFloat())
-                            .color(ContextCompat.getColor(this, R.color.bic_color_orange))
-                            .geodesic(true)
-                    googleMap?.addPolyline(options)
-                })
+        launch {
+            WSFacade.getDirections("bicycling", viewModelRide.departure.location, viewModelRide.arrival.location)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { response ->
+                        val routes: List<GMDirectionsRouteDto> = response.routes.sortedWith(compareBy({ it.legs[0].distance }))
+                        val listPoints = routes[0].overviewPolyline.points.fromPolyline()
+                        listPoints.add(0, viewModelRide.departure.location)
+                        listPoints.add(viewModelRide.arrival.location)
+                        var options = PolylineOptions().addAll(listPoints)
+                                .width(resources.getDimensionPixelSize(R.dimen.bic_width_polyline).toFloat())
+                                .color(ContextCompat.getColor(this, R.color.bic_color_orange))
+                                .geodesic(true)
+                        googleMap?.addPolyline(options)
+                    }
+        }
     }
 
     //region Map events
