@@ -14,15 +14,31 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle.models
+package com.sebastienbalard.bicycle.data
 
+import android.arch.persistence.room.ColumnInfo
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Ignore
+import android.arch.persistence.room.PrimaryKey
+import android.support.annotation.NonNull
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.gson.annotations.SerializedName
 import com.google.maps.android.SphericalUtil
 import java.lang.Math.sqrt
 
-data class BICContract(val name: String, @SerializedName("lat") val latitude: Double, @SerializedName("lng") val longitude: Double, val provider: Provider, val radius: Double, val url: String) {
+@Entity(tableName = "bic_contracts")
+data class BICContract(
+        @PrimaryKey(autoGenerate = true)
+        @ColumnInfo(name = "pk_contract_id")
+        @NonNull
+        val id: Long,
+        val name: String,
+        @SerializedName("lat") val latitude: Double,
+        @SerializedName("lng") val longitude: Double,
+        val provider: Provider,
+        val radius: Double,
+        val url: String) {
 
     val center: LatLng
         get() = LatLng(latitude, longitude)
@@ -35,9 +51,8 @@ data class BICContract(val name: String, @SerializedName("lat") val latitude: Do
             return LatLngBounds(southwestCorner, northeastCorner)
         }
 
-    enum class Provider(val value: Int, val tag: String) {
-        Unknown(0, "Unknown"),
-        CityBikes(1, "CityBikes");
+    enum class Provider(val tag: String) {
+        @SerializedName("CityBikes") CityBikes("CityBikes");
 
         companion object {
             fun from(tag: String): Provider = Provider.values().first { it.tag == tag }

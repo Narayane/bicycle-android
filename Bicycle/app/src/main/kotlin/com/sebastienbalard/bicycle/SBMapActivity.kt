@@ -31,7 +31,7 @@ import com.sebastienbalard.bicycle.extensions.*
 import com.sebastienbalard.bicycle.misc.NOTIFICATION_REQUEST_PERMISSION_LOCATION
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.viewmodels.BICMapViewModel
-import com.sebastienbalard.bicycle.views.BICHomeActivity
+import com.sebastienbalard.bicycle.views.home.BICHomeActivity
 import kotlinx.android.synthetic.main.bic_activity_home.*
 import kotlinx.android.synthetic.main.bic_widget_appbar.*
 import org.koin.android.architecture.ext.viewModel

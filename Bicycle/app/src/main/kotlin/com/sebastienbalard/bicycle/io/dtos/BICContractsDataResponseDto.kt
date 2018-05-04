@@ -16,4 +16,6 @@
 
 package com.sebastienbalard.bicycle.io.dtos
 
-class GMDirectionsLegDto(val distance: GMDirectionsDistanceDto, val duration: GMDirectionsDurationDto)
+import com.sebastienbalard.bicycle.data.BICContract
+
+class BICContractsDataResponseDto(val version: Int, val values: ArrayList<BICContract>)

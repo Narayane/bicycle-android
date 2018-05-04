@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle.views
+package com.sebastienbalard.bicycle.views.home
 
 import android.content.Context
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.res.ResourcesCompat
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
@@ -26,9 +24,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
-import com.sebastienbalard.bicycle.R
-import com.sebastienbalard.bicycle.extensions.drawOn
-import com.sebastienbalard.bicycle.extensions.getBitmap
 import com.sebastienbalard.bicycle.models.BICStation
 
 

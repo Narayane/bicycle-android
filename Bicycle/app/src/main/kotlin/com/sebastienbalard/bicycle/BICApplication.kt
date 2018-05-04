@@ -21,6 +21,7 @@ import android.content.Context
 import android.content.res.Resources
 import com.sebastienbalard.bicycle.di.bicycleApp
 import com.sebastienbalard.bicycle.misc.SBLog
+import net.danlew.android.joda.JodaTimeAndroid
 import org.koin.android.ext.android.startKoin
 
 class BICApplication : Application() {
@@ -40,6 +41,7 @@ class BICApplication : Application() {
         v("onCreate")
         startKoin(this, bicycleApp)
         instance = this
+        JodaTimeAndroid.init(context)
     }
 
 }

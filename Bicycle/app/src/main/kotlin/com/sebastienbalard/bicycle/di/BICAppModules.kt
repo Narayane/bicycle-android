@@ -17,22 +17,17 @@
 package com.sebastienbalard.bicycle.di
 
 import com.sebastienbalard.bicycle.repositories.BICContractRepository
-import com.sebastienbalard.bicycle.viewmodels.BICHomeViewModel
-import com.sebastienbalard.bicycle.viewmodels.BICMapViewModel
-import com.sebastienbalard.bicycle.viewmodels.BICRideViewModel
-import com.sebastienbalard.bicycle.viewmodels.BICSearchViewModel
+import com.sebastienbalard.bicycle.viewmodels.*
 import org.koin.android.architecture.ext.viewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module.applicationContext
 
-val dataModule = applicationContext {
-
-    bean { BICContractRepository() }
-}
-
 val commonModule = applicationContext {
 
-    viewModel { BICMapViewModel(androidApplication()) }
+    bean { BICContractRepository(get(), get()) }
+
+    viewModel { BICMapViewModel(get()) }
+    viewModel { BICSplashViewModel(get()) }
 }
 
 val homeModule = applicationContext {
@@ -43,7 +38,8 @@ val homeModule = applicationContext {
 
 val rideModule = applicationContext {
 
+    this
     viewModel { BICRideViewModel(get()) }
 }
 
-val bicycleApp = listOf(dataModule, commonModule, homeModule, rideModule)
+val bicycleApp = listOf(remoteDataSourceModule, localDataSourceModule, commonModule, homeModule, rideModule)

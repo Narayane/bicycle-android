@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle.views
+package com.sebastienbalard.bicycle.widgets
 
 import android.content.Context
 import android.graphics.Typeface

@@ -14,6 +14,15 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle.io.dtos
+package com.sebastienbalard.bicycle.data
 
-class GMDirectionsLegDto(val distance: GMDirectionsDistanceDto, val duration: GMDirectionsDurationDto)
+import android.arch.persistence.room.RoomDatabase
+import android.arch.persistence.room.Database
+import android.arch.persistence.room.TypeConverters
+
+@Database(entities = [BICContract::class], version = 1)
+@TypeConverters(BICConverters::class)
+abstract class BICDatabase : RoomDatabase() {
+
+    abstract fun getContractDao(): BICContractDao
+}

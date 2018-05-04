@@ -18,6 +18,7 @@ package com.sebastienbalard.bicycle.models
 
 import android.location.Location
 import com.google.android.gms.maps.model.LatLng
+import com.sebastienbalard.bicycle.data.BICContract
 
 data class BICPlace(private val latitude: Double, private val longitude: Double) {
 

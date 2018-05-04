@@ -18,29 +18,80 @@ package com.sebastienbalard.bicycle.repositories
 
 import android.location.Location
 import com.google.android.gms.maps.model.LatLng
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.sebastienbalard.bicycle.BICApplication
+import com.sebastienbalard.bicycle.*
+import com.sebastienbalard.bicycle.data.BICContract
+import com.sebastienbalard.bicycle.data.BICContractDao
 import com.sebastienbalard.bicycle.extensions.distanceTo
+import com.sebastienbalard.bicycle.extensions.formatDate
+import com.sebastienbalard.bicycle.io.BicycleApi
 import com.sebastienbalard.bicycle.io.WSFacade
+import com.sebastienbalard.bicycle.misc.BICSharedPreferences
 import com.sebastienbalard.bicycle.misc.SBLog
-import com.sebastienbalard.bicycle.models.BICContract
 import com.sebastienbalard.bicycle.models.BICStation
 import io.reactivex.Observable
 import io.reactivex.Single
-import java.io.IOException
-import java.nio.charset.Charset
+import io.reactivex.schedulers.Schedulers
+import org.joda.time.DateTime
+import org.joda.time.Days
 import java.util.*
+import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
-class BICContractRepository {
+class BICContractRepository(val bicycleApi: BicycleApi, val contractDao: BICContractDao) {
 
     companion object : SBLog()
 
-    var allContracts = ArrayList<BICContract>()
+    private var allContracts = ArrayList<BICContract>()
     private var cacheStations = HashMap<String, List<BICStation>>()
 
-    init {
-        loadContracts()
+    fun loadAllContracts(): Observable<Event> {
+
+        var timeToCheck = true
+        val now = DateTime.now()
+
+        BICSharedPreferences.contractsDataLastCheckDate?.let {
+            v("last check: ${it.formatDate(BICApplication.context)}")
+            timeToCheck = Days.daysBetween(it.toLocalDate(), now.toLocalDate()).days > BuildConfig
+                    .DAYS_BETWEEN_CONTRACTS_CHECK
+        }
+
+        return if (timeToCheck) {
+            d("get contracts from remote")
+            Observable.create<Event> { observer ->
+                observer.onNext(EventSuccess(BICApplication.context.getString(R.string.bic_messages_info_check_contracts_data_version)))
+                bicycleApi.getContractsData("media", BICApplication.context.getString(R.string.bicycle_storage_token))
+                        .subscribe(
+                                { response ->
+                                    if (response.version > BICSharedPreferences.contractsDataVersion) {
+                                        observer.onNext(EventSuccess(BICApplication.context.getString(R.string.bic_messages_info_update_contracts)))
+                                        val existing = contractDao.findAll()
+                                        d("delete ${existing.size} contracts")
+                                        contractDao.deleteAll(existing as ArrayList<BICContract>)
+                                        contractDao.insertAll(response.values)
+                                        BICSharedPreferences.contractsDataVersion = response.version
+                                    } else {
+                                        d("contracts are up-to-date")
+                                    }
+                                    BICSharedPreferences.contractsDataLastCheckDate = now
+                                    observer.onNext(EventSuccess(BICApplication.context.getString(R.string.bic_messages_info_contracts_loaded, contractDao.getAllCount())))
+                                    Thread.sleep(3000L)
+                                    observer.onComplete()
+                                },
+                                { error -> observer.onError(error) })
+
+            }.subscribeOn(Schedulers.newThread())
+        } else {
+            d("contracts are up-to-date")
+            Observable.concat(
+                    Observable.just(EventSuccess(BICApplication.context.getString(R.string.bic_messages_info_contracts_loaded, contractDao.getAllCount()))),
+                    Observable.empty<Event>().delay(3L, TimeUnit.SECONDS)
+            ).subscribeOn(Schedulers.newThread())
+        }
+    }
+
+    fun getAllContracts(): Single<List<BICContract>> {
+        d("get contracts from local")
+        return Single.fromObservable(Observable.fromArray(contractDao.findAll()))
     }
 
     fun getContractFor(location: Location): BICContract? {
@@ -85,7 +136,7 @@ class BICContractRepository {
                 .doOnError { throwable -> e("fail to get contract stations", throwable) }
     }
 
-    private fun loadContracts() {
+    /*private fun loadContracts() {
         try {
             val inputStream = BICApplication.context.assets.open("contracts.json")
             val size = inputStream.available()
@@ -99,5 +150,5 @@ class BICContractRepository {
         } catch (exception: IOException) {
             e("fail to load contracts from assets", exception)
         }
-    }
+    }*/
 }

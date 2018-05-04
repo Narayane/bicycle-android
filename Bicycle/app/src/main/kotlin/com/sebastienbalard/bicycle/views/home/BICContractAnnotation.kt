@@ -1,5 +1,5 @@
 /**
- * Copyright © 2018 Bicycle (Sébastien BALARD)
+ * Copyright © 2017 Bicycle (Sébastien BALARD)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle.io.dtos
+package com.sebastienbalard.bicycle.views.home
 
-class GMDirectionsLegDto(val distance: GMDirectionsDistanceDto, val duration: GMDirectionsDurationDto)
+import com.sebastienbalard.bicycle.data.BICContract
+
+open class BICContractAnnotation(val contract: BICContract) {
+
+}

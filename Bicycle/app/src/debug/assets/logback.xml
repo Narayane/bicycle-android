@@ -17,7 +17,7 @@
 <configuration>
     <appender name="LOGCAT" class="ch.qos.logback.classic.android.LogcatAppender">
         <encoder>
-            <pattern>[%thread] %-5level %logger{25} - %msg%n</pattern>
+            <pattern>### [%thread] %-5level %logger{25} - %msg%n</pattern>
         </encoder>
     </appender>
 

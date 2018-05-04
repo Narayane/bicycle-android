@@ -14,6 +14,22 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle.io.dtos
+package com.sebastienbalard.bicycle.data
 
-class GMDirectionsLegDto(val distance: GMDirectionsDistanceDto, val duration: GMDirectionsDurationDto)
+import android.arch.persistence.room.*
+
+@Dao
+interface BICContractDao {
+
+    @Query("SELECT * FROM bic_contracts")
+    fun findAll(): List<BICContract>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertAll(list: ArrayList<BICContract>): LongArray
+
+    @Delete
+    fun deleteAll(list: ArrayList<BICContract>)
+
+    @Query("SELECT COUNT(*) FROM bic_contracts")
+    fun getAllCount(): Int
+}

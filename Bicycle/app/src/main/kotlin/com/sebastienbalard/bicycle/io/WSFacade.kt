@@ -19,18 +19,12 @@ package com.sebastienbalard.bicycle.io
 import com.google.android.gms.maps.model.LatLng
 import com.sebastienbalard.bicycle.BICApplication
 import com.sebastienbalard.bicycle.R
-import com.sebastienbalard.bicycle.io.dtos.CBContractResponseDto
+import com.sebastienbalard.bicycle.io.dtos.BICContractsDataResponseDto
 import com.sebastienbalard.bicycle.io.dtos.GMDirectionsResponseDto
 import com.sebastienbalard.bicycle.misc.SBLog
-import com.sebastienbalard.bicycle.models.BICContract
+import com.sebastienbalard.bicycle.data.BICContract
 import com.sebastienbalard.bicycle.models.BICStation
-import io.reactivex.Flowable
-import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class WSFacade {
 

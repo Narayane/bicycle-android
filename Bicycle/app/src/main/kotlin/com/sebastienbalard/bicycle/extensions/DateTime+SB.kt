@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle.io.dtos
+package com.sebastienbalard.bicycle.extensions
 
-class GMDirectionsLegDto(val distance: GMDirectionsDistanceDto, val duration: GMDirectionsDurationDto)
+import android.content.Context
+import org.joda.time.DateTime
+
+fun DateTime.formatDate(context: Context): String {
+    return android.text.format.DateFormat.getDateFormat(context).format(this.toDate())
+}

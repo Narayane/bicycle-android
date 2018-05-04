@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle.views
+package com.sebastienbalard.bicycle.views.home
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
@@ -38,12 +37,14 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.clustering.ClusterManager
 import com.sebastienbalard.bicycle.*
+import com.sebastienbalard.bicycle.data.BICContract
 import com.sebastienbalard.bicycle.extensions.*
 import com.sebastienbalard.bicycle.misc.SBLog
-import com.sebastienbalard.bicycle.models.BICContract
 import com.sebastienbalard.bicycle.models.BICPlace
 import com.sebastienbalard.bicycle.viewmodels.BICHomeViewModel
 import com.sebastienbalard.bicycle.viewmodels.BICSearchViewModel
+import com.sebastienbalard.bicycle.widgets.BICPlacesAutoCompleteAdapter
+import com.sebastienbalard.bicycle.views.BICRideActivity
 import kotlinx.android.synthetic.main.bic_activity_home.*
 import kotlinx.android.synthetic.main.bic_widget_appbar.*
 import kotlinx.coroutines.experimental.CommonPool
@@ -125,6 +126,9 @@ class BICHomeActivity : SBMapActivity() {
         viewModelHome.events.observe(this, Observer { event ->
             event?.let {
                 when (it) {
+                    is EventContractList -> {
+                        createAnnotationsFor(it.contracts)
+                    }
                     is EventStationList -> {
                         clusterManager?.clearItems()
                         it.stations.map { station ->
@@ -222,6 +226,8 @@ class BICHomeActivity : SBMapActivity() {
 
     override fun onCameraIdle() {
         refreshMarkers()
+        (autoCompleteTextViewDepartureAddress.adapter as BICPlacesAutoCompleteAdapter).bounds = googleMap!!.projection.visibleRegion.latLngBounds
+        (autoCompleteTextViewArrivalAddress.adapter as BICPlacesAutoCompleteAdapter).bounds = googleMap!!.projection.visibleRegion.latLngBounds
     }
 
     //endregion
@@ -300,10 +306,9 @@ class BICHomeActivity : SBMapActivity() {
                 viewModelHome.determineCurrentContract(googleMap!!.projection.visibleRegion.latLngBounds, viewModelHome.currentContract)
             } else {
                 stopTimer()
-                createContractsAnnotations()
+                viewModelHome.getAllContracts()
+                //createContractsAnnotations()
             }
-            (autoCompleteTextViewDepartureAddress.adapter as BICPlacesAutoCompleteAdapter).bounds = googleMap!!.projection.visibleRegion.latLngBounds
-            (autoCompleteTextViewArrivalAddress.adapter as BICPlacesAutoCompleteAdapter).bounds = googleMap!!.projection.visibleRegion.latLngBounds
         }
     }
 
@@ -317,7 +322,7 @@ class BICHomeActivity : SBMapActivity() {
         }
     }
 
-    private fun createContractsAnnotations() {
+    private fun createAnnotationsFor(contracts: List<BICContract>) {
         val size = resources.getDimensionPixelSize(R.dimen.bic_size_annotation)
         val imageContract = getBitmapDescriptor(R.drawable.bic_img_contract, size, size)
         val hasMarkers = clusterManager?.markerCollection?.markers?.isNotEmpty()?.or(false)!!
@@ -330,7 +335,7 @@ class BICHomeActivity : SBMapActivity() {
             d("create contracts annotations")
             async(CommonPool) {
                 var options: MarkerOptions
-                viewModelHome.getAllContracts().map { contract ->
+                contracts.map { contract ->
                     options = MarkerOptions()
                     options.position(contract.center)
                     options.icon(imageContract)

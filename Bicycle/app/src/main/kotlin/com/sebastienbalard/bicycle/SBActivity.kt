@@ -23,7 +23,6 @@ import android.view.MenuItem
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
-
 open class SBActivity : AppCompatActivity() {
 
     private val disposables: CompositeDisposable = CompositeDisposable()

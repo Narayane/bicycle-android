@@ -16,7 +16,7 @@
 
 package com.sebastienbalard.bicycle
 
-import com.sebastienbalard.bicycle.models.BICContract
+import com.sebastienbalard.bicycle.data.BICContract
 
 open class State
 

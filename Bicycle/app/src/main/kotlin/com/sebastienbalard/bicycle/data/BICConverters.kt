@@ -1,5 +1,5 @@
 /**
- * Copyright © 2017 Bicycle (Sébastien BALARD)
+ * Copyright © 2018 Bicycle (Sébastien BALARD)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,23 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle.views
+package com.sebastienbalard.bicycle.data
 
-import com.sebastienbalard.bicycle.models.BICContract
+import android.arch.persistence.room.TypeConverter
 
-open class BICContractAnnotation(val contract: BICContract) {
+class BICConverters {
 
+    @TypeConverter
+    fun providerFrom(tag: String?): BICContract.Provider? {
+        return tag?.let {
+            BICContract.Provider.valueOf(it)
+        }
+    }
+
+    @TypeConverter
+    fun tagFrom(provider: BICContract.Provider?): String? {
+        return provider?.let {
+            it.tag
+        }
+    }
 }

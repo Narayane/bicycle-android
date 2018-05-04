@@ -16,13 +16,11 @@
 
 package com.sebastienbalard.bicycle.viewmodels
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
 import com.google.android.gms.maps.model.LatLngBounds
 import com.sebastienbalard.bicycle.*
 import com.sebastienbalard.bicycle.extensions.intersect
 import com.sebastienbalard.bicycle.misc.SBLog
-import com.sebastienbalard.bicycle.models.BICContract
+import com.sebastienbalard.bicycle.data.BICContract
 import com.sebastienbalard.bicycle.repositories.BICContractRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 
@@ -32,8 +30,14 @@ class BICHomeViewModel(private val contractRepository: BICContractRepository) : 
 
     var currentContract: BICContract? = null
 
-    fun getAllContracts(): List<BICContract> {
-        return contractRepository.allContracts
+    fun getAllContracts() {
+        _states.value = StateLoading
+        launch {
+            contractRepository.getAllContracts()
+                    .subscribe(
+                            { contracts -> _events.value = EventContractList(contracts) },
+                            { error -> _events.value = EventFailure(error) })
+        }
     }
 
     fun loadContractStations(contract: BICContract) {
