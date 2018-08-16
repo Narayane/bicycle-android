@@ -19,6 +19,7 @@ package com.sebastienbalard.bicycle.io
 import com.google.gson.GsonBuilder
 import com.sebastienbalard.bicycle.BICApplication
 import com.sebastienbalard.bicycle.R
+import com.sebastienbalard.bicycle.io.dtos.BICConfigResponseDto
 import com.sebastienbalard.bicycle.io.dtos.BICContractsDataResponseDto
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
@@ -56,7 +57,9 @@ interface BicycleApi {
         }
     }
 
+    @GET("config.json")
+    fun getConfig(@Query("alt") alt: String): Single<BICConfigResponseDto>
+
     @GET("contracts.json")
-    fun getContractsData(@Query("alt") alt: String,
-                         @Query("token") token: String): Single<BICContractsDataResponseDto>
+    fun getContractsData(@Query("alt") alt: String): Single<BICContractsDataResponseDto>
 }

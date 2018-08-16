@@ -39,11 +39,11 @@ class WSFacade {
         fun getDirections(mode: String, from: LatLng, to: LatLng, vararg steps: LatLng): Single<GMDirectionsResponseDto> {
             return if (steps.isEmpty()) {
                 GoogleMapsApi.instance.getDirections("${from.latitude},${from.longitude}", "${to.latitude},${to.longitude}",
-                        mode, true, BICApplication.context.getString(R.string.google_maps_directions_key))
+                        mode, true, BICApplication.context.getString(R.string.key_google_maps_directions))
             } else {
                 GoogleMapsApi.instance.getDirectionsViaWaypoints("${from.latitude},${from.longitude}", "${to.latitude},${to.longitude}",
                         steps.joinToString(separator = "|", transform = { latLng -> "${latLng.latitude},${latLng.longitude}" }),
-                        mode, true, BICApplication.context.getString(R.string.google_maps_directions_key))
+                        mode, true, BICApplication.context.getString(R.string.key_google_maps_directions))
             }
         }
     }

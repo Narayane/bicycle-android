@@ -27,7 +27,7 @@ val commonModule = applicationContext {
     bean { BICContractRepository(get(), get()) }
 
     viewModel { BICMapViewModel(get()) }
-    viewModel { BICSplashViewModel(get()) }
+    viewModel { BICSplashViewModel(get(), get()) }
 }
 
 val homeModule = applicationContext {
@@ -38,7 +38,6 @@ val homeModule = applicationContext {
 
 val rideModule = applicationContext {
 
-    this
     viewModel { BICRideViewModel(get()) }
 }
 

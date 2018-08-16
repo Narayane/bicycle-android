@@ -20,14 +20,16 @@ import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.sebastienbalard.bicycle.EventNextScreen
-import com.sebastienbalard.bicycle.EventSuccess
-import com.sebastienbalard.bicycle.R
-import com.sebastienbalard.bicycle.SBActivity
+import com.sebastienbalard.bicycle.*
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.viewmodels.BICSplashViewModel
+import com.sebastienbalard.bicycle.viewmodels.StateConfig
+import com.sebastienbalard.bicycle.viewmodels.StateContracts
+import com.sebastienbalard.bicycle.viewmodels.StateInit
 import com.sebastienbalard.bicycle.views.home.BICHomeActivity
 import kotlinx.android.synthetic.main.bic_activity_splash.*
+import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.android.UI
 import org.koin.android.architecture.ext.viewModel
 
 class BICSplashActivity : SBActivity() {
@@ -45,14 +47,25 @@ class BICSplashActivity : SBActivity() {
         setContentView(R.layout.bic_activity_splash)
         v("onCreate")
 
+        viewModel.states.observe(this, Observer { state ->
+            state?.let {
+                when (it) {
+                    is StateConfig -> ""
+                    is StateContracts -> ""
+                    else -> startActivity(BICHomeActivity.getIntent(this))
+                }
+            }
+        })
+
         viewModel.events.observe(this, Observer { event ->
             event?.let {
                 when (it) {
-                    is EventSuccess -> {
+                    is EventMessage -> {
                         v("event -> success: ${it.message}")
                         textViewEvent.text = it.message
+                        viewModel.loadAllContracts()
                     }
-                    is EventNextScreen -> {
+                    is EventSuccess -> {
                         v("event -> next screen")
                         startActivity(BICHomeActivity.getIntent(this))
                     }
@@ -60,11 +73,64 @@ class BICSplashActivity : SBActivity() {
                 }
             }
         })
+
+        viewModel.loadConfig()
     }
 
-    override fun onResume() {
-        super.onResume()
-        v("onResume")
-        viewModel.loadAllContracts()
+    /*val asyncJobs: MutableList<Job> = mutableListOf()
+
+    fun launchAsync(block: suspend CoroutineScope.() -> Unit) {
+        val job: Job = kotlinx.coroutines.experimental.launch(UI) { block() }
+        asyncJobs.add(job)
+        job.invokeOnCompletion { asyncJobs.remove(job) }
     }
+
+    /*fun cancelAllAsync() {
+        val asyncJobsSize = asyncJobs.size
+
+        if (asyncJobsSize > 0) {
+            for (i in asyncJobsSize - 1 downTo 0) {
+                asyncJobs[i].cancel()
+            }
+        }
+    }*/
+
+    val deferredObjects: MutableList<Deferred<*>> = mutableListOf()
+
+    suspend fun <T> async(block: suspend CoroutineScope.() -> T): Deferred<T> {
+        val deferred: Deferred<T> = kotlinx.coroutines.experimental.async(CommonPool) { block() }
+        deferredObjects.add(deferred)
+        deferred.invokeOnCompletion { deferredObjects.remove(deferred) }
+        return deferred
+    }
+
+    suspend fun <T> asyncAwait(block: suspend CoroutineScope.() -> T): T {
+        return async(block).await()
+    }
+
+    fun cancelAllAsync() {
+        val deferredObjectsSize = deferredObjects.size
+
+        if (deferredObjectsSize > 0) {
+            for (i in deferredObjectsSize - 1 downTo 0) {
+                deferredObjects[i].cancel()
+            }
+        }
+    }
+
+    suspend fun CoroutineScope.tryCatch(
+            tryBlock: suspend CoroutineScope.() -> Unit,
+            catchBlock: suspend CoroutineScope.(Throwable) -> Unit,
+            handleCancellationExceptionManually: Boolean = false) {
+        try {
+            tryBlock()
+        } catch (e: Throwable) {
+            if (e !is CancellationException ||
+                    handleCancellationExceptionManually) {
+                catchBlock(e)
+            } else {
+                throw e
+            }
+        }
+    }*/
 }

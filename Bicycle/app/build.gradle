@@ -12,7 +12,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0"
+        versionName "0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -25,9 +25,8 @@ android {
 
         resValue "string", "fabric_key", (project.findProperty("fabric.api.key") ?: "")
         resValue "string", "google_maps_key", (project.findProperty("google.maps.api.android.key") ?: "")
-        resValue "string", "google_maps_directions_key", (project.findProperty("google.maps.directions.api.web.key") ?: "")
+        resValue "string", "key_google_maps_directions", (project.findProperty("google.maps.directions.api.web.key") ?: "")
         resValue "string", "bicycle_storage_endpoint", (project.findProperty("bicycle.storage.endpoint") ?: "")
-        resValue "string", "bicycle_storage_token", (project.findProperty("bicycle.storage.token") ?: "")
 
         buildConfigField("String", "ROOM_DB_NAME", "\"bic_database\"")
         buildConfigField("int", "DAYS_BETWEEN_CONTRACTS_CHECK", "30")

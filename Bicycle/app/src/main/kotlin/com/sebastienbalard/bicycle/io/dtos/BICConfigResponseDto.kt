@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle
+package com.sebastienbalard.bicycle.io.dtos
 
-import com.sebastienbalard.bicycle.data.BICContract
-import com.sebastienbalard.bicycle.models.BICStation
+import com.google.gson.annotations.SerializedName
 
-open class Event
+class BICConfigResponseDto(val apps: BICConfigAppsDto, val contracts: BICConfigContractsDto)
 
-object EventSuccess : Event()
+class BICConfigAppsDto(@SerializedName("check_delay") val delay: Int, val android: BICConfigAndroidDto)
 
-data class EventMessage(val message: String) : Event()
+class BICConfigAndroidDto(val version: Int, val force: Boolean)
 
-data class EventFailure(val error: Throwable) : Event()
-
-data class EventContractList(val contracts: List<BICContract>) : Event()
-
-data class EventStationList(val stations: List<BICStation>) : Event()
+class BICConfigContractsDto(@SerializedName("check_delay") val delay: Int)

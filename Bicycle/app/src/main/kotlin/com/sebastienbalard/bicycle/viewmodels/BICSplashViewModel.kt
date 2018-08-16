@@ -16,16 +16,35 @@
 
 package com.sebastienbalard.bicycle.viewmodels
 
-import com.sebastienbalard.bicycle.EventFailure
-import com.sebastienbalard.bicycle.EventNextScreen
-import com.sebastienbalard.bicycle.SBViewModel
+import com.sebastienbalard.bicycle.*
+import com.sebastienbalard.bicycle.io.BicycleApi
+import com.sebastienbalard.bicycle.io.dtos.BICConfigResponseDto
+import com.sebastienbalard.bicycle.misc.BICSharedPreferences
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.repositories.BICContractRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 
-class BICSplashViewModel(private val contractRepository: BICContractRepository) : SBViewModel() {
+object StateConfig : State()
+
+object StateContracts : State()
+
+class BICSplashViewModel(private val bicycleApi: BicycleApi, private val contractRepository: BICContractRepository) : SBViewModel() {
 
     companion object : SBLog()
+
+    fun loadConfig() {
+        launch {
+            _events.value = EventMessage(BICApplication.context.getString(R.string.bic_messages_info_config))
+            bicycleApi.getConfig("media")
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            { response ->
+                                setConfig(response)
+                                _events.value = EventSuccess
+                            },
+                            { error -> _events.value = EventFailure(error) })
+        }
+    }
 
     fun loadAllContracts() {
         launch {
@@ -34,8 +53,17 @@ class BICSplashViewModel(private val contractRepository: BICContractRepository) 
                     .subscribe(
                             { event -> _events.value = event },
                             { error -> _events.value = EventFailure(error) },
-                            { _events.value = EventNextScreen })
+                            { _events.value = EventSuccess })
         }
+    }
+
+    private fun setConfig(response: BICConfigResponseDto) {
+        var delay = response.apps.android.version
+        v("app check delay: $delay")
+        BICSharedPreferences.appCheckDelay = delay
+        delay = response.contracts.delay
+        v("contracts check delay: $delay")
+        BICSharedPreferences.contractsCheckDelay = delay
     }
 
 }

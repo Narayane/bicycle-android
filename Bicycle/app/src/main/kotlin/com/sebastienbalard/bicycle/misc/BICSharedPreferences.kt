@@ -24,7 +24,27 @@ class BICSharedPreferences {
 
     companion object: SBLog() {
 
-        var contractsDataLastCheckDate: DateTime?
+        var appCheckDelay: Int
+            get() {
+                return PreferenceManager.getDefaultSharedPreferences(BICApplication.context)
+                        .getInt(PREFERENCE_APP_CHECK_DELAY, 7)
+            }
+            set(value) {
+                PreferenceManager.getDefaultSharedPreferences(BICApplication.context).edit()
+                        .putInt(PREFERENCE_APP_CHECK_DELAY, value).commit()
+            }
+
+        var contractsCheckDelay: Int
+            get() {
+                return PreferenceManager.getDefaultSharedPreferences(BICApplication.context)
+                        .getInt(PREFERENCE_CONTRACTS_CHECK_DELAY, 30)
+            }
+            set(value) {
+                PreferenceManager.getDefaultSharedPreferences(BICApplication.context).edit()
+                        .putInt(PREFERENCE_CONTRACTS_CHECK_DELAY, value).commit()
+            }
+
+        var contractsLastCheckDate: DateTime?
             get() {
                 val millis = PreferenceManager.getDefaultSharedPreferences(BICApplication.context)
                         .getLong(PREFERENCE_CONTRACTS_LAST_CHECK_DATE, 0)
@@ -37,14 +57,14 @@ class BICSharedPreferences {
                 }
             }
 
-        var contractsDataVersion: Int
+        var contractsVersion: Int
             get() {
                 return PreferenceManager.getDefaultSharedPreferences(BICApplication.context)
-                        .getInt(PREFERENCE_CONTRACTS_DATA_VERSION, 0)
+                        .getInt(PREFERENCE_CONTRACTS_VERSION, 0)
             }
             set(value) {
                 PreferenceManager.getDefaultSharedPreferences(BICApplication.context).edit()
-                        .putInt(PREFERENCE_CONTRACTS_DATA_VERSION, value).commit()
+                        .putInt(PREFERENCE_CONTRACTS_VERSION, value).commit()
             }
     }
 }

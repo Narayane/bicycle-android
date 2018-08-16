@@ -37,7 +37,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
-class BICContractRepository(val bicycleApi: BicycleApi, val contractDao: BICContractDao) {
+class BICContractRepository(private val bicycleApi: BicycleApi, private val contractDao: BICContractDao) {
 
     companion object : SBLog()
 
@@ -49,7 +49,7 @@ class BICContractRepository(val bicycleApi: BicycleApi, val contractDao: BICCont
         var timeToCheck = true
         val now = DateTime.now()
 
-        BICSharedPreferences.contractsDataLastCheckDate?.let {
+        BICSharedPreferences.contractsLastCheckDate?.let {
             v("last check: ${it.formatDate(BICApplication.context)}")
             timeToCheck = Days.daysBetween(it.toLocalDate(), now.toLocalDate()).days > BuildConfig
                     .DAYS_BETWEEN_CONTRACTS_CHECK
@@ -58,22 +58,23 @@ class BICContractRepository(val bicycleApi: BicycleApi, val contractDao: BICCont
         return if (timeToCheck) {
             d("get contracts from remote")
             Observable.create<Event> { observer ->
-                observer.onNext(EventSuccess(BICApplication.context.getString(R.string.bic_messages_info_check_contracts_data_version)))
-                bicycleApi.getContractsData("media", BICApplication.context.getString(R.string.bicycle_storage_token))
+                observer.onNext(EventMessage(BICApplication.context.getString(R.string.bic_messages_info_check_contracts_data_version)))
+                bicycleApi.getContractsData("media")
+                        .observeOn(Schedulers.computation())
                         .subscribe(
                                 { response ->
-                                    if (response.version > BICSharedPreferences.contractsDataVersion) {
-                                        observer.onNext(EventSuccess(BICApplication.context.getString(R.string.bic_messages_info_update_contracts)))
+                                    if (response.version > BICSharedPreferences.contractsVersion) {
+                                        observer.onNext(EventMessage(BICApplication.context.getString(R.string.bic_messages_info_update_contracts)))
                                         val existing = contractDao.findAll()
                                         d("delete ${existing.size} contracts")
                                         contractDao.deleteAll(existing as ArrayList<BICContract>)
                                         contractDao.insertAll(response.values)
-                                        BICSharedPreferences.contractsDataVersion = response.version
+                                        BICSharedPreferences.contractsVersion = response.version
                                     } else {
                                         d("contracts are up-to-date")
                                     }
-                                    BICSharedPreferences.contractsDataLastCheckDate = now
-                                    observer.onNext(EventSuccess(BICApplication.context.getString(R.string.bic_messages_info_contracts_loaded, contractDao.getAllCount())))
+                                    BICSharedPreferences.contractsLastCheckDate = now
+                                    observer.onNext(EventMessage(BICApplication.context.getString(R.string.bic_messages_info_contracts_loaded, contractDao.getAllCount())))
                                     Thread.sleep(3000L)
                                     observer.onComplete()
                                 },
@@ -82,10 +83,12 @@ class BICContractRepository(val bicycleApi: BicycleApi, val contractDao: BICCont
             }.subscribeOn(Schedulers.newThread())
         } else {
             d("contracts are up-to-date")
-            Observable.concat(
-                    Observable.just(EventSuccess(BICApplication.context.getString(R.string.bic_messages_info_contracts_loaded, contractDao.getAllCount()))),
-                    Observable.empty<Event>().delay(3L, TimeUnit.SECONDS)
-            ).subscribeOn(Schedulers.newThread())
+            BICSharedPreferences.contractsLastCheckDate = now
+            Observable.just(1)
+                    .subscribeOn(Schedulers.computation())
+                    .map { _ -> EventMessage(BICApplication.context.getString(R.string.bic_messages_info_contracts_loaded, contractDao.getAllCount())) }
+                    /*.concatMap { Observable.empty<Event>().delay(3L, TimeUnit.SECONDS) }
+                    .subscribeOn(Schedulers.newThread())*/
         }
     }
 

@@ -27,6 +27,7 @@
     <string name="bic_commons_arrival">Arrivée</string>
     <!-- messages -->
     <string name="bic_messages_info_init">Initialisation</string>
+    <string name="bic_messages_info_config">Configuration</string>
     <string name="bic_messages_info_check_contracts_data_version">Recherche de nouvelles villes</string>
     <string name="bic_messages_info_update_contracts">Mise à jour des villes</string>
     <string name="bic_messages_info_contracts_loaded">%1$d villes disponibles</string>
