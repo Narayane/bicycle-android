@@ -27,10 +27,10 @@ open class SBActivity : AppCompatActivity() {
 
     private val disposables: CompositeDisposable = CompositeDisposable()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    /*override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //overridePendingTransition(0,0)
-    }
+    }*/
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {

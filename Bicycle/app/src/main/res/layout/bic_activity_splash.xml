@@ -33,11 +33,11 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             app:srcCompat="@drawable/bic_ic_bike_24dp"
-            android:layout_above="@id/textViewTitle"
+            android:layout_above="@id/textViewLogoText"
             android:layout_centerInParent="true"/>
 
         <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/textViewTitle"
+            android:id="@+id/textViewLogoText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -51,20 +51,31 @@
             android:layout_height="wrap_content"
             android:indeterminateTint="@color/bic_color_white"
             android:indeterminate="true"
-            android:layout_above="@id/textViewEvent"
+            android:layout_above="@id/textViewTitle"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/bic_margin_vertical_half"/>
 
         <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/textViewEvent"
+            android:id="@+id/textViewTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/bic_color_white"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@id/textViewSubtitle"
+            android:textSize="@dimen/bic_size_font_subhead"
+            android:text="@string/bic_messages_info_init"
+            tools:text="Configuration"/>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/textViewSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/bic_color_white"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:textSize="@dimen/bic_size_font_subhead"
-            android:text="@string/bic_messages_info_init"
-            android:layout_marginBottom="@dimen/bic_margin_vertical_default"/>
+            android:textSize="@dimen/bic_size_font_body"
+            android:layout_marginBottom="@dimen/bic_margin_vertical_default"
+            tools:text="523 villes disponibles"/>
 
     </RelativeLayout>
 

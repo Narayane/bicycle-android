@@ -14,7 +14,7 @@ android {
         versionCode 1
         versionName "0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        multiDexEnabled true
+        //multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         javaCompileOptions {
             annotationProcessorOptions {
@@ -84,6 +84,7 @@ dependencies {
     // support
     implementation "com.android.support:appcompat-v7:$support_libs_version"
     implementation "com.android.support:design:$support_libs_version"
+    //implementation 'com.android.support:multidex:1.0.3'
     //implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     // play services
     implementation "com.google.android.gms:play-services-maps:$play_services_version"
@@ -124,7 +125,7 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:3.8'
     testImplementation 'org.robolectric:annotations:3.8'
     testImplementation 'org.robolectric:shadows-supportv4:3.8'
-    testImplementation 'org.robolectric:shadows-multidex:3.8'
+    //testImplementation 'org.robolectric:shadows-multidex:3.8'
     testImplementation 'org.mockito:mockito-core:2.20.1'
     testImplementation 'android.arch.core:core-testing:1.1.1'
     // android tests

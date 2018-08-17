@@ -20,14 +20,13 @@ import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AppCompatDelegate
 import com.sebastienbalard.bicycle.EventMessage
 import com.sebastienbalard.bicycle.EventSuccess
 import com.sebastienbalard.bicycle.R
 import com.sebastienbalard.bicycle.SBActivity
 import com.sebastienbalard.bicycle.misc.SBLog
-import com.sebastienbalard.bicycle.viewmodels.BICSplashViewModel
-import com.sebastienbalard.bicycle.viewmodels.StateConfig
-import com.sebastienbalard.bicycle.viewmodels.StateContracts
+import com.sebastienbalard.bicycle.viewmodels.*
 import com.sebastienbalard.bicycle.views.home.BICHomeActivity
 import kotlinx.android.synthetic.main.bic_activity_splash.*
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -40,7 +39,7 @@ class BICSplashActivity : SBActivity() {
         }
     }
 
-    private val viewModel: BICSplashViewModel by viewModel()
+    val viewModel: BICSplashViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,29 +48,29 @@ class BICSplashActivity : SBActivity() {
 
         viewModel.states.observe(this, Observer { state ->
             state?.let {
-                v("state -> ${it::class.java}")
+                v("state -> ${it::class.java.simpleName}")
                 when (it) {
-                    is StateConfig -> ""
-                    is StateContracts -> ""
-                    else -> startActivity(BICHomeActivity.getIntent(this))
+                    is StateSplashConfig -> textViewTitle.text = getString(R.string.bic_messages_info_init)
+                    is StateSplashContracts -> textViewTitle.text = getString(R.string.bic_messages_info_config)
+                    else -> {}
                 }
             }
         })
 
         viewModel.events.observe(this, Observer { event ->
             event?.let {
+                v("event -> ${it::class.java.simpleName}")
                 when (it) {
-                    is EventMessage -> {
-                        v("event -> success: ${it.message}")
-                        textViewEvent.text = it.message
+                    is EventSplashConfigLoaded, is EventSplashLoadConfigFailed -> {
                         viewModel.loadAllContracts()
                     }
-                    is EventSuccess -> {
-                        v("event -> next screen")
-                        startActivity(BICHomeActivity.getIntent(this))
-                        this@BICSplashActivity.finish()
+                    is EventSplashCheckContracts -> {
+                        textViewSubtitle.text = getString(R.string.bic_messages_info_check_contracts_data_version)
                     }
-                    else -> "" // error
+                    is EventSplashAvailableContracts -> {
+                        textViewSubtitle.text = getString(R.string.bic_messages_info_contracts_loaded, it.count)
+                    }
+                    else -> {}
                 }
             }
         })

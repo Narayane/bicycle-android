@@ -20,7 +20,7 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(application = TestApplication::class, constants = BuildConfig::class)
+@Config(application = BICTestApplication::class, constants = BuildConfig::class)
 class BICSplashVMTester {
 
     @Rule
@@ -114,7 +114,7 @@ class BICSplashVMTester {
         }
 
         `when`(mockPreferenceRepository.contractsLastCheckDate).thenReturn(DateTime.now().minusDays(10))
-        `when`(mockContractRepository.getContractCount()).thenReturn(255)
+        `when`(mockContractRepository.getContractCount()).thenReturn(Single.just(255))
 
         viewModel!!.loadAllContracts()
 

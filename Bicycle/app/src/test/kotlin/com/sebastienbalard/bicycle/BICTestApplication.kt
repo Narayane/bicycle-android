@@ -2,7 +2,7 @@ package com.sebastienbalard.bicycle
 
 import android.app.Application
 
-class TestApplication : Application() {
+class BICTestApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()

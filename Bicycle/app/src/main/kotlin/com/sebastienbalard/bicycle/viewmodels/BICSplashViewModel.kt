@@ -22,6 +22,7 @@ import com.sebastienbalard.bicycle.extensions.formatDate
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.repositories.BICContractRepository
 import com.sebastienbalard.bicycle.repositories.BICPreferenceRepository
+import io.reactivex.android.schedulers.AndroidSchedulers
 import org.joda.time.DateTime
 import org.joda.time.Days
 
@@ -41,7 +42,6 @@ open class BICSplashViewModel(private val context: Context,
 
     fun loadConfig() {
         _states.value = StateSplashConfig
-        _events.value = EventMessage(BICApplication.context.getString(R.string.bic_messages_info_config))
         launch {
             preferenceRepository.loadConfig().subscribe({
                 _events.value = EventSplashConfigLoaded
@@ -65,23 +65,28 @@ open class BICSplashViewModel(private val context: Context,
 
         return if (timeToCheck) {
             d("get contracts from remote")
-
-            //_events.value = EventMessage(BICApplication.context.getString(R.string.bic_messages_info_check_contracts_data_version))
             _events.value = EventSplashCheckContracts
             launch {
-                contractRepository.updateContracts().subscribe({ count ->
-                    _events.value = EventSplashAvailableContracts(count)
-                    //_events.value = EventMessage(BICApplication.context.getString(R.string.bic_messages_info_contracts_loaded, count))
-                }, { error ->
+                contractRepository.updateContracts()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ count ->
+                            _events.value = EventSplashAvailableContracts(count)
+                        }, { error ->
 
-                })
+                        })
             }
         } else {
-            BICContractRepository.d("contracts are up-to-date")
+            d("contracts are up-to-date")
             preferenceRepository.contractsLastCheckDate = now
-            val count = contractRepository.getContractCount()
-            _events.value = EventSplashAvailableContracts(count)
-            //_events.value = EventMessage(BICApplication.context.getString(R.string.bic_messages_info_contracts_loaded, contractRepository.getContractCount()))
+            launch {
+                contractRepository.getContractCount()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ count ->
+                            _events.value = EventSplashAvailableContracts(count)
+                        }, { error ->
+
+                        })
+            }
         }
     }
 }

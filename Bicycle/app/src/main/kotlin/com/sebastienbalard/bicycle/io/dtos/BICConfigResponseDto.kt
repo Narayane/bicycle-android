@@ -22,6 +22,6 @@ class BICConfigResponseDto(val apps: BICConfigAppsDto, val contracts: BICConfigC
 
 class BICConfigAppsDto(@SerializedName("check_delay") val delay: Int, val android: BICConfigAndroidDto)
 
-class BICConfigAndroidDto(val version: Int, val force: Boolean)
+class BICConfigAndroidDto(val version: String, val force: Boolean)
 
 class BICConfigContractsDto(@SerializedName("check_delay") val delay: Int)

@@ -63,7 +63,7 @@ open class BICPreferenceRepository(private val bicycleApi: BicycleApi, private v
     }
 
     private fun setConfig(response: BICConfigResponseDto) {
-        var delay = response.apps.android.version
+        var delay = response.apps.delay
         v("app check delay: $delay")
         appCheckDelay = delay
         delay = response.contracts.delay
