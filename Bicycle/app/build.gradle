@@ -18,8 +18,7 @@ android {
         vectorDrawables.useSupportLibrary = true
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = ["room.schemaLocation":
-                                     "$projectDir/schemas".toString()]
+                arguments = ["room.schemaLocation" : "$projectDir/schemas".toString()]
             }
         }
 
@@ -59,17 +58,22 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 ext.support_libs_version = '27.1.1'
-ext.play_services_version = '15.0.0'
+ext.play_services_version = '15.0.1'
 ext.crashlytics_version = '2.6.8'
 ext.logback_version = '1.1.1-6'
 ext.arch_version = '1.1.1'
 ext.retrofit_version = '2.3.0'
 ext.kotlinx_coroutines_version = '0.20'
-ext.koin_version = '0.9.1'
-ext.room_version = '1.0.0'
+ext.koin_version = '1.0.0-beta-6'
+ext.room_version = '1.1.1'
 ext.jodatime_version = '2.9.9'
 
 dependencies {
@@ -93,7 +97,7 @@ dependencies {
     kapt "android.arch.persistence.room:compiler:$room_version"
     // apis
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.10'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.13'
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
@@ -101,7 +105,9 @@ dependencies {
     implementation 'com.google.maps.android:android-maps-utils:0.4.4'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinx_coroutines_version"
-    implementation "org.koin:koin-android-architecture:$koin_version"
+    implementation "org.koin:koin-android:$koin_version"
+    implementation "org.koin:koin-android-scope:$koin_version"
+    implementation "org.koin:koin-android-viewmodel:$koin_version"
     implementation "net.danlew:android.joda:$jodatime_version"
     // logs
     implementation 'org.slf4j:slf4j-api:1.7.25'
@@ -114,6 +120,13 @@ dependencies {
     // tests
     testImplementation 'junit:junit:4.12'
     testImplementation "joda-time:joda-time:$jodatime_version"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testImplementation 'org.robolectric:robolectric:3.8'
+    testImplementation 'org.robolectric:annotations:3.8'
+    testImplementation 'org.robolectric:shadows-supportv4:3.8'
+    testImplementation 'org.robolectric:shadows-multidex:3.8'
+    testImplementation 'org.mockito:mockito-core:2.20.1'
+    testImplementation 'android.arch.core:core-testing:1.1.1'
     // android tests
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

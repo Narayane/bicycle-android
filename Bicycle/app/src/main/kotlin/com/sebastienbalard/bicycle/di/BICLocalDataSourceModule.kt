@@ -29,16 +29,18 @@ import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidApplication
+import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module.applicationContext
+import org.koin.dsl.module.module
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-val localDataSourceModule = applicationContext {
+val localDataSourceModule = module {
 
     bean {
-        Room.databaseBuilder(androidApplication(), BICDatabase::class.java, BuildConfig.ROOM_DB_NAME).build()
+        Room.databaseBuilder(androidContext(), BICDatabase::class.java, BuildConfig.ROOM_DB_NAME).build()
     }
     bean { get<BICDatabase>().getContractDao() }
 }

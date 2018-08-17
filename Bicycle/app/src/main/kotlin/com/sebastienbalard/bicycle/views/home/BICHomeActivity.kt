@@ -43,15 +43,15 @@ import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.models.BICPlace
 import com.sebastienbalard.bicycle.viewmodels.BICHomeViewModel
 import com.sebastienbalard.bicycle.viewmodels.BICSearchViewModel
-import com.sebastienbalard.bicycle.widgets.BICPlacesAutoCompleteAdapter
 import com.sebastienbalard.bicycle.views.BICRideActivity
+import com.sebastienbalard.bicycle.widgets.BICPlacesAutoCompleteAdapter
 import kotlinx.android.synthetic.main.bic_activity_home.*
 import kotlinx.android.synthetic.main.bic_widget_appbar.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.run
-import org.koin.android.architecture.ext.viewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 import java.util.*
 import kotlin.concurrent.timerTask
 

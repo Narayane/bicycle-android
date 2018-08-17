@@ -16,54 +16,72 @@
 
 package com.sebastienbalard.bicycle.viewmodels
 
+import android.content.Context
 import com.sebastienbalard.bicycle.*
-import com.sebastienbalard.bicycle.io.BicycleApi
-import com.sebastienbalard.bicycle.io.dtos.BICConfigResponseDto
-import com.sebastienbalard.bicycle.misc.BICSharedPreferences
+import com.sebastienbalard.bicycle.extensions.formatDate
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.repositories.BICContractRepository
-import io.reactivex.android.schedulers.AndroidSchedulers
+import com.sebastienbalard.bicycle.repositories.BICPreferenceRepository
+import org.joda.time.DateTime
+import org.joda.time.Days
 
-object StateConfig : State()
+object StateSplashConfig : State()
+object StateSplashContracts : State()
 
-object StateContracts : State()
+object EventSplashConfigLoaded : Event()
+data class EventSplashLoadConfigFailed(val error: Throwable) : Event()
+object EventSplashCheckContracts : Event()
+data class EventSplashAvailableContracts(val count: Int) : Event()
 
-class BICSplashViewModel(private val bicycleApi: BicycleApi, private val contractRepository: BICContractRepository) : SBViewModel() {
+open class BICSplashViewModel(private val context: Context,
+                              private val preferenceRepository: BICPreferenceRepository,
+                              private val contractRepository: BICContractRepository) : SBViewModel() {
 
     companion object : SBLog()
 
     fun loadConfig() {
+        _states.value = StateSplashConfig
+        _events.value = EventMessage(BICApplication.context.getString(R.string.bic_messages_info_config))
         launch {
-            _events.value = EventMessage(BICApplication.context.getString(R.string.bic_messages_info_config))
-            bicycleApi.getConfig("media")
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            { response ->
-                                setConfig(response)
-                                _events.value = EventSuccess
-                            },
-                            { error -> _events.value = EventFailure(error) })
+            preferenceRepository.loadConfig().subscribe({
+                _events.value = EventSplashConfigLoaded
+            }, { error ->
+                _events.value = EventSplashLoadConfigFailed(error)
+            })
         }
     }
 
     fun loadAllContracts() {
-        launch {
-            contractRepository.loadAllContracts()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            { event -> _events.value = event },
-                            { error -> _events.value = EventFailure(error) },
-                            { _events.value = EventSuccess })
+        _states.value = StateSplashContracts
+
+        var timeToCheck = true
+        val now = DateTime.now()
+
+        preferenceRepository.contractsLastCheckDate?.let {
+            v("last check: ${it.formatDate(context)}")
+            timeToCheck = Days.daysBetween(it.toLocalDate(), now.toLocalDate()).days > BuildConfig
+                    .DAYS_BETWEEN_CONTRACTS_CHECK
+        }
+
+        return if (timeToCheck) {
+            d("get contracts from remote")
+
+            //_events.value = EventMessage(BICApplication.context.getString(R.string.bic_messages_info_check_contracts_data_version))
+            _events.value = EventSplashCheckContracts
+            launch {
+                contractRepository.updateContracts().subscribe({ count ->
+                    _events.value = EventSplashAvailableContracts(count)
+                    //_events.value = EventMessage(BICApplication.context.getString(R.string.bic_messages_info_contracts_loaded, count))
+                }, { error ->
+
+                })
+            }
+        } else {
+            BICContractRepository.d("contracts are up-to-date")
+            preferenceRepository.contractsLastCheckDate = now
+            val count = contractRepository.getContractCount()
+            _events.value = EventSplashAvailableContracts(count)
+            //_events.value = EventMessage(BICApplication.context.getString(R.string.bic_messages_info_contracts_loaded, contractRepository.getContractCount()))
         }
     }
-
-    private fun setConfig(response: BICConfigResponseDto) {
-        var delay = response.apps.android.version
-        v("app check delay: $delay")
-        BICSharedPreferences.appCheckDelay = delay
-        delay = response.contracts.delay
-        v("contracts check delay: $delay")
-        BICSharedPreferences.contractsCheckDelay = delay
-    }
-
 }

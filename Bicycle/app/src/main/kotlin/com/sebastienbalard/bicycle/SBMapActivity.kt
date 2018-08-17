@@ -34,7 +34,7 @@ import com.sebastienbalard.bicycle.viewmodels.BICMapViewModel
 import com.sebastienbalard.bicycle.views.home.BICHomeActivity
 import kotlinx.android.synthetic.main.bic_activity_home.*
 import kotlinx.android.synthetic.main.bic_widget_appbar.*
-import org.koin.android.architecture.ext.viewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 
 abstract class SBMapActivity : SBActivity() {
 

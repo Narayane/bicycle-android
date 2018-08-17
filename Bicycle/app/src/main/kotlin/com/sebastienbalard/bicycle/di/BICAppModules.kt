@@ -16,27 +16,31 @@
 
 package com.sebastienbalard.bicycle.di
 
+import android.preference.PreferenceManager
 import com.sebastienbalard.bicycle.repositories.BICContractRepository
+import com.sebastienbalard.bicycle.repositories.BICPreferenceRepository
 import com.sebastienbalard.bicycle.viewmodels.*
-import org.koin.android.architecture.ext.viewModel
-import org.koin.android.ext.koin.androidApplication
-import org.koin.dsl.module.applicationContext
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.viewmodel.ext.koin.viewModel
+import org.koin.dsl.module.module
 
-val commonModule = applicationContext {
+val commonModule = module {
 
-    bean { BICContractRepository(get(), get()) }
+    single { PreferenceManager.getDefaultSharedPreferences(androidContext()) }
+    single { BICContractRepository(get(), get(), get()) }
+    single { BICPreferenceRepository(get(), get()) }
 
     viewModel { BICMapViewModel(get()) }
-    viewModel { BICSplashViewModel(get(), get()) }
+    viewModel { BICSplashViewModel(get(), get(), get()) }
 }
 
-val homeModule = applicationContext {
+val homeModule = module {
 
     viewModel { BICHomeViewModel(get()) }
     viewModel { BICSearchViewModel(get()) }
 }
 
-val rideModule = applicationContext {
+val rideModule = module {
 
     viewModel { BICRideViewModel(get()) }
 }

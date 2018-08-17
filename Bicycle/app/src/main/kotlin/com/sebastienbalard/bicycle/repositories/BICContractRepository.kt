@@ -25,31 +25,40 @@ import com.sebastienbalard.bicycle.extensions.distanceTo
 import com.sebastienbalard.bicycle.extensions.formatDate
 import com.sebastienbalard.bicycle.io.BicycleApi
 import com.sebastienbalard.bicycle.io.WSFacade
-import com.sebastienbalard.bicycle.misc.BICSharedPreferences
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.models.BICStation
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.joda.time.DateTime
 import org.joda.time.Days
 import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
-class BICContractRepository(private val bicycleApi: BicycleApi, private val contractDao: BICContractDao) {
+open class BICContractRepository(private val bicycleApi: BicycleApi,
+                            private val contractDao: BICContractDao,
+                            private val preferenceRepository: BICPreferenceRepository) {
 
     companion object : SBLog()
 
     private var allContracts = ArrayList<BICContract>()
     private var cacheStations = HashMap<String, List<BICStation>>()
 
+    open fun updateContracts(): Single<Int> {
+        return Single.never()
+    }
+
+    open fun getContractCount(): Int {
+        return 0
+    }
+
     fun loadAllContracts(): Observable<Event> {
 
         var timeToCheck = true
         val now = DateTime.now()
 
-        BICSharedPreferences.contractsLastCheckDate?.let {
+        preferenceRepository.contractsLastCheckDate?.let {
             v("last check: ${it.formatDate(BICApplication.context)}")
             timeToCheck = Days.daysBetween(it.toLocalDate(), now.toLocalDate()).days > BuildConfig
                     .DAYS_BETWEEN_CONTRACTS_CHECK
@@ -63,17 +72,17 @@ class BICContractRepository(private val bicycleApi: BicycleApi, private val cont
                         .observeOn(Schedulers.computation())
                         .subscribe(
                                 { response ->
-                                    if (response.version > BICSharedPreferences.contractsVersion) {
+                                    if (response.version > preferenceRepository.contractsVersion) {
                                         observer.onNext(EventMessage(BICApplication.context.getString(R.string.bic_messages_info_update_contracts)))
                                         val existing = contractDao.findAll()
                                         d("delete ${existing.size} contracts")
                                         contractDao.deleteAll(existing as ArrayList<BICContract>)
                                         contractDao.insertAll(response.values)
-                                        BICSharedPreferences.contractsVersion = response.version
+                                        preferenceRepository.contractsVersion = response.version
                                     } else {
                                         d("contracts are up-to-date")
                                     }
-                                    BICSharedPreferences.contractsLastCheckDate = now
+                                    preferenceRepository.contractsLastCheckDate = now
                                     observer.onNext(EventMessage(BICApplication.context.getString(R.string.bic_messages_info_contracts_loaded, contractDao.getAllCount())))
                                     Thread.sleep(3000L)
                                     observer.onComplete()
@@ -83,7 +92,7 @@ class BICContractRepository(private val bicycleApi: BicycleApi, private val cont
             }.subscribeOn(Schedulers.newThread())
         } else {
             d("contracts are up-to-date")
-            BICSharedPreferences.contractsLastCheckDate = now
+            preferenceRepository.contractsLastCheckDate = now
             Observable.just(1)
                     .subscribeOn(Schedulers.computation())
                     .map { _ -> EventMessage(BICApplication.context.getString(R.string.bic_messages_info_contracts_loaded, contractDao.getAllCount())) }

@@ -20,17 +20,17 @@ import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.sebastienbalard.bicycle.*
+import com.sebastienbalard.bicycle.EventMessage
+import com.sebastienbalard.bicycle.EventSuccess
+import com.sebastienbalard.bicycle.R
+import com.sebastienbalard.bicycle.SBActivity
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.viewmodels.BICSplashViewModel
 import com.sebastienbalard.bicycle.viewmodels.StateConfig
 import com.sebastienbalard.bicycle.viewmodels.StateContracts
-import com.sebastienbalard.bicycle.viewmodels.StateInit
 import com.sebastienbalard.bicycle.views.home.BICHomeActivity
 import kotlinx.android.synthetic.main.bic_activity_splash.*
-import kotlinx.coroutines.experimental.*
-import kotlinx.coroutines.experimental.android.UI
-import org.koin.android.architecture.ext.viewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class BICSplashActivity : SBActivity() {
 
@@ -49,6 +49,7 @@ class BICSplashActivity : SBActivity() {
 
         viewModel.states.observe(this, Observer { state ->
             state?.let {
+                v("state -> ${it::class.java}")
                 when (it) {
                     is StateConfig -> ""
                     is StateContracts -> ""
@@ -68,6 +69,7 @@ class BICSplashActivity : SBActivity() {
                     is EventSuccess -> {
                         v("event -> next screen")
                         startActivity(BICHomeActivity.getIntent(this))
+                        this@BICSplashActivity.finish()
                     }
                     else -> "" // error
                 }
