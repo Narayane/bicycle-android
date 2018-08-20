@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle
+package com.sebastienbalard.bicycle.repositories
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
+import com.sebastienbalard.bicycle.BICTestApplication
+import com.sebastienbalard.bicycle.BuildConfig
 import com.sebastienbalard.bicycle.data.BICContract
 import com.sebastienbalard.bicycle.data.BICContractDao
 import com.sebastienbalard.bicycle.io.BicycleApi
 import com.sebastienbalard.bicycle.io.dtos.BICContractsDataResponseDto
-import com.sebastienbalard.bicycle.repositories.BICContractRepository
-import com.sebastienbalard.bicycle.repositories.BICPreferenceRepository
 import io.reactivex.Single
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.plugins.RxJavaPlugins

@@ -32,7 +32,7 @@ class BICSearchViewModel(private val contractRepository: BICContractRepository) 
         set(value) {
             field = value
             field?.let {
-                it.contract = contractRepository.getContractFor(it.location)
+                it.contract = contractRepository.getContractBy(it.location)
                 v("departure place contract is ${it.contract?.name}")
             }
             isSearchButtonEnabled.value = departure != null && arrival != null
@@ -41,7 +41,7 @@ class BICSearchViewModel(private val contractRepository: BICContractRepository) 
         set(value) {
             field = value
             field?.let {
-                it.contract = contractRepository.getContractFor(it.location)
+                it.contract = contractRepository.getContractBy(it.location)
                 v("arrival place contract is ${it.contract?.name}")
             }
             isSearchButtonEnabled.value = departure != null && arrival != null

@@ -16,7 +16,9 @@
 
 package com.sebastienbalard.bicycle.models
 
+import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.support.v4.content.ContextCompat
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.annotations.SerializedName
@@ -24,6 +26,7 @@ import com.sebastienbalard.bicycle.BICApplication
 import com.sebastienbalard.bicycle.R
 import com.sebastienbalard.bicycle.extensions.drawOn
 import com.sebastienbalard.bicycle.extensions.getBitmap
+import kotlin.properties.Delegates
 
 data class BICStation(val name: String,
                       private val latitude: Double,
@@ -32,10 +35,17 @@ data class BICStation(val name: String,
                       @SerializedName("empty_slots") val freeStandsCount: Int) {
 
     companion object {
-        private val size = BICApplication.resources.getDimensionPixelSize(R.dimen.bic_size_annotation)
-        private val textSize = BICApplication.resources.getDimensionPixelSize(R.dimen.bic_size_font_body)
-        private val imageStation = BICApplication.context.getBitmap(R.drawable.bic_img_station, size, size)
-        private val textColor = ContextCompat.getColor(BICApplication.context, R.color.bic_color_white)
+        var size: Int by Delegates.notNull()
+        var textSize: Int by Delegates.notNull()
+        lateinit var imageStation: Bitmap
+        var textColor: Int by Delegates.notNull()
+
+        fun initConstants(context: Context) {
+            size = context.resources.getDimensionPixelSize(R.dimen.bic_size_annotation)
+            textSize = context.resources.getDimensionPixelSize(R.dimen.bic_size_font_body)
+            imageStation = context.getBitmap(R.drawable.bic_img_station, size, size)
+            textColor = ContextCompat.getColor(context, R.color.bic_color_white)
+        }
     }
 
     val location: LatLng

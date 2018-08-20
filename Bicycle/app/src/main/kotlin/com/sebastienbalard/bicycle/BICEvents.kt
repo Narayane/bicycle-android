@@ -16,9 +16,6 @@
 
 package com.sebastienbalard.bicycle
 
-import com.sebastienbalard.bicycle.data.BICContract
-import com.sebastienbalard.bicycle.models.BICStation
-
 open class Event
 
 object EventSuccess : Event()
@@ -26,7 +23,3 @@ object EventSuccess : Event()
 data class EventMessage(val message: String) : Event()
 
 data class EventFailure(val error: Throwable) : Event()
-
-data class EventContractList(val contracts: List<BICContract>) : Event()
-
-data class EventStationList(val stations: List<BICStation>) : Event()

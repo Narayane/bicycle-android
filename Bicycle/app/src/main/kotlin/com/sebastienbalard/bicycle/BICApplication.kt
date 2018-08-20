@@ -21,6 +21,7 @@ import android.content.Context
 import android.content.res.Resources
 import com.sebastienbalard.bicycle.di.bicycleApp
 import com.sebastienbalard.bicycle.misc.SBLog
+import com.sebastienbalard.bicycle.models.BICStation
 import net.danlew.android.joda.JodaTimeAndroid
 import org.koin.android.ext.android.startKoin
 
@@ -30,10 +31,8 @@ class BICApplication : Application() {
 
         private lateinit var instance: BICApplication
 
-        val context: Context
+        val context: Context //FIXME: remove
             get() = instance.applicationContext
-        val resources: Resources
-            get() = instance.resources
     }
 
     override fun onCreate() {
@@ -42,6 +41,7 @@ class BICApplication : Application() {
         startKoin(this, bicycleApp)
         instance = this
         JodaTimeAndroid.init(context)
+        BICStation.initConstants(applicationContext)
     }
 
 }

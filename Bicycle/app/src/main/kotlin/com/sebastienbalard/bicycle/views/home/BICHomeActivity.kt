@@ -41,8 +41,7 @@ import com.sebastienbalard.bicycle.data.BICContract
 import com.sebastienbalard.bicycle.extensions.*
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.models.BICPlace
-import com.sebastienbalard.bicycle.viewmodels.BICHomeViewModel
-import com.sebastienbalard.bicycle.viewmodels.BICSearchViewModel
+import com.sebastienbalard.bicycle.viewmodels.*
 import com.sebastienbalard.bicycle.views.BICRideActivity
 import com.sebastienbalard.bicycle.widgets.BICPlacesAutoCompleteAdapter
 import kotlinx.android.synthetic.main.bic_activity_home.*
@@ -101,24 +100,8 @@ class BICHomeActivity : SBMapActivity() {
         viewModelHome.states.observe(this, Observer { state ->
             state?.let {
                 when (it) {
-                    StateLoading ->  {}
-                    StateOutOfContract -> {
-                        d("current bounds is out of contracts cover")
-                        stopTimer()
-                    }
-                    is StateContract -> {
-                        if (!it.hasChanged) {
-                            v("current contract has not changed")
-                            // reload clustering
-                            clusterManager?.cluster()
-                        } else {
-                            stopTimer()
-                            d("refresh contract stations: ${it.current.name} (${it.current.provider.tag})")
-                            // refresh current contract stations data
-                            viewModelHome.loadContractStations(it.current)
-                            startTimer()
-                        }
-                    }
+                    is StateShowContracts -> ""
+                    is StateShowStations -> ""
                     else -> w("unexpected case")
                 }
             }
@@ -128,6 +111,22 @@ class BICHomeActivity : SBMapActivity() {
                 when (it) {
                     is EventContractList -> {
                         createAnnotationsFor(it.contracts)
+                    }
+                    is EventOutOfAnyContract -> {
+                        d("current bounds is out of contracts cover")
+                        stopTimer()
+                    }
+                    is EventNewContract -> {
+                        stopTimer()
+                        d("refresh contract stations: ${it.current.name} (${it.current.provider.tag})")
+                        // refresh current contract stations data
+                        viewModelHome.getStationsFor(it.current)
+                        startTimer()
+                    }
+                    is EventSameContract -> {
+                        v("current contract has not changed")
+                        // reload clustering
+                        clusterManager?.cluster()
                     }
                     is EventStationList -> {
                         clusterManager?.clearItems()
@@ -283,7 +282,7 @@ class BICHomeActivity : SBMapActivity() {
             timer!!.scheduleAtFixedRate(timerTask {
                 d("timer fired")
                 viewModelHome.currentContract?.let {
-                    viewModelHome.refreshContractStations(it)
+                    viewModelHome.refreshStationsFor(it)
                 }
             }, delay, delay)
         }
@@ -303,7 +302,7 @@ class BICHomeActivity : SBMapActivity() {
             d("current zoom level: $level")
             if (it >= 10) {
                 deleteContractsAnnotations()
-                viewModelHome.determineCurrentContract(googleMap!!.projection.visibleRegion.latLngBounds, viewModelHome.currentContract)
+                viewModelHome.determineCurrentContract(googleMap!!.projection.visibleRegion.latLngBounds)
             } else {
                 stopTimer()
                 viewModelHome.getAllContracts()

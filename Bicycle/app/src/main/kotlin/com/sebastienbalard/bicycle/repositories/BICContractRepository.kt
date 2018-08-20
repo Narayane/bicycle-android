@@ -18,21 +18,17 @@ package com.sebastienbalard.bicycle.repositories
 
 import android.location.Location
 import com.google.android.gms.maps.model.LatLng
-import com.sebastienbalard.bicycle.*
 import com.sebastienbalard.bicycle.data.BICContract
 import com.sebastienbalard.bicycle.data.BICContractDao
 import com.sebastienbalard.bicycle.extensions.distanceTo
-import com.sebastienbalard.bicycle.extensions.formatDate
 import com.sebastienbalard.bicycle.io.BicycleApi
 import com.sebastienbalard.bicycle.io.WSFacade
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.models.BICStation
-import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.joda.time.DateTime
-import org.joda.time.Days
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -75,16 +71,16 @@ open class BICContractRepository(private val bicycleApi: BicycleApi,
         }.subscribeOn(Schedulers.newThread())
     }
 
-    fun getAllContracts(): Single<List<BICContract>> {
+    open fun loadAllContracts(): Single<List<BICContract>> {
         d("get contracts from local")
-        return Single.fromObservable(Observable.fromArray(contractDao.findAll()))
+        return Single.fromObservable(Observable.fromArray(contractDao.findAll())).subscribeOn(Schedulers.newThread())
     }
 
-    fun getContractFor(location: Location): BICContract? {
-        return getContractFor(LatLng(location.latitude, location.longitude))
+    fun getContractBy(location: Location): BICContract? {
+        return getContractBy(LatLng(location.latitude, location.longitude))
     }
 
-    fun getContractFor(latLng: LatLng): BICContract? {
+    open fun getContractBy(latLng: LatLng): BICContract? {
         val filteredList = allContracts.filter { contract -> contract.bounds.contains(latLng) }
         var rightContract: BICContract? = null
         if (filteredList.isNotEmpty()) {
@@ -107,16 +103,15 @@ open class BICContractRepository(private val bicycleApi: BicycleApi,
         return rightContract
     }
 
-    fun getStationsFor(contract: BICContract): Single<List<BICStation>> {
+    open fun loadStationsBy(contract: BICContract): Single<List<BICStation>> {
         return if (cacheStations.containsKey(contract.name)) {
-            //Observable.fromIterable(cacheStations.getValue(contract.name))
-            Single.fromObservable(Observable.fromArray(cacheStations.getValue(contract.name)))
+            Single.fromObservable(Observable.fromArray(cacheStations.getValue(contract.name))).subscribeOn(Schedulers.newThread())
         } else {
-            refreshStationsFor(contract)
+            reloadStationsBy(contract)
         }
     }
 
-    fun refreshStationsFor(contract: BICContract): Single<List<BICStation>> {
+    open fun reloadStationsBy(contract: BICContract): Single<List<BICStation>> {
         return WSFacade.getStationsByContract(contract)
                 .doOnSuccess { stations -> cacheStations[contract.name] = stations }
                 .doOnError { throwable -> e("fail to get contract stations", throwable) }

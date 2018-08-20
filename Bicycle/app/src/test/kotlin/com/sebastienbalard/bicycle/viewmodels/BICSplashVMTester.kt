@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle
+package com.sebastienbalard.bicycle.viewmodels
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
+import com.sebastienbalard.bicycle.BICTestApplication
+import com.sebastienbalard.bicycle.BuildConfig
+import com.sebastienbalard.bicycle.Event
 import com.sebastienbalard.bicycle.repositories.BICContractRepository
 import com.sebastienbalard.bicycle.repositories.BICPreferenceRepository
-import com.sebastienbalard.bicycle.viewmodels.*
 import io.reactivex.Completable
 import io.reactivex.Single
 import org.hamcrest.CoreMatchers.*

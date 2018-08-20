@@ -20,7 +20,6 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.sebastienbalard.bicycle.extensions.distanceTo
 import com.sebastienbalard.bicycle.extensions.flatMapToObservable
-import com.sebastienbalard.bicycle.io.WSFacade
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.models.BICPlace
 import com.sebastienbalard.bicycle.models.BICStation
@@ -49,11 +48,11 @@ class BICRideViewModel(private val contractRepository: BICContractRepository) : 
 
     fun determineNearestStations() {
 
-        departure.contract = contractRepository.getContractFor(departure.location)
+        departure.contract = contractRepository.getContractBy(departure.location)
         departure.contract?.let {
             v("departure place contract is ${it.name}")
         }
-        arrival.contract = contractRepository.getContractFor(arrival.location)
+        arrival.contract = contractRepository.getContractBy(arrival.location)
         arrival.contract?.let {
             v("arrival place contract is ${it.name}")
         }
@@ -63,7 +62,7 @@ class BICRideViewModel(private val contractRepository: BICContractRepository) : 
             radius = 500f
         }
 
-        val observableStations = contractRepository.refreshStationsFor(departure.contract!!)
+        val observableStations = contractRepository.reloadStationsBy(departure.contract!!)
                 .flatMapToObservable()
 
         disposables.add(observableStations

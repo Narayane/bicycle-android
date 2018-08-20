@@ -150,9 +150,9 @@ abstract class SBMapActivity : SBActivity() {
 
     private fun showWarningForLocationPermission() {
         val snackbar = Snackbar.make(toolbar, R.string.bic_messages_warning_request_location_permissions, Snackbar.LENGTH_LONG)
-        snackbar.setAction(R.string.bic_actions_allow, {
+        snackbar.setAction(R.string.bic_actions_allow) {
             startActivityForResult(getIntentForApplicationSettings(), NOTIFICATION_REQUEST_PERMISSION_LOCATION)
-        }).setActionTextColor(ContextCompat.getColor(this, R.color.bic_color_white))
+        }.setActionTextColor(ContextCompat.getColor(this, R.color.bic_color_white))
         snackbar.view.setBackgroundColor(ContextCompat.getColor(this, R.color.bic_color_red))
         val textView = snackbar.view.findViewById(android.support.design.R.id.snackbar_text) as TextView
         textView.setTextColor(ContextCompat.getColor(this, R.color.bic_color_white))

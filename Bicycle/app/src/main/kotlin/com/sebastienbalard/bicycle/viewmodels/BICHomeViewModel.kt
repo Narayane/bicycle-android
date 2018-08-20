@@ -21,8 +21,18 @@ import com.sebastienbalard.bicycle.*
 import com.sebastienbalard.bicycle.extensions.intersect
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.data.BICContract
+import com.sebastienbalard.bicycle.models.BICStation
 import com.sebastienbalard.bicycle.repositories.BICContractRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
+
+object StateShowContracts : State()
+object StateShowStations : State()
+
+object EventOutOfAnyContract : Event()
+data class EventNewContract(val current: BICContract) : Event()
+object EventSameContract : Event()
+data class EventContractList(val contracts: List<BICContract>) : Event()
+data class EventStationList(val stations: List<BICStation>) : Event()
 
 class BICHomeViewModel(private val contractRepository: BICContractRepository) : SBViewModel() {
 
@@ -31,68 +41,68 @@ class BICHomeViewModel(private val contractRepository: BICContractRepository) : 
     var currentContract: BICContract? = null
 
     fun getAllContracts() {
-        _states.value = StateLoading
+        _states.value = StateShowContracts
         launch {
-            contractRepository.getAllContracts()
-                    .subscribe(
-                            { contracts -> _events.value = EventContractList(contracts) },
-                            { error -> _events.value = EventFailure(error) })
-        }
-    }
-
-    fun loadContractStations(contract: BICContract) {
-        _states.value = StateLoading
-        launch {
-            contractRepository.getStationsFor(contract)
+            contractRepository.loadAllContracts()
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            { stations -> _events.value = EventStationList(stations) },
-                            { error -> _events.value = EventFailure(error) })
+                    .subscribe({ contracts ->
+                        _events.value = EventContractList(contracts)
+                    }, { error ->
+                        _events.value = EventFailure(error)
+                    })
         }
     }
 
-    fun refreshContractStations(contract: BICContract) {
-        _states.postValue(StateLoading)
+    fun getStationsFor(contract: BICContract) {
+        _states.value = StateShowStations
         launch {
-            contractRepository.refreshStationsFor(contract)
+            contractRepository.loadStationsBy(contract)
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            { stations -> _events.postValue(EventStationList(stations)) },
-                            { error -> _events.postValue(EventFailure(error)) })
+                    .subscribe({ stations ->
+                        _events.value = EventStationList(stations)
+                    }, { error ->
+                        _events.value = EventFailure(error)
+                    })
         }
     }
 
-    fun determineCurrentContract(from: LatLngBounds, with: BICContract? = null) {
+    fun refreshStationsFor(contract: BICContract) {
+        launch {
+            contractRepository.reloadStationsBy(contract)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ stations ->
+                        _events.value = EventStationList(stations)
+                    }, { error ->
+                        _events.value = EventFailure(error)
+                    })
+        }
+    }
+
+    fun determineCurrentContract(from: LatLngBounds) {
 
         var invalidateCurrentContract = false
         var hasChanged = false
         var current: BICContract? = null
 
-        with?.let {
+        currentContract?.let {
             if (!it.bounds.intersect(from)) {
                 invalidateCurrentContract = true
-                hasChanged = true
             }
         }
 
-        if (with == null || invalidateCurrentContract) {
-            current = contractRepository.getContractFor(from.center)
-            hasChanged = hasChanged || current != null
+        if (currentContract == null || invalidateCurrentContract) {
+            current = contractRepository.getContractBy(from.center)
+            hasChanged = current != null
         }
 
-        when {
-            current != null ->  {
-                currentContract = current
-                _states.value = StateContract(current, hasChanged)
-            }
-            with != null -> {
-                currentContract = with
-                _states.value = StateContract(with, false)
-            }
-            else ->  {
-                currentContract = null
-                _states.value = StateOutOfContract
-            }
+        if (current != null && hasChanged)  {
+            currentContract = current
+            _events.value = EventNewContract(current)
+        } else if (currentContract != null && !invalidateCurrentContract) {
+            _events.value = EventSameContract
+        } else {
+            currentContract = null
+            _events.value = EventOutOfAnyContract
         }
     }
 }

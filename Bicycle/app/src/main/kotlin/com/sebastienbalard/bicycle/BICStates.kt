@@ -23,7 +23,3 @@ open class State
 object StateLoading : State()
 
 data class StateError(val error: Throwable) : State()
-
-object StateOutOfContract : State()
-
-data class StateContract(val current: BICContract, val hasChanged: Boolean) : State()
