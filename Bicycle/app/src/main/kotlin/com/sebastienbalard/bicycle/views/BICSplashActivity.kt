@@ -20,6 +20,8 @@ import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.support.v7.app.AppCompatDelegate
 import com.sebastienbalard.bicycle.EventMessage
 import com.sebastienbalard.bicycle.EventSuccess
@@ -69,6 +71,9 @@ class BICSplashActivity : SBActivity() {
                     }
                     is EventSplashAvailableContracts -> {
                         textViewSubtitle.text = getString(R.string.bic_messages_info_contracts_loaded, it.count)
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            startActivity(BICHomeActivity.getIntent(this))
+                        }, 3000)
                     }
                     else -> {}
                 }
