@@ -36,8 +36,8 @@ class WSFacade {
             return CityBikesApi.instance.getStations(contractName).map { response -> response.network.stations }
         }
 
-        fun getDirections(mode: String, from: LatLng, to: LatLng, vararg steps: LatLng): Single<GMDirectionsResponseDto> {
-            return if (steps.isEmpty()) {
+        fun getDirections(mode: String, from: LatLng, to: LatLng, steps: ArrayList<LatLng> = arrayListOf()): Single<GMDirectionsResponseDto> {
+            return if (steps.count() == 0) {
                 GoogleMapsApi.instance.getDirections("${from.latitude},${from.longitude}", "${to.latitude},${to.longitude}",
                         mode, true, BICApplication.context.getString(R.string.key_google_maps_directions))
             } else {

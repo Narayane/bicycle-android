@@ -137,14 +137,23 @@ class BICRideActivity : SBMapActivity() {
 
     private fun determineRoute() {
         launch {
-            WSFacade.getDirections("bicycling", viewModelRide.departure.location, viewModelRide.arrival.location)
+            val nearestDeparture = viewModelRide.departureNearestStations.value?.get(0)
+            val nearestArrival = viewModelRide.arrivalNearestStations.value?.get(0)
+            val steps = arrayListOf<LatLng>()
+            nearestDeparture?.location?.apply {
+                steps.add(this)
+            }
+            nearestArrival?.location?.apply {
+                steps.add(this)
+            }
+            WSFacade.getDirections("bicycling", viewModelRide.departure.location, viewModelRide.arrival.location, steps)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe { response ->
-                        val routes: List<GMDirectionsRouteDto> = response.routes.sortedWith(compareBy({ it.legs[0].distance }))
+                        val routes: List<GMDirectionsRouteDto> = response.routes.sortedWith(compareBy { it.legs[0].distance })
                         val listPoints = routes[0].overviewPolyline.points.fromPolyline()
                         listPoints.add(0, viewModelRide.departure.location)
                         listPoints.add(viewModelRide.arrival.location)
-                        var options = PolylineOptions().addAll(listPoints)
+                        val options = PolylineOptions().addAll(listPoints)
                                 .width(resources.getDimensionPixelSize(R.dimen.bic_width_polyline).toFloat())
                                 .color(ContextCompat.getColor(this, R.color.bic_color_orange))
                                 .geodesic(true)

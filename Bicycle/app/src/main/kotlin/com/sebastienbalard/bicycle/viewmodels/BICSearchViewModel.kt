@@ -18,11 +18,12 @@ package com.sebastienbalard.bicycle.viewmodels
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import com.sebastienbalard.bicycle.SBViewModel
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.models.BICPlace
 import com.sebastienbalard.bicycle.repositories.BICContractRepository
 
-class BICSearchViewModel(private val contractRepository: BICContractRepository) : ViewModel() {
+class BICSearchViewModel(private val contractRepository: BICContractRepository) : SBViewModel() {
 
     companion object : SBLog()
 

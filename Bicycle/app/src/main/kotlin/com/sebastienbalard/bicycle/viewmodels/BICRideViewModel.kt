@@ -17,7 +17,7 @@
 package com.sebastienbalard.bicycle.viewmodels
 
 import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
+import com.sebastienbalard.bicycle.SBViewModel
 import com.sebastienbalard.bicycle.extensions.distanceTo
 import com.sebastienbalard.bicycle.extensions.flatMapToObservable
 import com.sebastienbalard.bicycle.misc.SBLog
@@ -25,13 +25,10 @@ import com.sebastienbalard.bicycle.models.BICPlace
 import com.sebastienbalard.bicycle.models.BICStation
 import com.sebastienbalard.bicycle.repositories.BICContractRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 
-class BICRideViewModel(private val contractRepository: BICContractRepository) : ViewModel() {
+class BICRideViewModel(private val contractRepository: BICContractRepository) : SBViewModel() {
 
     companion object : SBLog()
-
-    private val disposables: CompositeDisposable = CompositeDisposable()
 
     lateinit var departure: BICPlace
     lateinit var arrival: BICPlace
@@ -40,11 +37,6 @@ class BICRideViewModel(private val contractRepository: BICContractRepository) : 
     var departureNearestStations = MutableLiveData<List<BICStation>>()
     var arrivalNearestStations =  MutableLiveData<List<BICStation>>()
     var hasRoute = MutableLiveData<Boolean>()
-
-    override fun onCleared() {
-        super.onCleared()
-        disposables.clear()
-    }
 
     fun determineNearestStations() {
 
@@ -65,42 +57,49 @@ class BICRideViewModel(private val contractRepository: BICContractRepository) : 
         val observableStations = contractRepository.reloadStationsBy(departure.contract!!)
                 .flatMapToObservable()
 
-        disposables.add(observableStations
-                .filter { station -> station.location.distanceTo(departure.location) <= radius && station.availableBikesCount >= bikesCount }
-                .toSortedList { station1, station2 ->
-                    station1.location.distanceTo(departure.location).compareTo(station2.location.distanceTo(departure.location))
-                }
-                .doOnSuccess { sortedStations -> v("take 3 nearest from departure on ${sortedStations.size}") }
-                .doOnError { error -> e("fail to find 3 nearest from departure", error) }
-                .flatMapToObservable().take(3).toList()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe( {
-                    nearestStations -> run {
-                        departureNearestStations.value = nearestStations
-                        hasRoute.value = departureNearestStations.value != null && arrivalNearestStations.value != null
-                    }
-                }, {
-                    _ -> departureNearestStations.value = null ; hasRoute.value = false
-                })
-        )
-        disposables.add(observableStations
-                .filter { station -> station.location.distanceTo(arrival.location) <= radius && station.freeStandsCount >= freeSlotsCount }
-                .toSortedList { station1, station2 ->
-                    station1.location.distanceTo(arrival.location).compareTo(station2.location.distanceTo(arrival.location))
-                }
-                .doOnSuccess { sortedStations -> v("take 3 nearest from arrival on ${sortedStations.size}") }
-                .doOnError { error -> e("fail to find 3 nearest from departure", error) }
-                .flatMapToObservable().take(3).toList()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe( {
-                    nearestStations -> run {
-                        arrivalNearestStations.value = nearestStations
-                        hasRoute.value = departureNearestStations.value != null && arrivalNearestStations.value != null
-                    }
-                }, {
-                    _ -> arrivalNearestStations.value = null ; hasRoute.value = false
-                })
-        )
+        launch {
+            observableStations.filter { station ->
+                station.location.distanceTo(departure.location) <= radius && station.availableBikesCount >= bikesCount
+            }.toSortedList { station1, station2 ->
+                station1.location.distanceTo(departure.location).compareTo(station2.location.distanceTo(departure.location))
+            }.doOnSuccess { sortedStations ->
+                v("take 3 nearest from departure on ${sortedStations.size}")
+            }.doOnError { error ->
+                e("fail to find 3 nearest from departure", error)
+            }.flatMapToObservable()
+                    .take(3).toList()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe( { nearestStations ->
+                        run {
+                            departureNearestStations.value = nearestStations
+                            hasRoute.value = departureNearestStations.value != null && arrivalNearestStations.value != null
+                        }
+                    }, {  _ ->
+                        departureNearestStations.value = null ; hasRoute.value = false
+                    })
+        }
+
+        launch {
+            observableStations.filter { station ->
+                station.location.distanceTo(arrival.location) <= radius && station.freeStandsCount >= freeSlotsCount
+            }.toSortedList { station1, station2 ->
+                station1.location.distanceTo(arrival.location).compareTo(station2.location.distanceTo(arrival.location))
+            }.doOnSuccess { sortedStations ->
+                v("take 3 nearest from arrival on ${sortedStations.size}")
+            }.doOnError { error ->
+                e("fail to find 3 nearest from departure", error)
+            }.flatMapToObservable()
+                    .take(3).toList()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe( { nearestStations ->
+                        run {
+                            arrivalNearestStations.value = nearestStations
+                            hasRoute.value = departureNearestStations.value != null && arrivalNearestStations.value != null
+                        }
+                    }, { _ ->
+                        arrivalNearestStations.value = null ; hasRoute.value = false
+                    })
+        }
     }
 
 }
