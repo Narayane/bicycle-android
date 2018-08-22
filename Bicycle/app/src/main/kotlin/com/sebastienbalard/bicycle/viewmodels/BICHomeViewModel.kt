@@ -42,6 +42,7 @@ class BICHomeViewModel(private val contractRepository: BICContractRepository) : 
 
     fun getAllContracts() {
         _states.value = StateShowContracts
+        currentContract = null
         launch {
             contractRepository.loadAllContracts()
                     .observeOn(AndroidSchedulers.mainThread())

@@ -32,7 +32,7 @@ class WSFacade {
 
         fun getStationsByContract(contract: BICContract): Single<List<BICStation>> {
             val contractName = contract.url.substring(contract.url.lastIndexOf('/') + 1)
-            d("contract endpoint: $contractName")
+            d("contract endpoint: $contractName (${contract.name})")
             return CityBikesApi.instance.getStations(contractName).map { response -> response.network.stations }
         }
 

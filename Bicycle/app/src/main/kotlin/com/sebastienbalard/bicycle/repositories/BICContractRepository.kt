@@ -28,6 +28,7 @@ import com.sebastienbalard.bicycle.models.BICStation
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.experimental.async
 import org.joda.time.DateTime
 import java.util.*
 import kotlin.collections.ArrayList
@@ -40,6 +41,12 @@ open class BICContractRepository(private val bicycleApi: BicycleApi,
 
     private var allContracts = ArrayList<BICContract>()
     private var cacheStations = HashMap<String, List<BICStation>>()
+
+    init {
+        async {
+            allContracts.addAll(contractDao.findAll())
+        }
+    }
 
     open fun updateContracts(): Single<Int> {
         return Single.create<Int> { observer ->
@@ -73,7 +80,9 @@ open class BICContractRepository(private val bicycleApi: BicycleApi,
 
     open fun loadAllContracts(): Single<List<BICContract>> {
         d("get contracts from local")
-        return Single.fromObservable(Observable.fromArray(contractDao.findAll())).subscribeOn(Schedulers.newThread())
+        return Single.create<List<BICContract>> { observer ->
+            observer.onSuccess(contractDao.findAll())
+        }.subscribeOn(Schedulers.newThread())
     }
 
     fun getContractBy(location: Location): BICContract? {

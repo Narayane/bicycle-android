@@ -28,6 +28,8 @@ import android.support.v4.content.ContextCompat
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.animation.RotateAnimation
 import android.widget.TextView
 import android.widget.Toast
@@ -36,7 +38,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.clustering.ClusterManager
-import com.sebastienbalard.bicycle.*
+import com.sebastienbalard.bicycle.BuildConfig
+import com.sebastienbalard.bicycle.EventFailure
+import com.sebastienbalard.bicycle.R
+import com.sebastienbalard.bicycle.SBMapActivity
 import com.sebastienbalard.bicycle.data.BICContract
 import com.sebastienbalard.bicycle.extensions.*
 import com.sebastienbalard.bicycle.misc.SBLog
@@ -58,7 +63,8 @@ class BICHomeActivity : SBMapActivity() {
 
     companion object : SBLog() {
         fun getIntent(context: Context): Intent {
-            return Intent(context, BICHomeActivity::class.java)
+            return Intent(context, BICHomeActivity::class.java)/*.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent
+                    .FLAG_ACTIVITY_CLEAR_TOP)*/
         }
     }
 
@@ -68,7 +74,7 @@ class BICHomeActivity : SBMapActivity() {
     private var clusterManager: ClusterManager<BICStationAnnotation>? = null
     private var listContractsAnnotations: MutableList<Marker>? = null
     private var timer: Timer? = null
-    private var menuItemSearch: MenuItem? = null
+    //private var menuItemSearch: MenuItem? = null
 
     //region Lifecycle methods
 
@@ -83,6 +89,10 @@ class BICHomeActivity : SBMapActivity() {
 
         initMap(savedInstanceState)
         initSearchView()
+        fabSearch.setOnClickListener {
+            i("click on menu item: search")
+            showLayoutSearch()
+        }
         //fabSearch.setOnClickListener({
             /*int x = layoutContent.getRight();
             int y = layoutContent.getBottom();
@@ -159,17 +169,17 @@ class BICHomeActivity : SBMapActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         v("onCreateOptionsMenu")
         menuInflater.inflate(R.menu.bic_menu_home, menu)
-        menuItemSearch = menu?.findItem(R.id.bic_menu_home_item_search)
+        //menuItemSearch = menu?.findItem(R.id.bic_menu_home_item_search)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
-            R.id.bic_menu_home_item_search -> {
+            /*R.id.bic_menu_home_item_search -> {
                 i("click on menu item: search")
                 showLayoutSearch()
                 true
-            }
+            }*/
             R.id.bic_menu_home_item_favorites -> {
                 i("click on menu item: favorites")
                 Toast.makeText(this, R.string.bic_messages_available_soon, Toast.LENGTH_LONG).showAsError(this)
@@ -237,7 +247,7 @@ class BICHomeActivity : SBMapActivity() {
         val params = layoutSearch.layoutParams as CoordinatorLayout.LayoutParams
         params.topMargin -= layoutSearch.measuredHeight
         layoutSearch.layoutParams = params
-        menuItemSearch?.isVisible = true
+        fabSearch?.visibility = VISIBLE
         val animate = RotateAnimation(180f, 360f, imageViewCollapse.measuredWidth / 2f, imageViewCollapse.measuredHeight / 2f)
         animate.duration = 200
         animate.fillAfter = true
@@ -246,7 +256,7 @@ class BICHomeActivity : SBMapActivity() {
     }
 
     private fun showLayoutSearch() {
-        menuItemSearch?.isVisible = false
+        fabSearch?.visibility = GONE
         /*val animate = TranslateAnimation(
                 0f,
                 0f,
