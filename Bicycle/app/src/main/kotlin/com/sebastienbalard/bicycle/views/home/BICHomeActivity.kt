@@ -43,6 +43,7 @@ import com.sebastienbalard.bicycle.extensions.showAsError
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.viewmodels.*
 import com.sebastienbalard.bicycle.views.BICAboutActivity
+import com.sebastienbalard.bicycle.views.BICHelpActivity
 import kotlinx.android.synthetic.main.bic_widget_appbar.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
@@ -141,6 +142,11 @@ class BICHomeActivity : SBMapActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
+            R.id.bic_menu_home_item_help -> {
+                i("click on menu item: help")
+                startActivity(BICHelpActivity.getIntent(this))
+                true
+            }
             R.id.bic_menu_home_item_about -> {
                 i("click on menu item: about")
                 startActivity(BICAboutActivity.getIntent(this))

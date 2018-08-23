@@ -18,6 +18,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/bic_menu_home_item_help"
+        android:orderInCategory="102"
+        app:showAsAction="never"
+        android:title="@string/bic_actions_help"/>
+
+    <item
         android:id="@+id/bic_menu_home_item_about"
         android:orderInCategory="103"
         app:showAsAction="never"
