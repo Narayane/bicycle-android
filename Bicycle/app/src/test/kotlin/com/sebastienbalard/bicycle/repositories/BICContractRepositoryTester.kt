@@ -70,7 +70,7 @@ class BICContractRepositoryTester {
         val spy = repository!!.updateContracts().test().await()
 
         verify(mockBicycleApi).getContractsData("media")
-        verify(mockContractDao).findAll()
+        verify(mockContractDao, times(2)).findAll()
         verify(mockContractDao).deleteAll(arrayListOf(contract))
         verify(mockContractDao).insertAll(arrayListOf(newContract1, newContract2))
         verify(mockContractDao).getAllCount()

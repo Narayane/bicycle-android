@@ -22,15 +22,21 @@ import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import kotlinx.android.synthetic.main.bic_widget_appbar.*
 
 open class SBActivity : AppCompatActivity() {
 
     private val disposables: CompositeDisposable = CompositeDisposable()
 
-    /*override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //overridePendingTransition(0,0)
-    }*/
+        overridePendingTransition(0,0)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        overridePendingTransition(R.anim.bic_anim_activity_enter, R.anim.bic_anim_activity_exit)
+    }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
@@ -58,5 +64,14 @@ open class SBActivity : AppCompatActivity() {
 
     protected fun dispose(disposable: Disposable) {
         disposables.add(disposable)
+    }
+
+    protected open fun initToolbar() {
+        setSupportActionBar(toolbar)
+        try {
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        } catch (exception: NullPointerException) {
+            // do nothing
+        }
     }
 }

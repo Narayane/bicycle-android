@@ -16,6 +16,7 @@
 -->
 <resources>
     <string name="app_name">Bicycle</string>
+    <string name="bic_app_catching">Allez-y en vélo</string>
     <!-- actions -->
     <string name="bic_actions_allow">Autoriser</string>
     <string name="bic_actions_search">Rechercher</string>

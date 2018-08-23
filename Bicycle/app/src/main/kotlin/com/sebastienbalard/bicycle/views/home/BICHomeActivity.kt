@@ -42,6 +42,7 @@ import com.sebastienbalard.bicycle.extensions.hideSoftInput
 import com.sebastienbalard.bicycle.extensions.showAsError
 import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.viewmodels.*
+import com.sebastienbalard.bicycle.views.BICAboutActivity
 import kotlinx.android.synthetic.main.bic_widget_appbar.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
@@ -72,8 +73,7 @@ class BICHomeActivity : SBMapActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.bic_activity_home)
         v("onCreate")
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        initToolbar()
 
         listContractsAnnotations = mutableListOf()
 
@@ -143,7 +143,8 @@ class BICHomeActivity : SBMapActivity() {
         return when (item?.itemId) {
             R.id.bic_menu_home_item_about -> {
                 i("click on menu item: about")
-                Toast.makeText(this, R.string.bic_messages_available_soon, Toast.LENGTH_LONG).showAsError(this)
+                startActivity(BICAboutActivity.getIntent(this))
+                //Toast.makeText(this, R.string.bic_messages_available_soon, Toast.LENGTH_LONG).showAsError(this)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -154,10 +155,19 @@ class BICHomeActivity : SBMapActivity() {
         super.onStop()
         v("onStop")
         stopTimer()
-        hideSoftInput()
     }
 
     //endregion
+
+    @Override
+    override fun initToolbar() {
+        super.initToolbar()
+        try {
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        } catch (exception: NullPointerException) {
+            // do nothing
+        }
+    }
 
     //region Map events
 

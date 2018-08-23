@@ -129,6 +129,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
 
+        <activity
+            android:name=".views.BICAboutActivity"
+            android:label="@string/bic_actions_about"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="7988e6ed164e770bc103a2ffd3a6037c24bbc405" />

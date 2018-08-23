@@ -19,20 +19,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sebastienbalard.bicycle.views.BICSplashActivity">
+    tools:context="com.sebastienbalard.bicycle.views.BICAboutActivity">
 
-    <include layout="@layout/bic_widget_appbar_gone" />
+    <include layout="@layout/bic_widget_appbar" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:background="@color/bic_color_primary_dark">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.v7.widget.AppCompatImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
             app:srcCompat="@drawable/bic_ic_bike_24dp"
+            android:tint="@color/bic_color_primary_dark"
             android:layout_above="@id/textViewLogoText"
             android:layout_centerInParent="true"/>
 
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:textSize="56sp"
-            android:textColor="@color/bic_color_white"
+            android:textColor="@color/bic_color_primary_dark"
             android:text="@string/app_name"/>
 
         <android.support.v7.widget.AppCompatTextView
@@ -51,40 +51,19 @@
             android:layout_below="@id/textViewLogoText"
             android:layout_centerHorizontal="true"
             android:textSize="@dimen/bic_size_font_headline"
-            android:textColor="@color/bic_color_white"
+            android:textColor="@color/bic_color_primary_dark"
             android:text="@string/bic_app_catching"/>
 
-        <ProgressBar
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:indeterminateTint="@color/bic_color_white"
-            android:indeterminate="true"
-            android:layout_above="@id/textViewTitle"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/bic_margin_vertical_half"/>
-
         <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/textViewTitle"
+            android:id="@+id/textViewAppVersion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/bic_color_white"
-            android:layout_centerHorizontal="true"
-            android:layout_above="@id/textViewSubtitle"
-            android:textSize="@dimen/bic_size_font_subhead"
-            android:text="@string/bic_messages_info_init"
-            tools:text="Configuration"/>
-
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/textViewSubtitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/bic_color_white"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:textSize="@dimen/bic_size_font_body"
+            android:textSize="@dimen/bic_size_font_subhead"
             android:layout_marginBottom="@dimen/bic_margin_vertical_default"
-            tools:text="523 villes disponibles"/>
+            android:textColor="@color/bic_color_primary_dark"
+            tools:text="v1.0-alpha"/>
 
     </RelativeLayout>
 
