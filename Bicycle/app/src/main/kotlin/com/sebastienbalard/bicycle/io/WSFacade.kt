@@ -16,13 +16,8 @@
 
 package com.sebastienbalard.bicycle.io
 
-import com.google.android.gms.maps.model.LatLng
-import com.sebastienbalard.bicycle.BICApplication
-import com.sebastienbalard.bicycle.R
-import com.sebastienbalard.bicycle.io.dtos.BICContractsDataResponseDto
-import com.sebastienbalard.bicycle.io.dtos.GMDirectionsResponseDto
-import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.data.BICContract
+import com.sebastienbalard.bicycle.misc.SBLog
 import com.sebastienbalard.bicycle.models.BICStation
 import io.reactivex.Single
 
@@ -34,17 +29,6 @@ class WSFacade {
             val contractName = contract.url.substring(contract.url.lastIndexOf('/') + 1)
             d("contract endpoint: $contractName (${contract.name})")
             return CityBikesApi.instance.getStations(contractName).map { response -> response.network.stations }
-        }
-
-        fun getDirections(mode: String, from: LatLng, to: LatLng, steps: ArrayList<LatLng> = arrayListOf()): Single<GMDirectionsResponseDto> {
-            return if (steps.count() == 0) {
-                GoogleMapsApi.instance.getDirections("${from.latitude},${from.longitude}", "${to.latitude},${to.longitude}",
-                        mode, true, BICApplication.context.getString(R.string.key_google_maps_directions))
-            } else {
-                GoogleMapsApi.instance.getDirectionsViaWaypoints("${from.latitude},${from.longitude}", "${to.latitude},${to.longitude}",
-                        steps.joinToString(separator = "|", transform = { latLng -> "${latLng.latitude},${latLng.longitude}" }),
-                        mode, true, BICApplication.context.getString(R.string.key_google_maps_directions))
-            }
         }
     }
 }

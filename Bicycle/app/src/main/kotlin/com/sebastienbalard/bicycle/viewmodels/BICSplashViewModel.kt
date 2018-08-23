@@ -71,7 +71,7 @@ open class BICSplashViewModel(private val context: Context,
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({ count ->
                             _events.value = EventSplashAvailableContracts(count)
-                        }, { error ->
+                        }, { _ ->
 
                         })
             }
@@ -83,7 +83,7 @@ open class BICSplashViewModel(private val context: Context,
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({ count ->
                             _events.value = EventSplashAvailableContracts(count)
-                        }, { error ->
+                        }, { _ ->
 
                         })
             }

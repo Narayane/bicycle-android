@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 
 android {
@@ -24,7 +24,7 @@ android {
 
         resValue "string", "fabric_key", (project.findProperty("fabric.api.key") ?: "")
         resValue "string", "google_maps_key", (project.findProperty("google.maps.api.android.key") ?: "")
-        resValue "string", "key_google_maps_directions", (project.findProperty("google.maps.directions.api.web.key") ?: "")
+        //resValue "string", "key_google_maps_directions", (project.findProperty("google.maps.directions.api.web.key") ?: "")
         resValue "string", "bicycle_storage_endpoint", (project.findProperty("bicycle.storage.endpoint") ?: "")
 
         buildConfigField("String", "ROOM_DB_NAME", "\"bic_database\"")
@@ -89,7 +89,7 @@ dependencies {
     // play services
     implementation "com.google.android.gms:play-services-maps:$play_services_version"
     implementation "com.google.android.gms:play-services-location:$play_services_version"
-    implementation "com.google.android.gms:play-services-places:$play_services_version"
+    //implementation "com.google.android.gms:play-services-places:$play_services_version"
     // architecture
     implementation "android.arch.lifecycle:runtime:$arch_version"
     implementation "android.arch.lifecycle:extensions:$arch_version"

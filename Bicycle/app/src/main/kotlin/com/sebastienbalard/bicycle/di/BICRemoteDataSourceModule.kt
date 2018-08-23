@@ -22,23 +22,21 @@ import com.sebastienbalard.bicycle.BICApplication
 import com.sebastienbalard.bicycle.R
 import com.sebastienbalard.bicycle.io.BicycleApi
 import com.sebastienbalard.bicycle.io.CityBikesApi
-import com.sebastienbalard.bicycle.io.GoogleMapsApi
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.koin.dsl.module.applicationContext
+import org.koin.dsl.module.module
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-val remoteDataSourceModule = applicationContext {
+val remoteDataSourceModule = module {
 
-    bean { initGson() }
-    bean { initHttpClient() }
-    bean { initApi<BicycleApi>(get(), get(), BICApplication.context.getString(R.string.bicycle_storage_endpoint)) }
-    bean { initApi<CityBikesApi>(get(), get(), "http://api.citybik.es/v2/networks/") }
-    bean { initApi<GoogleMapsApi>(get(), get(), "https://maps.googleapis.com/maps/api/") }
+    factory { initGson() }
+    factory { initHttpClient() }
+    factory { initApi<BicycleApi>(get(), get(), BICApplication.context.getString(R.string.bicycle_storage_endpoint)) }
+    factory { initApi<CityBikesApi>(get(), get(), "http://api.citybik.es/v2/networks/") }
 }
 
 fun initGson(): Gson {

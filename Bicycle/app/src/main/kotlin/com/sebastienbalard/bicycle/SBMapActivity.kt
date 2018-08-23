@@ -124,7 +124,9 @@ abstract class SBMapActivity : SBActivity() {
             googleMap = map
             if (googleMap != null) {
                 onMapInitialized()
-                googleMap!!.setOnMapClickListener { latLng -> BICHomeActivity.v("onMapClick") }
+                googleMap!!.setOnMapClickListener {
+                    v("onMapClick")
+                }
                 googleMap!!.setOnMarkerClickListener { marker ->
                     v("onMarkerClick")
                     onMarkerClicked(marker)

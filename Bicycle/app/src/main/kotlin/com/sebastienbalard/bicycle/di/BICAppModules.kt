@@ -19,7 +19,9 @@ package com.sebastienbalard.bicycle.di
 import android.preference.PreferenceManager
 import com.sebastienbalard.bicycle.repositories.BICContractRepository
 import com.sebastienbalard.bicycle.repositories.BICPreferenceRepository
-import com.sebastienbalard.bicycle.viewmodels.*
+import com.sebastienbalard.bicycle.viewmodels.BICHomeViewModel
+import com.sebastienbalard.bicycle.viewmodels.BICMapViewModel
+import com.sebastienbalard.bicycle.viewmodels.BICSplashViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
@@ -37,12 +39,6 @@ val commonModule = module {
 val homeModule = module {
 
     viewModel { BICHomeViewModel(get()) }
-    viewModel { BICSearchViewModel(get()) }
 }
 
-val rideModule = module {
-
-    viewModel { BICRideViewModel(get()) }
-}
-
-val bicycleApp = listOf(remoteDataSourceModule, localDataSourceModule, commonModule, homeModule, rideModule)
+val bicycleApp = listOf(remoteDataSourceModule, localDataSourceModule, commonModule, homeModule)
