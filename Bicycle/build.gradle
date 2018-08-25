@@ -12,6 +12,7 @@ buildscript {
     ext.jodatime_version = '2.9.9'
     ext.retrofit_version = '2.3.0'
     ext.kotlinx_coroutines_version = '0.20'
+    ext.robolectric_version = '3.8'
 
     repositories {
         google()

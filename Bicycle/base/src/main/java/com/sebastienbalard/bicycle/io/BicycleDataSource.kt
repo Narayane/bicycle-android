@@ -25,11 +25,11 @@ open class BicycleDataSource(private val bicycleApi: BicycleApi) {
 
     companion object : SBLog()
 
-    fun getConfig(): Single<BICConfigResponseDto> {
+    open fun getConfig(): Single<BICConfigResponseDto> {
         return bicycleApi.getAppConfig("media")
     }
 
-    fun getContracts(): Single<BICContractsDataResponseDto> {
+    open fun getContracts(): Single<BICContractsDataResponseDto> {
         return bicycleApi.getContractsData("media")
     }
 }

@@ -25,7 +25,7 @@ open class CityBikesDataSource(private val cityBikesApi: CityBikesApi) {
 
     companion object : SBLog()
 
-    fun getStationsByContract(contract: BICContract): Single<List<BICStation>> {
+    open fun getStationsByContract(contract: BICContract): Single<List<BICStation>> {
         val contractName = contract.url.substring(contract.url.lastIndexOf('/') + 1)
         d("contract endpoint: $contractName (${contract.name})")
         return cityBikesApi.getStations(contractName).map { response -> response.network.stations }

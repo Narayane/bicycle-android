@@ -40,7 +40,7 @@ open class BICSplashViewModel(private val context: Context,
 
     companion object : SBLog()
 
-    fun loadConfig() {
+    open fun loadConfig() {
         _states.value = StateSplashConfig
         launch {
             preferenceRepository.loadConfig().subscribe({
@@ -51,7 +51,7 @@ open class BICSplashViewModel(private val context: Context,
         }
     }
 
-    fun loadAllContracts() {
+    open fun loadAllContracts() {
         _states.value = StateSplashContracts
 
         var timeToCheck = true

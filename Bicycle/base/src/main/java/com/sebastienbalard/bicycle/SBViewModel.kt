@@ -37,11 +37,11 @@ abstract class SBViewModel : ViewModel() {
     private val disposables = CompositeDisposable()
 
     protected var _states = MutableLiveData<SBState>()
-    val states: LiveData<SBState>
+    open val states: LiveData<SBState>
         get() = _states
 
     protected var _events = MutableLiveData<SBEvent>()
-    val events: LiveData<SBEvent>
+    open val events: LiveData<SBEvent>
         get() = _events
 
     fun launch(rx: () -> Disposable) {
