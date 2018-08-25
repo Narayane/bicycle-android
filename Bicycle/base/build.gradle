@@ -12,13 +12,47 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0-alpha"
+        vectorDrawables.useSupportLibrary = true
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation" : "$projectDir/schemas".toString()]
+            }
+        }
 
         resValue "string", "fabric_key", (project.findProperty("fabric.api.key") ?: "")
+        resValue "string", "google_maps_key", (project.findProperty("google.maps.api.android.key") ?: "")
+        resValue "string", "bicycle_storage_endpoint", (project.findProperty("bicycle.storage.endpoint") ?: "")
+
+        buildConfigField("String", "ROOM_DB_NAME", "\"bic_database\"")
+        buildConfigField("int", "DAYS_BETWEEN_CONTRACTS_CHECK", "30")
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+        debug {
+            testCoverageEnabled false
+
+            buildConfigField("long", "TIME_BEFORE_REFRESH_STATIONS_DATA_IN_SECONDS", "60")
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            buildConfigField("long", "TIME_BEFORE_REFRESH_STATIONS_DATA_IN_SECONDS", "120")
+        }
+    }
+    kotlin {
+        experimental {
+            coroutines 'enable'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
         }
     }
 }
@@ -43,6 +77,8 @@ dependencies {
     implementation "android.arch.lifecycle:runtime:$arch_version"
     implementation "android.arch.lifecycle:extensions:$arch_version"
     kapt "android.arch.lifecycle:compiler:$arch_version"
+    implementation "android.arch.persistence.room:runtime:$arch_version"
+    kapt "android.arch.persistence.room:compiler:$arch_version"
 
     // logs
     implementation 'org.slf4j:slf4j-api:1.7.25'
@@ -58,6 +94,13 @@ dependencies {
     implementation "org.koin:koin-android-scope:$koin_version"
     implementation "org.koin:koin-android-viewmodel:$koin_version"
     implementation "net.danlew:android.joda:$jodatime_version"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1'
+    implementation 'com.google.maps.android:android-maps-utils:0.4.4'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinx_coroutines_version"
 }
 repositories {
     mavenCentral()

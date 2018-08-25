@@ -14,15 +14,6 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle
+package com.sebastienbalard.bicycle.io.dtos
 
-import android.arch.lifecycle.ViewModel
-import android.content.Context
-import com.sebastienbalard.bicycle.models.SBLocationLiveData
-
-class SBMapViewModel(context: Context) : ViewModel() {
-
-    companion object : SBLog()
-
-    var userLocation = SBLocationLiveData(context)
-}
+class CBContractResponseDto(val network: CBNetworkDto)

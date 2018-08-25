@@ -16,4 +16,22 @@
 
 package com.sebastienbalard.bicycle
 
-const val NOTIFICATION_REQUEST_PERMISSION_LOCATION: Int = 10000
+import android.app.Application
+import com.sebastienbalard.bicycle.di.bicycleApp
+import com.sebastienbalard.bicycle.models.BICStation
+import net.danlew.android.joda.JodaTimeAndroid
+import org.koin.android.ext.android.startKoin
+
+class BICApplication : Application() {
+
+    companion object: SBLog()
+
+    override fun onCreate() {
+        super.onCreate()
+        v("onCreate")
+        startKoin(this, bicycleApp)
+        JodaTimeAndroid.init(applicationContext)
+        BICStation.initConstants(applicationContext)
+    }
+
+}

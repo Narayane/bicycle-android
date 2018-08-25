@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle
+package com.sebastienbalard.bicycle.io
 
-import android.arch.lifecycle.ViewModel
-import android.content.Context
-import com.sebastienbalard.bicycle.models.SBLocationLiveData
+import com.sebastienbalard.bicycle.io.dtos.CBContractResponseDto
+import io.reactivex.Single
+import retrofit2.http.GET
+import retrofit2.http.Path
 
-class SBMapViewModel(context: Context) : ViewModel() {
+interface CityBikesApi {
 
-    companion object : SBLog()
-
-    var userLocation = SBLocationLiveData(context)
+    @GET("{contract_name}?fields=stations")
+    fun getStations(@Path("contract_name") name: String): Single<CBContractResponseDto>
 }

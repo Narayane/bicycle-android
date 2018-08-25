@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle.misc
+package com.sebastienbalard.bicycle
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

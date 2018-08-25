@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle
+package com.sebastienbalard.bicycle.models
 
 import android.annotation.SuppressLint
 import android.arch.lifecycle.MutableLiveData
@@ -24,7 +24,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import com.sebastienbalard.bicycle.misc.SBLog
+import com.sebastienbalard.bicycle.SBLog
 
 class SBLocationLiveData(context: Context) : MutableLiveData<Location>() {
 

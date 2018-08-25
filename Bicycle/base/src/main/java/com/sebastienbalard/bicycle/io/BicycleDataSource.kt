@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle
+package com.sebastienbalard.bicycle.io
 
-import android.arch.lifecycle.ViewModel
-import android.content.Context
-import com.sebastienbalard.bicycle.models.SBLocationLiveData
+import com.sebastienbalard.bicycle.SBLog
+import com.sebastienbalard.bicycle.io.dtos.BICConfigResponseDto
+import com.sebastienbalard.bicycle.io.dtos.BICContractsDataResponseDto
+import io.reactivex.Single
 
-class SBMapViewModel(context: Context) : ViewModel() {
+open class BicycleDataSource(private val bicycleApi: BicycleApi) {
 
     companion object : SBLog()
 
-    var userLocation = SBLocationLiveData(context)
+    fun getConfig(): Single<BICConfigResponseDto> {
+        return bicycleApi.getAppConfig("media")
+    }
+
+    fun getContracts(): Single<BICContractsDataResponseDto> {
+        return bicycleApi.getContractsData("media")
+    }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle.misc
+package com.sebastienbalard.bicycle
 
 import android.content.Context
 import com.crashlytics.android.Crashlytics

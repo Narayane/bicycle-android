@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle
+package com.sebastienbalard.bicycle.io
 
-import android.arch.lifecycle.ViewModel
-import android.content.Context
-import com.sebastienbalard.bicycle.models.SBLocationLiveData
+import com.sebastienbalard.bicycle.data.BICContract
+import com.sebastienbalard.bicycle.SBLog
+import com.sebastienbalard.bicycle.models.BICStation
+import io.reactivex.Single
 
-class SBMapViewModel(context: Context) : ViewModel() {
+open class CityBikesDataSource(private val cityBikesApi: CityBikesApi) {
 
     companion object : SBLog()
 
-    var userLocation = SBLocationLiveData(context)
+    fun getStationsByContract(contract: BICContract): Single<List<BICStation>> {
+        val contractName = contract.url.substring(contract.url.lastIndexOf('/') + 1)
+        d("contract endpoint: $contractName (${contract.name})")
+        return cityBikesApi.getStations(contractName).map { response -> response.network.stations }
+    }
 }

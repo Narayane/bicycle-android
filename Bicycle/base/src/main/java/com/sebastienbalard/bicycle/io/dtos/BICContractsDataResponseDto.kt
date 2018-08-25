@@ -1,5 +1,5 @@
 /**
- * Copyright © 2017 Bicycle (Sébastien BALARD)
+ * Copyright © 2018 Bicycle (Sébastien BALARD)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,8 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle
+package com.sebastienbalard.bicycle.io.dtos
 
-import android.arch.lifecycle.ViewModel
-import android.content.Context
-import com.sebastienbalard.bicycle.models.SBLocationLiveData
+import com.sebastienbalard.bicycle.data.BICContract
 
-class SBMapViewModel(context: Context) : ViewModel() {
-
-    companion object : SBLog()
-
-    var userLocation = SBLocationLiveData(context)
-}
+class BICContractsDataResponseDto(val version: Int, val values: ArrayList<BICContract>)

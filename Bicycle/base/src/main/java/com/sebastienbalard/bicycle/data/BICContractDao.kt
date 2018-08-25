@@ -1,5 +1,5 @@
 /**
- * Copyright © 2017 Bicycle (Sébastien BALARD)
+ * Copyright © 2018 Bicycle (Sébastien BALARD)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle
+package com.sebastienbalard.bicycle.data
 
-import android.arch.lifecycle.ViewModel
-import android.content.Context
-import com.sebastienbalard.bicycle.models.SBLocationLiveData
+import android.arch.persistence.room.*
 
-class SBMapViewModel(context: Context) : ViewModel() {
+@Dao
+interface BICContractDao {
 
-    companion object : SBLog()
+    @Query("SELECT * FROM bic_contracts")
+    fun findAll(): List<BICContract>
 
-    var userLocation = SBLocationLiveData(context)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertAll(list: ArrayList<BICContract>): LongArray
+
+    @Delete
+    fun deleteAll(list: ArrayList<BICContract>)
+
+    @Query("SELECT COUNT(*) FROM bic_contracts")
+    fun getAllCount(): Int
 }

@@ -16,13 +16,9 @@
 
 package com.sebastienbalard.bicycle
 
-import android.arch.lifecycle.ViewModel
-import android.content.Context
-import com.sebastienbalard.bicycle.models.SBLocationLiveData
+const val NOTIFICATION_REQUEST_PERMISSION_LOCATION: Int = 10000
 
-class SBMapViewModel(context: Context) : ViewModel() {
-
-    companion object : SBLog()
-
-    var userLocation = SBLocationLiveData(context)
-}
+const val PREFERENCE_APP_CHECK_DELAY: String = "PREFERENCE_APP_CHECK_DELAY"
+const val PREFERENCE_CONTRACTS_CHECK_DELAY: String = "PREFERENCE_CONTRACTS_CHECK_DELAY"
+const val PREFERENCE_CONTRACTS_LAST_CHECK_DATE: String = "PREFERENCE_CONTRACTS_LAST_CHECK_DATE"
+const val PREFERENCE_CONTRACTS_VERSION: String = "PREFERENCE_CONTRACTS_VERSION"

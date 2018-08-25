@@ -1,5 +1,5 @@
 /**
- * Copyright © 2017 Bicycle (Sébastien BALARD)
+ * Copyright © 2018 Bicycle (Sébastien BALARD)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle
+package com.sebastienbalard.bicycle.io.dtos
 
-import android.arch.lifecycle.ViewModel
-import android.content.Context
-import com.sebastienbalard.bicycle.models.SBLocationLiveData
+import com.google.gson.annotations.SerializedName
 
-class SBMapViewModel(context: Context) : ViewModel() {
+class BICConfigResponseDto(val apps: BICConfigAppsDto, val contracts: BICConfigContractsDto)
 
-    companion object : SBLog()
+class BICConfigAppsDto(@SerializedName("check_delay") val delay: Int, val android: BICConfigAndroidDto)
 
-    var userLocation = SBLocationLiveData(context)
-}
+class BICConfigAndroidDto(val version: String, val force: Boolean)
+
+class BICConfigContractsDto(@SerializedName("check_delay") val delay: Int)

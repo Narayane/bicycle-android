@@ -1,5 +1,5 @@
 /**
- * Copyright © 2017 Bicycle (Sébastien BALARD)
+ * Copyright © 2018 Bicycle (Sébastien BALARD)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle
+package com.sebastienbalard.bicycle.di
 
-import android.arch.lifecycle.ViewModel
-import android.content.Context
-import com.sebastienbalard.bicycle.models.SBLocationLiveData
+import android.arch.persistence.room.Room
+import com.sebastienbalard.bicycle.BuildConfig
+import com.sebastienbalard.bicycle.data.BICDatabase
+import org.koin.android.ext.koin.androidContext
+import org.koin.dsl.module.module
 
-class SBMapViewModel(context: Context) : ViewModel() {
+val localDataSourceModule = module {
 
-    companion object : SBLog()
-
-    var userLocation = SBLocationLiveData(context)
+    single {
+        Room.databaseBuilder(androidContext(), BICDatabase::class.java, BuildConfig.ROOM_DB_NAME).build()
+    }
+    factory { get<BICDatabase>().getContractDao() }
 }

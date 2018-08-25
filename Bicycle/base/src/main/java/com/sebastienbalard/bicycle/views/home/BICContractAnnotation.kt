@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-package com.sebastienbalard.bicycle
+package com.sebastienbalard.bicycle.views.home
 
-import android.arch.lifecycle.ViewModel
-import android.content.Context
-import com.sebastienbalard.bicycle.models.SBLocationLiveData
+import com.sebastienbalard.bicycle.data.BICContract
 
-class SBMapViewModel(context: Context) : ViewModel() {
+open class BICContractAnnotation(val contract: BICContract) {
 
-    companion object : SBLog()
-
-    var userLocation = SBLocationLiveData(context)
 }

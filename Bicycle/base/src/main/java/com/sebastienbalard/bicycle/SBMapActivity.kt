@@ -28,9 +28,8 @@ import android.widget.TextView
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.Marker
 import com.sebastienbalard.bicycle.extensions.*
-import com.sebastienbalard.bicycle.misc.SBLog
-import kotlinx.android.synthetic.main.sb_widget_mapview.*
 import kotlinx.android.synthetic.main.sb_widget_appbar.*
+import kotlinx.android.synthetic.main.sb_widget_mapview.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
 abstract class SBMapActivity : SBActivity() {
@@ -48,7 +47,7 @@ abstract class SBMapActivity : SBActivity() {
         mapView.onStart()
         requestLocationPermissionsIfNeeded(NOTIFICATION_REQUEST_PERMISSION_LOCATION,
                 onGranted = {
-                    viewModelMap.userLocation.observe(this, Observer { location ->
+                    viewModelMap.userLocation.observe(this, Observer<Location> { location ->
                     refreshMap()
                     onUserLocationChanged(location)
                 })
@@ -61,7 +60,7 @@ abstract class SBMapActivity : SBActivity() {
             NOTIFICATION_REQUEST_PERMISSION_LOCATION ->
                 processPermissionsResults(permissions, grantResults,
                         onGranted = {
-                            viewModelMap.userLocation.observe(this, Observer { location ->
+                            viewModelMap.userLocation.observe(this, Observer<Location> { location ->
                                 refreshMap()
                                 onUserLocationChanged(location)
                             })
