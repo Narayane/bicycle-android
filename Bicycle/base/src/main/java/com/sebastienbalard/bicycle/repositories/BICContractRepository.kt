@@ -16,7 +16,6 @@
 
 package com.sebastienbalard.bicycle.repositories
 
-import android.location.Location
 import com.google.android.gms.maps.model.LatLng
 import com.sebastienbalard.bicycle.data.BICContract
 import com.sebastienbalard.bicycle.data.BICContractDao
@@ -45,7 +44,9 @@ open class BICContractRepository(private val bicycleDataSource: BicycleDataSourc
 
     init {
         async {
-            allContracts.addAll(contractDao.findAll())
+            val contracts = contractDao.findAll()
+            d("load ${contracts.count()} contracts")
+            allContracts.addAll(contracts)
         }
     }
 
@@ -59,13 +60,13 @@ open class BICContractRepository(private val bicycleDataSource: BicycleDataSourc
                             d("delete ${existing.size} contracts")
                             contractDao.deleteAll(existing as ArrayList<BICContract>)
                             contractDao.insertAll(response.values)
+                            d("insert ${response.values.count()} contracts")
                             preferenceRepository.contractsVersion = response.version
                         } else {
                             d("contracts are up-to-date")
                         }
                         preferenceRepository.contractsLastCheckDate = DateTime.now()
                         val count = contractDao.getAllCount()
-                        d("find $count contracts")
                         observer.onSuccess(count)
                     }, { error ->
                         observer.onError(error)
@@ -86,12 +87,14 @@ open class BICContractRepository(private val bicycleDataSource: BicycleDataSourc
         }.subscribeOn(Schedulers.newThread())
     }
 
-    fun getContractBy(location: Location): BICContract? {
+    /*fun getContractBy(location: Location): BICContract? {
         return getContractBy(LatLng(location.latitude, location.longitude))
-    }
+    }*/
 
     open fun getContractBy(latLng: LatLng): BICContract? {
-        val filteredList = allContracts.filter { contract -> contract.bounds.contains(latLng) }
+        val filteredList = allContracts.filter { contract ->
+            contract.bounds.contains(latLng)
+        }
         var rightContract: BICContract? = null
         if (filteredList.isNotEmpty()) {
             rightContract = filteredList.first()
@@ -122,9 +125,11 @@ open class BICContractRepository(private val bicycleDataSource: BicycleDataSourc
     }
 
     open fun reloadStationsBy(contract: BICContract): Single<List<BICStation>> {
-        return cityBikesDataSource.getStationsByContract(contract)
-                .doOnSuccess { stations -> cacheStations[contract.name] = stations }
-                .doOnError { throwable -> e("fail to get contract stations", throwable) }
+        return cityBikesDataSource.getStationsBy(contract)
+                .doOnSuccess { stations ->
+                    cacheStations[contract.name] = stations
+                }
+                .doOnError { throwable -> e("fail to reload contract stations", throwable) }
     }
 
     /*private fun loadContracts() {

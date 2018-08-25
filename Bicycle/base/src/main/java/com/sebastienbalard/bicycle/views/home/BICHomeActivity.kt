@@ -221,6 +221,7 @@ class BICHomeActivity : SBMapActivity() {
             timer!!.scheduleAtFixedRate(timerTask {
                 d("timer fired")
                 viewModelHome.currentContract?.let {
+                    d("refresh contract stations: ${it.name} (${it.provider.tag})")
                     viewModelHome.refreshStationsFor(it)
                 }
             }, delay, delay)

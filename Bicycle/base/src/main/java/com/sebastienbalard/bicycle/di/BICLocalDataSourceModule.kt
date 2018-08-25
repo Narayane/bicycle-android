@@ -24,7 +24,7 @@ import org.koin.dsl.module.module
 
 val localDataSourceModule = module {
 
-    single {
+    factory {
         Room.databaseBuilder(androidContext(), BICDatabase::class.java, BuildConfig.ROOM_DB_NAME).build()
     }
     factory { get<BICDatabase>().getContractDao() }

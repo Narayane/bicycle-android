@@ -33,15 +33,15 @@ val commonModule = module {
     single { PreferenceManager.getDefaultSharedPreferences(androidContext()) }
     single { BicycleDataSource(get()) }
     single { CityBikesDataSource(get()) }
-    single { BICContractRepository(get(), get(), get(), get()) }
     single { BICPreferenceRepository(get(), get()) }
+    single { BICContractRepository(get(), get(), get(), get()) }
 
     viewModel { SBMapViewModel(get()) }
-    viewModel { BICSplashViewModel(get(), get(), get()) }
 }
 
 val homeModule = module {
 
+    viewModel { BICSplashViewModel(get(), get(), get()) }
     viewModel { BICHomeViewModel(get()) }
 }
 

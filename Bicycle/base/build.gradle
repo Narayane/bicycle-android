@@ -59,7 +59,7 @@ android {
 
 dependencies {
     application project(':app')
-    feature project(':feature')
+    //feature project(':ride')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
