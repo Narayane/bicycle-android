@@ -4,6 +4,12 @@ buildscript {
 
     ext.kotlin_version = '1.2.61'
     ext.support_version = '27.1.1'
+    ext.play_services_version = '15.0.1'
+    ext.crashlytics_version = '2.9.5'
+    ext.koin_version = '1.0.0-beta-7'
+    ext.arch_version = '1.1.1'
+    ext.logback_version = '1.1.1-12'
+    ext.jodatime_version = '2.9.9'
 
     repositories {
         google()
@@ -29,6 +35,15 @@ allprojects {
         jcenter()
         maven {
             url 'https://maven.google.com/'
+        }
+    }
+    configurations {
+        all {
+            resolutionStrategy {
+                force "android.arch.lifecycle:runtime:$arch_version"
+                force "android.arch.lifecycle:livedata-core:$arch_version"
+                force "android.arch.lifecycle:viewmodel:$arch_version"
+            }
         }
     }
 }

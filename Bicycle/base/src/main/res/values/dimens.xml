@@ -15,14 +15,18 @@
     limitations under the License.
 -->
 <resources>
+    <!-- margins -->
+    <dimen name="bic_margin_horizontal_default">16dp</dimen>
+    <dimen name="bic_margin_vertical_default">16dp</dimen>
+    <dimen name="bic_margin_vertical_half">8dp</dimen>
+    <dimen name="bic_margin_fab">16dp</dimen>
+    <dimen name="bic_size_annotation">64dp</dimen>
+    <dimen name="bic_size_annotation_place">48dp</dimen>
+    <!-- text sizes -->
+    <dimen name="bic_size_font_headline">24sp</dimen>
+    <dimen name="bic_size_font_subhead">17sp</dimen>
+    <dimen name="bic_size_font_body">14sp</dimen>
+    <dimen name="bic_size_font_caption">11sp</dimen>
 
-    <style name="AppTheme.Widget.Button" parent="@style/Widget.AppCompat.Button">
-        <item name="android:padding">4dp</item>
-        <item name="android:backgroundTint">@color/bic_selector_button_background</item>
-    </style>
-
-    <style name="AppTheme.Widget.Button.Borderless" parent="@style/Widget.AppCompat.Button.Borderless">
-        <item name="android:padding">4dp</item>
-    </style>
-
+    <dimen name="bic_width_polyline">5dp</dimen>
 </resources>

@@ -14,15 +14,6 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<resources>
-
-    <style name="AppTheme.Widget.Button" parent="@style/Widget.AppCompat.Button">
-        <item name="android:padding">4dp</item>
-        <item name="android:backgroundTint">@color/bic_selector_button_background</item>
-    </style>
-
-    <style name="AppTheme.Widget.Button.Borderless" parent="@style/Widget.AppCompat.Button.Borderless">
-        <item name="android:padding">4dp</item>
-    </style>
-
+<resources xmlns:tools="http://schemas.android.com/tools" tools:override="true">
+    <integer name="design_snackbar_text_max_lines">3</integer>
 </resources>

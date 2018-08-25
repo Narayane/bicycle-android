@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright © 2017 Bicycle (Sébastien BALARD)
+    Copyright © 2018 Bicycle (Sébastien BALARD)
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -14,15 +14,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<resources>
 
-    <style name="AppTheme.Widget.Button" parent="@style/Widget.AppCompat.Button">
-        <item name="android:padding">4dp</item>
-        <item name="android:backgroundTint">@color/bic_selector_button_background</item>
-    </style>
-
-    <style name="AppTheme.Widget.Button.Borderless" parent="@style/Widget.AppCompat.Button.Borderless">
-        <item name="android:padding">4dp</item>
-    </style>
-
-</resources>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/bic_color_grey_light" android:state_enabled="false"/>
+    <item android:color="@color/bic_color_accent"/>
+</selector>

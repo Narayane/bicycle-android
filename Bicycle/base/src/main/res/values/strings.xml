@@ -1,3 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright © 2017 Bicycle (Sébastien BALARD)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
 <resources>
     <string name="app_name">Bicycle</string>
+    <string name="bic_app_catching">Allez-y en vélo</string>
+    <!-- actions -->
+    <string name="bic_actions_allow">Autoriser</string>
+    <string name="bic_actions_search">Rechercher</string>
+    <string name="bic_actions_favorites">Mes trajets favoris</string>
+    <string name="bic_actions_help">Aide</string>
+    <string name="bic_actions_about">À propos</string>
+    <!-- commons -->
+    <string name="bic_commons_ride">Votre trajet</string>
+    <string name="bic_commons_departure">Départ</string>
+    <string name="bic_commons_arrival">Arrivée</string>
+    <!-- messages -->
+    <string name="bic_messages_info_init">Initialisation</string>
+    <string name="bic_messages_info_config">Configuration</string>
+    <string name="bic_messages_info_check_contracts_data_version">Recherche de nouvelles villes</string>
+    <string name="bic_messages_info_update_contracts">Mise à jour des villes</string>
+    <string name="bic_messages_info_contracts_loaded">%1$d villes disponibles</string>
+    <string name="bic_messages_error_no_play_services_installed">Merci de vérifier que les Google Play Services sont
+        bien installés sur votre appareil</string>
+    <string name="bic_messages_warning_request_location_permissions">L\'application fonctionnera en mode dégradé si
+        vous ne lui permettez pas d\'accéder à votre position</string>
+    <string name="bic_messages_warning_get_current_contract_stations">Nous n\'avons pas pu récupérer les données des stations</string>
+    <string name="bic_messages_available_soon">Bientôt disponible</string>
+    <string name="bic_messages_warning_not_the_same_contract">Votre trajet n\'est pas valide</string>
 </resources>
