@@ -21,26 +21,26 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
+import android.support.v4.widget.NestedScrollView
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.clustering.ClusterManager
-import com.sebastienbalard.bicycle.BuildConfig
-import com.sebastienbalard.bicycle.EventFailure
-import com.sebastienbalard.bicycle.R
-import com.sebastienbalard.bicycle.SBMapActivity
+import com.sebastienbalard.bicycle.*
 import com.sebastienbalard.bicycle.data.BICContract
-import com.sebastienbalard.bicycle.extensions.getBitmapDescriptor
-import com.sebastienbalard.bicycle.SBLog
+import com.sebastienbalard.bicycle.models.BICStation
 import com.sebastienbalard.bicycle.viewmodels.*
 import com.sebastienbalard.bicycle.views.BICAboutActivity
 import com.sebastienbalard.bicycle.views.BICHelpActivity
+import kotlinx.android.synthetic.main.bic_activity_home.*
 import kotlinx.android.synthetic.main.sb_widget_appbar.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
@@ -54,8 +54,8 @@ class BICHomeActivity : SBMapActivity() {
 
     companion object : SBLog() {
         fun getIntent(context: Context): Intent {
-            return Intent(context, BICHomeActivity::class.java)/*.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent
-                    .FLAG_ACTIVITY_CLEAR_TOP)*/
+            return Intent(context, BICHomeActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent
+                    .FLAG_ACTIVITY_CLEAR_TOP)
         }
     }
 
@@ -64,6 +64,8 @@ class BICHomeActivity : SBMapActivity() {
     private var clusterManager: ClusterManager<BICStationAnnotation>? = null
     private var listContractsAnnotations: MutableList<Marker>? = null
     private var timer: Timer? = null
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<NestedScrollView>
+    private var selectedMarker: Marker? = null
 
     //region Lifecycle methods
 
@@ -76,12 +78,14 @@ class BICHomeActivity : SBMapActivity() {
         listContractsAnnotations = mutableListOf()
 
         initMap(savedInstanceState)
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         viewModelHome.states.observe(this, Observer { state ->
             state?.let {
                 when (it) {
-                    is StateShowContracts -> ""
-                    is StateShowStations -> ""
+                    is StateShowContracts -> hideBottomSheet()
+                    is StateShowStations -> hideBottomSheet()
                     else -> w("unexpected case")
                 }
             }
@@ -89,9 +93,7 @@ class BICHomeActivity : SBMapActivity() {
         viewModelHome.events.observe(this, Observer { event ->
             event?.let {
                 when (it) {
-                    is EventContractList -> {
-                        createAnnotationsFor(it.contracts)
-                    }
+                    is EventContractList -> createAnnotationsFor(it.contracts)
                     is EventOutOfAnyContract -> {
                         d("current bounds is out of contracts cover")
                         stopTimer()
@@ -110,6 +112,7 @@ class BICHomeActivity : SBMapActivity() {
                     }
                     is EventStationList -> {
                         clusterManager?.clearItems()
+                        hideBottomSheet()
                         it.stations.map { station ->
                             clusterManager?.addItem(BICStationAnnotation(station))
                         }
@@ -117,6 +120,7 @@ class BICHomeActivity : SBMapActivity() {
                     }
                     is EventFailure -> {
                         clusterManager?.clearItems()
+                        hideBottomSheet()
                         showErrorForCurrentContractStation()
                     }
                     else -> w("unexpected case")
@@ -193,7 +197,36 @@ class BICHomeActivity : SBMapActivity() {
     }
 
     override fun onMarkerClicked(marker: Marker) {
+        selectedMarker?.let { currentMarker ->
+            if (currentMarker == marker) {
+                return // same marker clicked
+            } else {
+                unselectedMarker(currentMarker)
+            }
+        }
+        marker.snippet?.apply {
+            if (startsWith("type=")) {
+                if (endsWith("station")) {
+                    (marker.tag as? BICStation)?.apply {
+                        marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconSelected))
+                        textViewBottomSheetTitle.text = name
+                    }
+                } else if (endsWith("contract")) {
+                    (marker.tag as? BICContract)?.apply {
+                        marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconSelected))
+                        textViewBottomSheetTitle.text = name
+                    }
+                }
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                selectedMarker = marker
+            }
+        }
+    }
 
+    override fun onMapClicked() {
+        selectedMarker?.let { currentMarker ->
+            unselectedMarker(currentMarker)
+        }
     }
 
     override fun onCameraIdle() {
@@ -203,6 +236,28 @@ class BICHomeActivity : SBMapActivity() {
     //endregion
 
     //region Private methods
+
+    private fun unselectedMarker(marker: Marker) {
+        marker.snippet?.apply {
+            if (startsWith("type=")) {
+                if (endsWith("station")) {
+                    (marker.tag as? BICStation)?.apply {
+                        marker.setIcon(BitmapDescriptorFactory.fromBitmap(icon))
+                    }
+                } else if (endsWith("contract")) {
+                    (marker.tag as? BICContract)?.apply {
+                        marker.setIcon(BitmapDescriptorFactory.fromBitmap(icon))
+                    }
+                }
+            }
+        }
+        hideBottomSheet()
+    }
+
+    private fun hideBottomSheet() {
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        selectedMarker = null
+    }
 
     private fun showErrorForCurrentContractStation() {
         val snackbar = Snackbar.make(toolbar, R.string.bic_messages_warning_get_current_contract_stations, Snackbar.LENGTH_LONG)
@@ -246,7 +301,6 @@ class BICHomeActivity : SBMapActivity() {
             } else {
                 stopTimer()
                 viewModelHome.getAllContracts()
-                //createContractsAnnotations()
             }
         }
     }
@@ -262,8 +316,6 @@ class BICHomeActivity : SBMapActivity() {
     }
 
     private fun createAnnotationsFor(contracts: List<BICContract>) {
-        val size = resources.getDimensionPixelSize(R.dimen.bic_size_annotation)
-        val imageContract = getBitmapDescriptor(R.drawable.bic_img_contract, size, size)
         val hasMarkers = clusterManager?.markerCollection?.markers?.isNotEmpty()?.or(false)!!
         val hasClusterMarkers = clusterManager?.clusterMarkerCollection?.markers?.isNotEmpty()?.or(false)!!
         if (hasMarkers || hasClusterMarkers) {
@@ -277,11 +329,12 @@ class BICHomeActivity : SBMapActivity() {
                 contracts.map { contract ->
                     options = MarkerOptions()
                     options.position(contract.center)
-                    options.icon(imageContract)
-                    options.title(contract.name)
+                    options.icon(BitmapDescriptorFactory.fromBitmap(contract.icon))
+                    options.snippet("type=contract")
                     run(UI) {
-                        googleMap?.addMarker(options)?.let {
-                            listContractsAnnotations?.add(it)
+                        googleMap?.addMarker(options)?.let { marker ->
+                            listContractsAnnotations?.add(marker)
+                            marker.tag = contract
                         }
                     }
                 }

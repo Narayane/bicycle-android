@@ -110,6 +110,8 @@ abstract class SBMapActivity : SBActivity() {
 
     protected abstract fun onMarkerClicked(marker: Marker)
 
+    protected abstract fun onMapClicked()
+
     protected abstract fun onCameraIdle()
 
     protected fun initMap(savedInstanceState: Bundle?) {
@@ -122,6 +124,7 @@ abstract class SBMapActivity : SBActivity() {
                 onMapInitialized()
                 googleMap!!.setOnMapClickListener {
                     v("onMapClick")
+                    onMapClicked()
                 }
                 googleMap!!.setOnMarkerClickListener { marker ->
                     v("onMarkerClick")

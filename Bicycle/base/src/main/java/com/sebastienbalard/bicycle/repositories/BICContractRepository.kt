@@ -42,14 +42,6 @@ open class BICContractRepository(private val bicycleDataSource: BicycleDataSourc
     private var allContracts = ArrayList<BICContract>()
     private var cacheStations = HashMap<String, List<BICStation>>()
 
-    init {
-        async {
-            val contracts = contractDao.findAll()
-            d("load ${contracts.count()} contracts")
-            allContracts.addAll(contracts)
-        }
-    }
-
     open fun updateContracts(): Single<Int> {
         return Single.create<Int> { observer ->
             bicycleDataSource.getContracts()
@@ -65,9 +57,11 @@ open class BICContractRepository(private val bicycleDataSource: BicycleDataSourc
                         } else {
                             d("contracts are up-to-date")
                         }
+                        val contracts = contractDao.findAll()
+                        d("load ${contracts.count()} contracts")
+                        allContracts.addAll(contracts)
                         preferenceRepository.contractsLastCheckDate = DateTime.now()
-                        val count = contractDao.getAllCount()
-                        observer.onSuccess(count)
+                        observer.onSuccess(contracts.count())
                     }, { error ->
                         observer.onError(error)
                     })
@@ -76,14 +70,17 @@ open class BICContractRepository(private val bicycleDataSource: BicycleDataSourc
 
     open fun getContractCount(): Single<Int> {
         return Single.create<Int> { observer ->
-            observer.onSuccess(contractDao.getAllCount())
+            val contracts = contractDao.findAll()
+            d("load ${contracts.count()} contracts")
+            allContracts.addAll(contracts)
+            observer.onSuccess(contracts.count())
         }.subscribeOn(Schedulers.newThread())
     }
 
     open fun loadAllContracts(): Single<List<BICContract>> {
         d("get contracts from local")
         return Single.create<List<BICContract>> { observer ->
-            observer.onSuccess(contractDao.findAll())
+            observer.onSuccess(allContracts)
         }.subscribeOn(Schedulers.newThread())
     }
 

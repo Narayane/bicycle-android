@@ -17,6 +17,7 @@
 package com.sebastienbalard.bicycle
 
 import android.app.Application
+import com.sebastienbalard.bicycle.data.BICContract
 import com.sebastienbalard.bicycle.di.bicycleApp
 import com.sebastienbalard.bicycle.models.BICStation
 import net.danlew.android.joda.JodaTimeAndroid
@@ -31,6 +32,7 @@ class BICApplication : Application() {
         v("onCreate")
         startKoin(this, bicycleApp)
         JodaTimeAndroid.init(applicationContext)
+        BICContract.initConstants(applicationContext)
         BICStation.initConstants(applicationContext)
     }
 

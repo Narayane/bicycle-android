@@ -20,12 +20,20 @@ import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.PrimaryKey
+import android.content.Context
+import android.graphics.Bitmap
 import android.support.annotation.NonNull
+import android.support.v4.content.ContextCompat
+import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.gson.annotations.SerializedName
 import com.google.maps.android.SphericalUtil
+import com.sebastienbalard.bicycle.R
+import com.sebastienbalard.bicycle.extensions.getBitmap
+import com.sebastienbalard.bicycle.extensions.getBitmapDescriptor
 import java.lang.Math.sqrt
+import kotlin.properties.Delegates
 
 @Entity(tableName = "bic_contracts")
 data class BICContract(
@@ -51,11 +59,29 @@ data class BICContract(
             return LatLngBounds(southwestCorner, northeastCorner)
         }
 
+    val icon: Bitmap
+        get() = imageContract
+
+    val iconSelected: Bitmap
+        get() = imageContractSelected
+
     enum class Provider(val tag: String) {
         @SerializedName("CityBikes") CityBikes("CityBikes");
 
         companion object {
             fun from(tag: String): Provider = Provider.values().first { it.tag == tag }
+        }
+    }
+
+    companion object {
+        var size: Int by Delegates.notNull()
+        lateinit var imageContract: Bitmap
+        lateinit var imageContractSelected: Bitmap
+
+        fun initConstants(context: Context) {
+            size = context.resources.getDimensionPixelSize(R.dimen.bic_size_annotation)
+            imageContract = context.getBitmap(R.drawable.bic_img_contract, size, size)
+            imageContractSelected = context.getBitmap(R.drawable.bic_img_contract_selected, size, size)
         }
     }
 }

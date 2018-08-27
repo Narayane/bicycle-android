@@ -62,7 +62,7 @@
             android:indeterminate="true"
             android:layout_above="@id/textViewTitle"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/bic_margin_vertical_half"/>
+            android:layout_marginBottom="@dimen/bic_margin_half"/>
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/textViewTitle"

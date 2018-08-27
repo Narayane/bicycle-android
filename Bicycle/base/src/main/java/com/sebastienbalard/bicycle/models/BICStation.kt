@@ -24,6 +24,7 @@ import com.google.gson.annotations.SerializedName
 import com.sebastienbalard.bicycle.R
 import com.sebastienbalard.bicycle.extensions.drawOn
 import com.sebastienbalard.bicycle.extensions.getBitmap
+import com.sebastienbalard.bicycle.extensions.getBitmapDescriptor
 import kotlin.properties.Delegates
 
 data class BICStation(val name: String,
@@ -31,20 +32,6 @@ data class BICStation(val name: String,
                       private val longitude: Double,
                       @SerializedName("free_bikes") val availableBikesCount: Int,
                       @SerializedName("empty_slots") val freeStandsCount: Int) {
-
-    companion object {
-        var size: Int by Delegates.notNull()
-        var textSize: Int by Delegates.notNull()
-        lateinit var imageStation: Bitmap
-        var textColor: Int by Delegates.notNull()
-
-        fun initConstants(context: Context) {
-            size = context.resources.getDimensionPixelSize(R.dimen.bic_size_annotation)
-            textSize = context.resources.getDimensionPixelSize(R.dimen.bic_size_font_body)
-            imageStation = context.getBitmap(R.drawable.bic_img_station, size, size)
-            textColor = ContextCompat.getColor(context, R.color.bic_color_white)
-        }
-    }
 
     val location: LatLng
         get() = LatLng(latitude, longitude)
@@ -55,4 +42,28 @@ data class BICStation(val name: String,
             bitmap = bitmap.drawOn(freeStandsCount.toString(), textColor, textSize.toFloat(), 1.65f)
             return bitmap
         }
+
+    val iconSelected: Bitmap
+        get() {
+            var bitmap = imageStationSelected.drawOn(availableBikesCount.toString(), textColor, textSize.toFloat(), 3.75f)
+            bitmap = bitmap.drawOn(freeStandsCount.toString(), textColor, textSize.toFloat(), 1.65f)
+            return bitmap
+        }
+
+    companion object {
+        var size: Int by Delegates.notNull()
+        var textSize: Int by Delegates.notNull()
+        var textColor: Int by Delegates.notNull()
+        lateinit var imageStation: Bitmap
+        lateinit var imageStationSelected: Bitmap
+
+        fun initConstants(context: Context) {
+            size = context.resources.getDimensionPixelSize(R.dimen.bic_size_annotation)
+            textSize = context.resources.getDimensionPixelSize(R.dimen.bic_size_font_body)
+            imageStation = context.getBitmap(R.drawable.bic_img_station, size, size)
+            textColor = ContextCompat.getColor(context, R.color.bic_color_white)
+            imageStation = context.getBitmap(R.drawable.bic_img_station, size, size)
+            imageStationSelected = context.getBitmap(R.drawable.bic_img_station_selected, size, size)
+        }
+    }
 }

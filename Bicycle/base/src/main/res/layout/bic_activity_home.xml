@@ -25,4 +25,50 @@
 
     <include layout="@layout/sb_widget_mapview" />
 
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/bottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        app:behavior_hideable="true"
+        android:clipToPadding="true"
+        android:background="@color/bic_color_white"
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/bic_margin_horizontal_default">
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/textViewBottomSheetTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/bic_size_font_headline"
+                app:autoSizeMinTextSize="@dimen/bic_size_font_body"
+                android:maxLines="2"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/textViewBottomSheetSubtitle"
+                tools:text="Place de l'Ormeau"/>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/textViewBottomSheetSubtitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/bic_size_font_body"
+                app:autoSizeMinTextSize="@dimen/bic_size_font_caption"
+                android:maxLines="1"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintTop_toBottomOf="@+id/textViewBottomSheetTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:text="Toulouse"/>
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
 </android.support.design.widget.CoordinatorLayout>

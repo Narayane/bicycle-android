@@ -18,7 +18,8 @@
     <!-- margins -->
     <dimen name="bic_margin_horizontal_default">16dp</dimen>
     <dimen name="bic_margin_vertical_default">16dp</dimen>
-    <dimen name="bic_margin_vertical_half">8dp</dimen>
+    <dimen name="bic_margin_half">8dp</dimen>
+    <dimen name="bic_margin_quarter">4dp</dimen>
     <dimen name="bic_margin_fab">16dp</dimen>
     <dimen name="bic_size_annotation">64dp</dimen>
     <dimen name="bic_size_annotation_place">48dp</dimen>
