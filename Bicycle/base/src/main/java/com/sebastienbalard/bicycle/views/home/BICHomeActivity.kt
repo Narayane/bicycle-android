@@ -65,7 +65,6 @@ class BICHomeActivity : SBMapActivity() {
     private var listContractsAnnotations: MutableList<Marker>? = null
     private var timer: Timer? = null
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<NestedScrollView>
-    private var selectedMarker: Marker? = null
 
     //region Lifecycle methods
 
@@ -82,11 +81,11 @@ class BICHomeActivity : SBMapActivity() {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         viewModelHome.states.observe(this, Observer { state ->
-            state?.let {
-                when (it) {
-                    is StateShowContracts -> hideBottomSheet()
-                    is StateShowStations -> hideBottomSheet()
-                    else -> w("unexpected case")
+            state?.apply {
+                when (this) {
+                    is StateShowContracts -> {}
+                    is StateShowStations -> {}
+                    else -> w("unexpected state")
                 }
             }
         })
@@ -197,36 +196,11 @@ class BICHomeActivity : SBMapActivity() {
     }
 
     override fun onMarkerClicked(marker: Marker) {
-        selectedMarker?.let { currentMarker ->
-            if (currentMarker == marker) {
-                return // same marker clicked
-            } else {
-                unselectedMarker(currentMarker)
-            }
-        }
-        marker.snippet?.apply {
-            if (startsWith("type=")) {
-                if (endsWith("station")) {
-                    (marker.tag as? BICStation)?.apply {
-                        marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconSelected))
-                        textViewBottomSheetTitle.text = name
-                    }
-                } else if (endsWith("contract")) {
-                    (marker.tag as? BICContract)?.apply {
-                        marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconSelected))
-                        textViewBottomSheetTitle.text = name
-                    }
-                }
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                selectedMarker = marker
-            }
-        }
+        showBottomSheet(marker)
     }
 
     override fun onMapClicked() {
-        selectedMarker?.let { currentMarker ->
-            unselectedMarker(currentMarker)
-        }
+        hideBottomSheet()
     }
 
     override fun onCameraIdle() {
@@ -237,8 +211,61 @@ class BICHomeActivity : SBMapActivity() {
 
     //region Private methods
 
-    private fun unselectedMarker(marker: Marker) {
+    private fun showBottomSheet(marker: Marker) {
+        v("showBottomSheet")
+        deselectMarker(selectedMarker)
+        refreshBottomSheetLayout(marker)
+        if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+        selectMarker(marker)
+        selectedMarker = marker
+    }
+
+    private fun hideBottomSheet() {
+        v("hideBottomSheet")
+        deselectMarker(selectedMarker)
+        if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+        selectedMarker = null
+    }
+
+    private fun refreshBottomSheetLayout(marker: Marker) {
         marker.snippet?.apply {
+            if (startsWith("type=")) {
+                if (endsWith("station")) {
+                    (marker.tag as? BICStation)?.apply {
+                        textViewBottomSheetTitle.text = name
+                    }
+                } else if (endsWith("contract")) {
+                    (marker.tag as? BICContract)?.apply {
+                        textViewBottomSheetTitle.text = name
+                    }
+                }
+            }
+        }
+    }
+
+    private fun selectMarker(marker: Marker?) {
+        marker?.snippet?.apply {
+            if (startsWith("type=")) {
+                if (endsWith("station")) {
+                    (marker.tag as? BICStation)?.apply {
+                        marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconSelected))
+                    }
+                } else if (endsWith("contract")) {
+                    (marker.tag as? BICContract)?.apply {
+                        marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconSelected))
+                    }
+                }
+                selectedMarker = marker
+            }
+        }
+    }
+
+    private fun deselectMarker(marker: Marker?) {
+        marker?.snippet?.apply {
             if (startsWith("type=")) {
                 if (endsWith("station")) {
                     (marker.tag as? BICStation)?.apply {
@@ -251,12 +278,6 @@ class BICHomeActivity : SBMapActivity() {
                 }
             }
         }
-        hideBottomSheet()
-    }
-
-    private fun hideBottomSheet() {
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        selectedMarker = null
     }
 
     private fun showErrorForCurrentContractStation() {
@@ -284,9 +305,9 @@ class BICHomeActivity : SBMapActivity() {
     }
 
     private fun stopTimer() {
-        timer?.let {
+        timer?.apply {
             d("stop timer")
-            it.cancel()
+            cancel()
             timer = null
         }
     }
@@ -306,24 +327,24 @@ class BICHomeActivity : SBMapActivity() {
     }
 
     private fun deleteContractsAnnotations() {
-        listContractsAnnotations?.let {
-            if (it.size > 0) {
+        listContractsAnnotations?.apply {
+            if (size > 0) {
                 d("delete contracts annotations")
-                it.map { marker -> marker.remove() }
-                it.clear()
+                map { marker -> marker.remove() }
+                clear()
             }
         }
     }
 
     private fun createAnnotationsFor(contracts: List<BICContract>) {
-        val hasMarkers = clusterManager?.markerCollection?.markers?.isNotEmpty()?.or(false)!!
-        val hasClusterMarkers = clusterManager?.clusterMarkerCollection?.markers?.isNotEmpty()?.or(false)!!
-        if (hasMarkers || hasClusterMarkers) {
-            clusterManager?.clearItems()
-            clusterManager?.cluster()
-        }
         if (listContractsAnnotations?.size == 0) {
             d("create contracts annotations")
+            val hasMarkers = clusterManager?.markerCollection?.markers?.isNotEmpty()?.or(false)!!
+            val hasClusterMarkers = clusterManager?.clusterMarkerCollection?.markers?.isNotEmpty()?.or(false)!!
+            if (hasMarkers || hasClusterMarkers) {
+                clusterManager?.clearItems()
+                clusterManager?.cluster()
+            }
             async(CommonPool) {
                 var options: MarkerOptions
                 contracts.map { contract ->

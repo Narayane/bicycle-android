@@ -39,6 +39,7 @@ abstract class SBMapActivity : SBActivity() {
     protected val viewModelMap: SBMapViewModel by viewModel()
 
     protected var googleMap: GoogleMap? = null
+    protected var selectedMarker: Marker? = null
 
     //region Lifecycle methods
 
@@ -127,9 +128,13 @@ abstract class SBMapActivity : SBActivity() {
                     onMapClicked()
                 }
                 googleMap!!.setOnMarkerClickListener { marker ->
-                    v("onMarkerClick")
-                    onMarkerClicked(marker)
-                    false
+                    if (selectedMarker != null && selectedMarker!! == marker) {
+                        true // current selected marker clicked
+                    } else {
+                        v("onMarkerClick")
+                        onMarkerClicked(marker)
+                        false
+                    }
                 }
                 googleMap!!.setOnCameraIdleListener {
                     v("onCameraIdle")
