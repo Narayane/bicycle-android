@@ -27,6 +27,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.widget.NestedScrollView
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -54,15 +55,14 @@ class BICHomeActivity : SBMapActivity() {
 
     companion object : SBLog() {
         fun getIntent(context: Context): Intent {
-            return Intent(context, BICHomeActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent
-                    .FLAG_ACTIVITY_CLEAR_TOP)
+            return Intent(context, BICHomeActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
     }
 
     private val viewModelHome: BICHomeViewModel by viewModel()
 
-    private var clusterManager: ClusterManager<BICStationAnnotation>? = null
-    private var listContractsAnnotations: MutableList<Marker>? = null
+    private var clusterContracts: ClusterManager<BICContractAnnotation>? = null
+    private var clusterStations: ClusterManager<BICStationAnnotation>? = null
     private var timer: Timer? = null
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<NestedScrollView>
 
@@ -74,8 +74,6 @@ class BICHomeActivity : SBMapActivity() {
         v("onCreate")
         initToolbar()
 
-        listContractsAnnotations = mutableListOf()
-
         initMap(savedInstanceState)
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -83,8 +81,8 @@ class BICHomeActivity : SBMapActivity() {
         viewModelHome.states.observe(this, Observer { state ->
             state?.apply {
                 when (this) {
-                    is StateShowContracts -> {}
-                    is StateShowStations -> {}
+                    is StateShowContracts -> fabContractZoom.visibility = View.INVISIBLE
+                    is StateShowStations -> fabContractZoom.visibility = View.GONE
                     else -> w("unexpected state")
                 }
             }
@@ -92,7 +90,14 @@ class BICHomeActivity : SBMapActivity() {
         viewModelHome.events.observe(this, Observer { event ->
             event?.let {
                 when (it) {
-                    is EventContractList -> createAnnotationsFor(it.contracts)
+                    is EventContractList -> {
+                        clusterContracts?.clearItems()
+                        hideBottomSheet()
+                        it.contracts.map { contract ->
+                            clusterContracts?.addItem(BICContractAnnotation(contract))
+                        }
+                        clusterContracts?.cluster()
+                    }
                     is EventOutOfAnyContract -> {
                         d("current bounds is out of contracts cover")
                         stopTimer()
@@ -107,22 +112,34 @@ class BICHomeActivity : SBMapActivity() {
                     is EventSameContract -> {
                         v("current contract has not changed")
                         // reload clustering
-                        clusterManager?.cluster()
+                        clusterStations?.cluster()
                     }
                     is EventStationList -> {
-                        clusterManager?.clearItems()
+                        clusterStations?.clearItems()
                         hideBottomSheet()
                         it.stations.map { station ->
-                            clusterManager?.addItem(BICStationAnnotation(station))
+                            clusterStations?.addItem(BICStationAnnotation(station))
                         }
-                        clusterManager?.cluster()
+                        clusterStations?.cluster()
                     }
                     is EventFailure -> {
-                        clusterManager?.clearItems()
-                        hideBottomSheet()
-                        showErrorForCurrentContractStation()
+                        viewModelHome.states.value?.apply {
+                            when (this) {
+                                is StateShowContracts -> {
+                                    clusterContracts?.clearItems()
+                                    hideBottomSheet()
+                                    //TODO: display error message
+                                }
+                                is StateShowStations -> {
+                                    clusterStations?.clearItems()
+                                    hideBottomSheet()
+                                    showErrorForCurrentContractStation()
+                                }
+                                else -> w("unexpected state")
+                            }
+                        }
                     }
-                    else -> w("unexpected case")
+                    else -> w("unexpected event")
                 }
             }
         })
@@ -178,9 +195,11 @@ class BICHomeActivity : SBMapActivity() {
     //region Map events
 
     override fun onMapInitialized() {
-        clusterManager = ClusterManager(this, googleMap!!)
-        clusterManager?.renderer = BICStationAnnotation.Renderer(this, googleMap!!, clusterManager!!)
-        googleMap!!.setOnInfoWindowClickListener(clusterManager)
+        clusterContracts = ClusterManager(this, googleMap!!)
+        clusterContracts?.renderer = BICContractAnnotation.Renderer(this, googleMap!!, clusterContracts!!)
+        clusterStations = ClusterManager(this, googleMap!!)
+        clusterStations?.renderer = BICStationAnnotation.Renderer(this, googleMap!!, clusterStations!!)
+        //googleMap!!.setOnInfoWindowClickListener(clusterStations)
     }
 
     override fun onMapRefreshed(hasLocationPermissions: Boolean) {
@@ -214,16 +233,40 @@ class BICHomeActivity : SBMapActivity() {
     private fun showBottomSheet(marker: Marker) {
         v("showBottomSheet")
         deselectMarker(selectedMarker)
-        refreshBottomSheetLayout(marker)
-        if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        if (marker.snippet == null) {
+            viewModelHome.states.value?.apply {
+                when (this) {
+                    is StateShowContracts -> fabContractZoom.visibility = View.INVISIBLE
+                    else -> fabContractZoom.visibility = View.GONE
+                }
+            }
+            if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            }
+            selectedMarker = null
+        } else {
+            refreshBottomSheetLayout(marker)
+            if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }
+            selectMarker(marker)
+            viewModelHome.states.value?.apply {
+                when (this) {
+                    is StateShowContracts -> fabContractZoom.visibility = View.VISIBLE
+                    else -> fabContractZoom.visibility = View.GONE
+                }
+            }
         }
-        selectMarker(marker)
-        selectedMarker = marker
     }
 
     private fun hideBottomSheet() {
         v("hideBottomSheet")
+        viewModelHome.states.value?.apply {
+            when (this) {
+                is StateShowContracts -> fabContractZoom.visibility = View.INVISIBLE
+                else -> fabContractZoom.visibility = View.GONE
+            }
+        }
         deselectMarker(selectedMarker)
         if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -317,59 +360,34 @@ class BICHomeActivity : SBMapActivity() {
         level?.let {
             d("current zoom level: $level")
             if (it >= 10) {
-                deleteContractsAnnotations()
+                if (!haveStationAnnotations()) {
+                    clusterContracts?.clearItems()
+                    clusterContracts?.cluster()
+                }
                 viewModelHome.determineCurrentContract(googleMap!!.projection.visibleRegion.latLngBounds)
             } else {
                 stopTimer()
-                viewModelHome.getAllContracts()
+                if (!haveContractAnnotations()) {
+                    clusterStations?.clearItems()
+                    clusterStations?.cluster()
+                    viewModelHome.getAllContracts()
+                } else {
+                    clusterContracts?.cluster()
+                }
             }
         }
     }
 
-    private fun deleteContractsAnnotations() {
-        listContractsAnnotations?.apply {
-            if (size > 0) {
-                d("delete contracts annotations")
-                map { marker -> marker.remove() }
-                clear()
-            }
-        }
+    private fun haveContractAnnotations(): Boolean {
+        val hasMarkers = clusterContracts?.markerCollection?.markers?.isNotEmpty()?.or(false)!!
+        val hasClusterMarkers = clusterContracts?.clusterMarkerCollection?.markers?.isNotEmpty()?.or(false)!!
+        return hasMarkers || hasClusterMarkers
     }
 
-    private fun createAnnotationsFor(contracts: List<BICContract>) {
-        if (listContractsAnnotations?.size == 0) {
-            d("create contracts annotations")
-            val hasMarkers = clusterManager?.markerCollection?.markers?.isNotEmpty()?.or(false)!!
-            val hasClusterMarkers = clusterManager?.clusterMarkerCollection?.markers?.isNotEmpty()?.or(false)!!
-            if (hasMarkers || hasClusterMarkers) {
-                clusterManager?.clearItems()
-                clusterManager?.cluster()
-            }
-            async(CommonPool) {
-                var options: MarkerOptions
-                contracts.map { contract ->
-                    options = MarkerOptions()
-                    options.position(contract.center)
-                    options.icon(BitmapDescriptorFactory.fromBitmap(contract.icon))
-                    options.snippet("type=contract")
-                    run(UI) {
-                        googleMap?.addMarker(options)?.let { marker ->
-                            listContractsAnnotations?.add(marker)
-                            marker.tag = contract
-                        }
-                    }
-                }
-                run(UI) {
-                    // do this to avoid contracts partial display after activity launch
-                    val level = googleMap?.cameraPosition?.zoom?.toInt()
-                    level?.let {
-                        if (it >= 10) {
-                            deleteContractsAnnotations()
-                        }
-                    }
-                }
-            }
-        }
+    private fun haveStationAnnotations(): Boolean {
+        val hasMarkers = clusterStations?.markerCollection?.markers?.isNotEmpty()?.or(false)!!
+        val hasClusterMarkers = clusterStations?.clusterMarkerCollection?.markers?.isNotEmpty()?.or(false)!!
+        return hasMarkers || hasClusterMarkers
     }
 
     //endregion

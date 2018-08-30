@@ -24,11 +24,11 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import com.sebastienbalard.bicycle.models.BICStation
-
 
 open class BICStationAnnotation(val station: BICStation) : ClusterItem {
 
@@ -38,18 +38,23 @@ open class BICStationAnnotation(val station: BICStation) : ClusterItem {
 
     open class Renderer(context: Context, map: GoogleMap, clusterManager: ClusterManager<BICStationAnnotation>) : DefaultClusterRenderer<BICStationAnnotation>(context, map, clusterManager) {
 
-        override fun onBeforeClusterItemRendered(item: BICStationAnnotation?,
-                                                 markerOptions: MarkerOptions?) {
+        override fun onBeforeClusterRendered(cluster: Cluster<BICStationAnnotation>?, markerOptions: MarkerOptions?) {
+            markerOptions?.snippet(null)
+            super.onBeforeClusterRendered(cluster, markerOptions)
+        }
+
+        override fun onBeforeClusterItemRendered(item: BICStationAnnotation?, markerOptions: MarkerOptions?) {
             item?.station?.let { station ->
                 markerOptions!!.icon(BitmapDescriptorFactory.fromBitmap(station.icon)).snippet("type=station")
             }
+            super.onBeforeClusterItemRendered(item, markerOptions)
         }
 
         override fun onClusterItemRendered(clusterItem: BICStationAnnotation?, marker: Marker?) {
-            super.onClusterItemRendered(clusterItem, marker)
             clusterItem?.let { item ->
                 marker?.tag = item.station
             }
+            super.onClusterItemRendered(clusterItem, marker)
         }
     }
 }
