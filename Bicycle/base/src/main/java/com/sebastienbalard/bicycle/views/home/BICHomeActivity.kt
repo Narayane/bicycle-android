@@ -143,6 +143,18 @@ class BICHomeActivity : SBMapActivity() {
                 }
             }
         })
+
+        fabContractZoom.setOnClickListener {
+            selectedMarker?.tag?.apply {
+                when (this) {
+                    is BICContract -> {
+                        hideBottomSheet()
+                        googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(center, 12f))
+                    }
+                    else -> {}
+                }
+            }
+        }
     }
 
     override fun onStart() {

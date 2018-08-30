@@ -71,4 +71,15 @@
 
     </android.support.v4.widget.NestedScrollView>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabContractZoom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@+id/bottomSheet"
+        android:src="@drawable/bic_ic_zoom_in_24dp"
+        android:layout_marginEnd="@dimen/bic_margin_horizontal_default"
+        android:visibility="gone"
+        app:layout_anchorGravity="end|top"
+        tools:visibility="visible" />
+
 </android.support.design.widget.CoordinatorLayout>
