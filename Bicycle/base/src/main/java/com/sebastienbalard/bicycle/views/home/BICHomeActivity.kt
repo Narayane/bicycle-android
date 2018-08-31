@@ -33,7 +33,6 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.clustering.ClusterManager
 import com.sebastienbalard.bicycle.*
 import com.sebastienbalard.bicycle.data.BICContract
@@ -43,10 +42,6 @@ import com.sebastienbalard.bicycle.views.BICAboutActivity
 import com.sebastienbalard.bicycle.views.BICHelpActivity
 import kotlinx.android.synthetic.main.bic_activity_home.*
 import kotlinx.android.synthetic.main.sb_widget_appbar.*
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.run
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.util.*
 import kotlin.concurrent.timerTask
@@ -73,88 +68,9 @@ class BICHomeActivity : SBMapActivity() {
         setContentView(R.layout.bic_activity_home)
         v("onCreate")
         initToolbar()
-
         initMap(savedInstanceState)
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-
-        viewModelHome.states.observe(this, Observer { state ->
-            state?.apply {
-                when (this) {
-                    is StateShowContracts -> fabContractZoom.visibility = View.INVISIBLE
-                    is StateShowStations -> fabContractZoom.visibility = View.GONE
-                    else -> w("unexpected state")
-                }
-            }
-        })
-        viewModelHome.events.observe(this, Observer { event ->
-            event?.let {
-                when (it) {
-                    is EventContractList -> {
-                        clusterContracts?.clearItems()
-                        hideBottomSheet()
-                        it.contracts.map { contract ->
-                            clusterContracts?.addItem(BICContractAnnotation(contract))
-                        }
-                        clusterContracts?.cluster()
-                    }
-                    is EventOutOfAnyContract -> {
-                        d("current bounds is out of contracts cover")
-                        stopTimer()
-                    }
-                    is EventNewContract -> {
-                        stopTimer()
-                        d("refresh contract stations: ${it.current.name} (${it.current.provider.tag})")
-                        // refresh current contract stations data
-                        viewModelHome.getStationsFor(it.current)
-                        startTimer()
-                    }
-                    is EventSameContract -> {
-                        v("current contract has not changed")
-                        // reload clustering
-                        clusterStations?.cluster()
-                    }
-                    is EventStationList -> {
-                        clusterStations?.clearItems()
-                        hideBottomSheet()
-                        it.stations.map { station ->
-                            clusterStations?.addItem(BICStationAnnotation(station))
-                        }
-                        clusterStations?.cluster()
-                    }
-                    is EventFailure -> {
-                        viewModelHome.states.value?.apply {
-                            when (this) {
-                                is StateShowContracts -> {
-                                    clusterContracts?.clearItems()
-                                    hideBottomSheet()
-                                    //TODO: display error message
-                                }
-                                is StateShowStations -> {
-                                    clusterStations?.clearItems()
-                                    hideBottomSheet()
-                                    showErrorForCurrentContractStation()
-                                }
-                                else -> w("unexpected state")
-                            }
-                        }
-                    }
-                    else -> w("unexpected event")
-                }
-            }
-        })
-
-        fabContractZoom.setOnClickListener {
-            selectedMarker?.tag?.apply {
-                when (this) {
-                    is BICContract -> {
-                        hideBottomSheet()
-                        googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(center, 12f))
-                    }
-                    else -> {}
-                }
-            }
-        }
+        initObservers()
+        initLayout()
     }
 
     override fun onStart() {
@@ -291,11 +207,17 @@ class BICHomeActivity : SBMapActivity() {
             if (startsWith("type=")) {
                 if (endsWith("station")) {
                     (marker.tag as? BICStation)?.apply {
-                        textViewBottomSheetTitle.text = name
+                        textViewBottomSheetTitle.text = displayName
+                        textViewBottomSheetSubtitle.text = viewModelHome.currentContract?.name ?: ""
+                        textViewBottomSheetAvailableBikesCount.text = resources.getQuantityString(R.plurals.bic_plurals_available_bikes, availableBikesCount, availableBikesCount)
+                        textViewBottomSheetFreeStandsCount.text = resources.getQuantityString(R.plurals.bic_plurals_free_stands, freeStandsCount, freeStandsCount)
                     }
                 } else if (endsWith("contract")) {
                     (marker.tag as? BICContract)?.apply {
                         textViewBottomSheetTitle.text = name
+                        textViewBottomSheetSubtitle.text = countryName
+                        textViewBottomSheetAvailableBikesCount.text = ""
+                        textViewBottomSheetFreeStandsCount.text = ""
                     }
                 }
             }
@@ -400,6 +322,91 @@ class BICHomeActivity : SBMapActivity() {
         val hasMarkers = clusterStations?.markerCollection?.markers?.isNotEmpty()?.or(false)!!
         val hasClusterMarkers = clusterStations?.clusterMarkerCollection?.markers?.isNotEmpty()?.or(false)!!
         return hasMarkers || hasClusterMarkers
+    }
+
+    private fun initLayout() {
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        fabContractZoom.setOnClickListener {
+            selectedMarker?.tag?.apply {
+                when (this) {
+                    is BICContract -> {
+                        hideBottomSheet()
+                        googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(center, 12f))
+                    }
+                    else -> {
+                    }
+                }
+            }
+        }
+    }
+
+    private fun initObservers() {
+        viewModelHome.states.observe(this, Observer { state ->
+            state?.apply {
+                when (this) {
+                    is StateShowContracts -> fabContractZoom.visibility = View.INVISIBLE
+                    is StateShowStations -> fabContractZoom.visibility = View.GONE
+                    else -> w("unexpected state")
+                }
+            }
+        })
+        viewModelHome.events.observe(this, Observer { event ->
+            event?.let {
+                when (it) {
+                    is EventContractList -> {
+                        clusterContracts?.clearItems()
+                        hideBottomSheet()
+                        it.contracts.map { contract ->
+                            clusterContracts?.addItem(BICContractAnnotation(contract))
+                        }
+                        clusterContracts?.cluster()
+                    }
+                    is EventOutOfAnyContract -> {
+                        d("current bounds is out of contracts cover")
+                        stopTimer()
+                    }
+                    is EventNewContract -> {
+                        stopTimer()
+                        d("refresh contract stations: ${it.current.name} (${it.current.provider.tag})")
+                        // refresh current contract stations data
+                        viewModelHome.getStationsFor(it.current)
+                        startTimer()
+                    }
+                    is EventSameContract -> {
+                        v("current contract has not changed")
+                        // reload clustering
+                        clusterStations?.cluster()
+                    }
+                    is EventStationList -> {
+                        clusterStations?.clearItems()
+                        hideBottomSheet()
+                        it.stations.map { station ->
+                            clusterStations?.addItem(BICStationAnnotation(station))
+                        }
+                        clusterStations?.cluster()
+                    }
+                    is EventFailure -> {
+                        viewModelHome.states.value?.apply {
+                            when (this) {
+                                is StateShowContracts -> {
+                                    clusterContracts?.clearItems()
+                                    hideBottomSheet()
+                                    //TODO: display error message
+                                }
+                                is StateShowStations -> {
+                                    clusterStations?.clearItems()
+                                    hideBottomSheet()
+                                    showErrorForCurrentContractStation()
+                                }
+                                else -> w("unexpected state")
+                            }
+                        }
+                    }
+                    else -> w("unexpected event")
+                }
+            }
+        })
     }
 
     //endregion

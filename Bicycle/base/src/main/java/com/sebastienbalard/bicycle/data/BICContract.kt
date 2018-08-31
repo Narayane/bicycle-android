@@ -33,6 +33,7 @@ import com.sebastienbalard.bicycle.R
 import com.sebastienbalard.bicycle.extensions.getBitmap
 import com.sebastienbalard.bicycle.extensions.getBitmapDescriptor
 import java.lang.Math.sqrt
+import java.util.*
 import kotlin.properties.Delegates
 
 @Entity(tableName = "bic_contracts")
@@ -44,6 +45,8 @@ data class BICContract(
         val name: String,
         @SerializedName("lat") val latitude: Double,
         @SerializedName("lng") val longitude: Double,
+        @ColumnInfo(name = "country_code")
+        @SerializedName("country") val countryCode: String? = null,
         val provider: Provider,
         val radius: Double,
         val url: String) {
@@ -64,6 +67,14 @@ data class BICContract(
 
     val iconSelected: Bitmap
         get() = imageContractSelected
+
+    val countryName: String
+        get() {
+            return countryCode?.apply {
+                val locale = Locale("", this)
+                return locale.displayCountry
+            } ?: "-"
+        }
 
     enum class Provider(val tag: String) {
         @SerializedName("CityBikes") CityBikes("CityBikes");

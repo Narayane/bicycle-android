@@ -24,7 +24,7 @@ import com.google.gson.annotations.SerializedName
 import com.sebastienbalard.bicycle.R
 import com.sebastienbalard.bicycle.extensions.drawOn
 import com.sebastienbalard.bicycle.extensions.getBitmap
-import com.sebastienbalard.bicycle.extensions.getBitmapDescriptor
+import java.util.regex.Pattern
 import kotlin.properties.Delegates
 
 data class BICStation(val name: String,
@@ -49,6 +49,17 @@ data class BICStation(val name: String,
             bitmap = bitmap.drawOn(freeStandsCount.toString(), textColor, textSize.toFloat(), 1.65f)
             return bitmap
         }
+
+    val displayName: String
+        get() = filter(name)
+
+    private fun filter(name: String): String {
+        val pattern = Pattern.compile("[\\d\\s]*([a-zA-Z](.*)$)")
+        val matcher = pattern.matcher(name)
+        return if (matcher.find()) {
+            matcher.group(1)
+        } else name
+    }
 
     companion object {
         var size: Int by Delegates.notNull()
