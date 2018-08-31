@@ -69,3 +69,5 @@ kotlinc.xml
 contracts.json
 Bicycle/.idea/caches
 Bicycle/.idea/codeStyles
+crashlytics-build.properties
+com_crashlytics_export_strings.xml
