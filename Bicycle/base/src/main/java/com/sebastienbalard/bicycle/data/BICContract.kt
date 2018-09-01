@@ -43,10 +43,12 @@ data class BICContract(
         @NonNull
         val id: Long,
         val name: String,
-        @SerializedName("lat") val latitude: Double,
-        @SerializedName("lng") val longitude: Double,
+        val latitude: Double,
+        val longitude: Double,
         @ColumnInfo(name = "country_code")
-        @SerializedName("country") val countryCode: String? = null,
+        @SerializedName("country") val countryCode: String,
+        @ColumnInfo(name = "station_count")
+        @SerializedName("station_count") val stationCount: Int,
         val provider: Provider,
         val radius: Double,
         val url: String) {

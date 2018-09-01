@@ -23,4 +23,8 @@
         <item quantity="one">%d place libre</item>
         <item quantity="other">%d places libres</item>
     </plurals>
+    <plurals name="bic_plurals_station_count">
+        <item quantity="one">%d station</item>
+        <item quantity="other">%d stations</item>
+    </plurals>
 </resources>

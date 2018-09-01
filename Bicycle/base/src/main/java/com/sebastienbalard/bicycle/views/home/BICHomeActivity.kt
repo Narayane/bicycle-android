@@ -61,6 +61,8 @@ class BICHomeActivity : SBMapActivity() {
     private var timer: Timer? = null
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<NestedScrollView>
 
+    private var previousZoomLevel: Int? = null
+
     //region Lifecycle methods
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -217,7 +219,7 @@ class BICHomeActivity : SBMapActivity() {
                         textViewBottomSheetTitle.text = name
                         textViewBottomSheetSubtitle.text = countryName
                         textViewBottomSheetAvailableBikesCount.text = ""
-                        textViewBottomSheetFreeStandsCount.text = ""
+                        textViewBottomSheetFreeStandsCount.text = resources.getQuantityString(R.plurals.bic_plurals_station_count, stationCount, stationCount)
                     }
                 }
             }
@@ -290,15 +292,20 @@ class BICHomeActivity : SBMapActivity() {
     }
 
     private fun refreshMarkers() {
-        val level = googleMap?.cameraPosition?.zoom?.toInt()
-        level?.let {
-            d("current zoom level: $level")
-            if (it >= 10) {
+        zoomLevel?.let { zoomLevel ->
+            d("current zoom level: $zoomLevel")
+            previousZoomLevel?.let { previous ->
+                if (zoomLevel != previous) {
+                    hideBottomSheet()
+                }
+            }
+            previousZoomLevel = zoomLevel
+            if (zoomLevel >= 10) {
                 if (!haveStationAnnotations()) {
                     clusterContracts?.clearItems()
                     clusterContracts?.cluster()
                 }
-                viewModelHome.determineCurrentContract(googleMap!!.projection.visibleRegion.latLngBounds)
+                viewModelHome.determineCurrentContract(visibleRegion!!.latLngBounds)
             } else {
                 stopTimer()
                 if (!haveContractAnnotations()) {

@@ -27,6 +27,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.VisibleRegion
 import com.sebastienbalard.bicycle.extensions.*
 import kotlinx.android.synthetic.main.sb_widget_appbar.*
 import kotlinx.android.synthetic.main.sb_widget_mapview.*
@@ -40,6 +41,12 @@ abstract class SBMapActivity : SBActivity() {
 
     protected var googleMap: GoogleMap? = null
     protected var selectedMarker: Marker? = null
+
+    val zoomLevel: Int?
+        get() = googleMap?.cameraPosition?.zoom?.toInt()
+
+    val visibleRegion: VisibleRegion?
+        get() = googleMap?.projection?.visibleRegion
 
     //region Lifecycle methods
 

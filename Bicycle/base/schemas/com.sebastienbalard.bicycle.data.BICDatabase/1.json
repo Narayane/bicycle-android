@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "ae412abffb7393b946b3a34d9727ffa2",
+    "identityHash": "3ab1ef37da1255f136af97fb9ee83730",
     "entities": [
       {
         "tableName": "bic_contracts",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pk_contract_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `country_code` TEXT, `provider` TEXT NOT NULL, `radius` REAL NOT NULL, `url` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pk_contract_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `country_code` TEXT NOT NULL, `station_count` INTEGER NOT NULL, `provider` TEXT NOT NULL, `radius` REAL NOT NULL, `url` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -36,7 +36,13 @@
             "fieldPath": "countryCode",
             "columnName": "country_code",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
+          },
+          {
+            "fieldPath": "stationCount",
+            "columnName": "station_count",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "provider",
@@ -69,7 +75,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"ae412abffb7393b946b3a34d9727ffa2\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"3ab1ef37da1255f136af97fb9ee83730\")"
     ]
   }
 }
