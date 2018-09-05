@@ -40,6 +40,7 @@ import com.sebastienbalard.bicycle.models.BICStation
 import com.sebastienbalard.bicycle.viewmodels.*
 import com.sebastienbalard.bicycle.views.BICAboutActivity
 import com.sebastienbalard.bicycle.views.BICHelpActivity
+import com.sebastienbalard.bicycle.views.settings.BICSettingsActivity
 import kotlinx.android.synthetic.main.bic_activity_home.*
 import kotlinx.android.synthetic.main.sb_widget_appbar.*
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -92,6 +93,11 @@ class BICHomeActivity : SBMapActivity() {
             R.id.bic_menu_home_item_help -> {
                 i("click on menu item: help")
                 startActivity(BICHelpActivity.getIntent(this))
+                true
+            }
+            R.id.bic_menu_home_item_settings -> {
+                i("click on menu item: settings")
+                startActivity(BICSettingsActivity.getIntent(this))
                 true
             }
             R.id.bic_menu_home_item_about -> {

@@ -19,9 +19,15 @@
 
     <item
         android:id="@+id/bic_menu_home_item_help"
-        android:orderInCategory="102"
+        android:orderInCategory="101"
         app:showAsAction="never"
         android:title="@string/bic_actions_help"/>
+
+    <item
+        android:id="@+id/bic_menu_home_item_settings"
+        android:orderInCategory="102"
+        app:showAsAction="never"
+        android:title="@string/bic_actions_settings"/>
 
     <item
         android:id="@+id/bic_menu_home_item_about"

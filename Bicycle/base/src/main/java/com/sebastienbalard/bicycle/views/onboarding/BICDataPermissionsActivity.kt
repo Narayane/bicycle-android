@@ -59,8 +59,8 @@ class BICDataPermissionsActivity : SBActivity() {
         })
 
         buttonValidateDataPermissions.setOnClickListener {
-            i("crash data user permission: ${switchAllowCrashDataSending.isChecked}")
-            i("use data user permission: ${switchAllowUseDataSending.isChecked}")
+            i("crash data permission: ${switchAllowCrashDataSending.isChecked}")
+            i("use data permission: ${switchAllowUseDataSending.isChecked}")
             viewModel.saveDataPermissions(switchAllowCrashDataSending.isChecked, switchAllowUseDataSending.isChecked)
         }
     }

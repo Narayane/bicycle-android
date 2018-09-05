@@ -40,14 +40,10 @@ open class SBActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
-            16908332  -> {
+            android.R.id.home -> {
                 onBackPressed()
                 true
             }
-            /*android.R.id.home -> {
-                onBackPressed()
-                true
-            }*/
             else -> super.onOptionsItemSelected(item)
         }
     }
