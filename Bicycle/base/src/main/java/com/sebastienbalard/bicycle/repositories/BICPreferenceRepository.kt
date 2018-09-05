@@ -28,6 +28,30 @@ open class BICPreferenceRepository(private val bicycleDataSource: BicycleDataSou
 
     companion object : SBLog()
 
+    open var requestDataSendingPermissions: Boolean
+        get() {
+            return preferences.getBoolean(PREFERENCE_REQUEST_DATA_SENDING_PERMISSIONS, true)
+        }
+        set(value) {
+            preferences.edit().putBoolean(PREFERENCE_REQUEST_DATA_SENDING_PERMISSIONS, value).commit()
+        }
+
+    open var isCrashDataSendingAllowed: Boolean
+        get() {
+            return preferences.getBoolean(PREFERENCE_CRASH_DATA_SENDING_PERMISSION, true)
+        }
+        set(value) {
+            preferences.edit().putBoolean(PREFERENCE_CRASH_DATA_SENDING_PERMISSION, value).commit()
+        }
+
+    open var isUseDataSendingAllowed: Boolean
+        get() {
+            return preferences.getBoolean(PREFERENCE_USE_DATA_SENDING_PERMISSION, true)
+        }
+        set(value) {
+            preferences.edit().putBoolean(PREFERENCE_USE_DATA_SENDING_PERMISSION, value).commit()
+        }
+
     open var appCheckDelay: Int
         get() {
             return preferences.getInt(PREFERENCE_APP_CHECK_DELAY, 7)

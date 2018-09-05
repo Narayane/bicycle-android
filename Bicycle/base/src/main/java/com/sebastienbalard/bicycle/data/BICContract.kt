@@ -72,10 +72,8 @@ data class BICContract(
 
     val countryName: String
         get() {
-            return countryCode?.apply {
-                val locale = Locale("", this)
-                return locale.displayCountry
-            } ?: "-"
+            val locale = Locale("", countryCode)
+            return locale.displayCountry
         }
 
     enum class Provider(val tag: String) {

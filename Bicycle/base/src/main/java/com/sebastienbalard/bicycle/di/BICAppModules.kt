@@ -17,12 +17,14 @@
 package com.sebastienbalard.bicycle.di
 
 import android.preference.PreferenceManager
+import com.sebastienbalard.bicycle.SBAnalytics
 import com.sebastienbalard.bicycle.SBMapViewModel
 import com.sebastienbalard.bicycle.io.BicycleDataSource
 import com.sebastienbalard.bicycle.io.CityBikesDataSource
 import com.sebastienbalard.bicycle.repositories.BICContractRepository
 import com.sebastienbalard.bicycle.repositories.BICPreferenceRepository
 import com.sebastienbalard.bicycle.viewmodels.BICHomeViewModel
+import com.sebastienbalard.bicycle.viewmodels.BICOnboardingViewModel
 import com.sebastienbalard.bicycle.viewmodels.BICSplashViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.ext.koin.viewModel
@@ -31,6 +33,8 @@ import org.koin.dsl.module.module
 val commonModule = module {
 
     single { PreferenceManager.getDefaultSharedPreferences(androidContext()) }
+
+    single { SBAnalytics(androidContext(), get()) }
     single { BicycleDataSource(get()) }
     single { CityBikesDataSource(get()) }
     single { BICPreferenceRepository(get(), get()) }
@@ -39,10 +43,15 @@ val commonModule = module {
     viewModel { SBMapViewModel(get()) }
 }
 
-val homeModule = module {
+val onboardingModule = module {
 
     viewModel { BICSplashViewModel(get(), get(), get()) }
+    viewModel { BICOnboardingViewModel(get()) }
+}
+
+val homeModule = module {
+
     viewModel { BICHomeViewModel(get()) }
 }
 
-val bicycleApp = listOf(remoteDataSourceModule, localDataSourceModule, commonModule, homeModule)
+val bicycleApp = listOf(remoteDataSourceModule, localDataSourceModule, commonModule, onboardingModule, homeModule)

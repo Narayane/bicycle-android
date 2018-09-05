@@ -33,6 +33,7 @@ object EventSplashConfigLoaded : SBEvent()
 data class EventSplashLoadConfigFailed(val error: Throwable) : SBEvent()
 object EventSplashCheckContracts : SBEvent()
 data class EventSplashAvailableContracts(val count: Int) : SBEvent()
+data class EventSplashRequestDataPermissions(val needed: Boolean) : SBEvent()
 
 open class BICSplashViewModel(private val context: Context,
                               private val preferenceRepository: BICPreferenceRepository,
@@ -88,5 +89,9 @@ open class BICSplashViewModel(private val context: Context,
                         })
             }
         }
+    }
+
+    open fun requestDataSendingPermissions() {
+        _events.value = EventSplashRequestDataPermissions(preferenceRepository.requestDataSendingPermissions)
     }
 }

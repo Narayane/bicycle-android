@@ -17,14 +17,18 @@
 package com.sebastienbalard.bicycle
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.crashlytics.android.Crashlytics
+import com.crashlytics.android.answers.Answers
+import com.crashlytics.android.answers.CustomEvent
 import com.sebastienbalard.bicycle.BuildConfig
 import io.fabric.sdk.android.Fabric
 
-class SBAnalytics(val context: Context) {
+class SBAnalytics(context: Context, private val preferences: SharedPreferences) {
 
     init {
         Fabric.with(context, Crashlytics())
+        //Fabric.with(context, Answers())
     }
 
     fun setUserInformation(userid: String, username: String, email: String) {
@@ -50,6 +54,12 @@ class SBAnalytics(val context: Context) {
     fun catchException(throwable: Throwable) {
         if (BuildConfig.DEBUG && Fabric.isInitialized()) {
             Crashlytics.logException(throwable)
+        }
+    }
+
+    fun logEvent(name: String) {
+        if (BuildConfig.DEBUG && Fabric.isInitialized()) {
+            Answers.getInstance().logCustom(CustomEvent(name))
         }
     }
 }

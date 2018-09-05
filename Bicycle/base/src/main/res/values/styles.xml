@@ -17,12 +17,16 @@
 <resources>
 
     <style name="AppTheme.Widget.Button" parent="@style/Widget.AppCompat.Button">
-        <item name="android:padding">4dp</item>
+        <item name="android:padding">16dp</item>
         <item name="android:backgroundTint">@color/bic_selector_button_background</item>
+        <item name="android:textSize">@dimen/bic_size_font_subhead</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
     <style name="AppTheme.Widget.Button.Borderless" parent="@style/Widget.AppCompat.Button.Borderless">
-        <item name="android:padding">4dp</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/bic_size_font_subhead</item>
     </style>
 
 </resources>

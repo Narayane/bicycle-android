@@ -23,6 +23,7 @@
     <string name="bic_actions_favorites">Mes trajets favoris</string>
     <string name="bic_actions_help">Aide</string>
     <string name="bic_actions_about">À propos</string>
+    <string name="bic_actions_validate_choices">Valider mes choix</string>
     <!-- commons -->
     <string name="bic_commons_ride">Votre trajet</string>
     <string name="bic_commons_departure">Départ</string>
@@ -40,4 +41,12 @@
     <string name="bic_messages_warning_get_current_contract_stations">Nous n\'avons pas pu récupérer les données des stations</string>
     <string name="bic_messages_available_soon">Bientôt disponible</string>
     <string name="bic_messages_warning_not_the_same_contract">Votre trajet n\'est pas valide</string>
+    <!-- onboarding screen -->
+    <string name="bic_onboarding_screen_title">Traitement de vos données</string>
+    <string name="bic_onboarding_screen_personal_data">Bicycle ne collecte aucune de vos données personnelles (nom, email, âge, position, …)</string>
+    <string name="bic_onboarding_screen_warning">Vous pourrez, à tout moment, modifier vos choix ci-dessous dans l\'écran de réglages de l\'application.</string>
+    <string name="bic_onboarding_screen_crash_data_desc">Ayant été codée par un humain, il se peut en de rares occasions que l\'application s\'arrête pour une raison inexpliquée. Bicycle peut alors envoyer des données anonymes sur l\'état de l\'application au développeur qui l\'aidera à comprendre cette raison et à corriger le problème.</string>
+    <string name="bic_onboarding_screen_crash_data_label">Autoriser l\'envoi de données sur l\'état de l\'application en cas de problème</string>
+    <string name="bic_onboarding_screen_use_data_desc">Pour permettre au développeur d\'améliorer l\'application, Bicycle peut envoyer des données anonymes sur la façon dont vous l\'utiliser.</string>
+    <string name="bic_onboarding_screen_use_data_label">Autoriser l\'envoi de données d\'utilisation à des fins statistiques</string>
 </resources>

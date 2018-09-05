@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright © 2018 Bicycle (Sébastien BALARD)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.sebastienbalard.bicycle.views.onboarding.BICDataPermissionsActivity">
+
+    <include layout="@layout/sb_widget_appbar_gone" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:background="@color/bic_color_primary_dark">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/bic_margin_horizontal_default">
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/bic_color_white"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="@dimen/bic_size_font_headline"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/bic_margin_vertical_default"
+                android:layout_marginBottom="@dimen/bic_margin_vertical_default"
+                android:text="@string/bic_onboarding_screen_title"/>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/bic_color_white"
+                android:textSize="@dimen/bic_size_font_subhead"
+                android:fontFamily="sans-serif-black"
+                android:layout_marginTop="@dimen/bic_margin_vertical_default"
+                android:text="@string/bic_onboarding_screen_personal_data"/>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/bic_color_white"
+                android:textSize="@dimen/bic_size_font_subhead"
+                android:fontFamily="sans-serif-black"
+                android:layout_marginTop="@dimen/bic_margin_vertical_default"
+                android:text="@string/bic_onboarding_screen_warning"/>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/bic_color_white"
+                android:textSize="@dimen/bic_size_font_body"
+                android:layout_marginTop="@dimen/bic_margin_vertical_default"
+                android:text="@string/bic_onboarding_screen_crash_data_desc"/>
+
+            <Switch
+                android:id="@+id/switchAllowCrashDataSending"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/bic_color_white"
+                android:textSize="@dimen/bic_size_font_subhead"
+                android:layout_marginTop="@dimen/bic_margin_half"
+                android:fontFamily="sans-serif-medium"
+                android:checked="true"
+                android:text="@string/bic_onboarding_screen_crash_data_label"/>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/bic_color_white"
+                android:textSize="@dimen/bic_size_font_body"
+                android:layout_marginTop="@dimen/bic_margin_vertical_default"
+                android:text="@string/bic_onboarding_screen_use_data_desc"/>
+
+            <Switch
+                android:id="@+id/switchAllowUseDataSending"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/bic_color_white"
+                android:textSize="@dimen/bic_size_font_subhead"
+                android:layout_marginTop="@dimen/bic_margin_half"
+                android:layout_marginBottom="@dimen/bic_margin_vertical_default"
+                android:fontFamily="sans-serif-medium"
+                android:checked="true"
+                android:text="@string/bic_onboarding_screen_use_data_label"/>
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/buttonValidateDataPermissions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/bic_color_white"
+                android:layout_marginTop="@dimen/bic_margin_vertical_default"
+                android:layout_marginBottom="@dimen/bic_margin_vertical_default"
+                android:text="@string/bic_actions_validate_choices"/>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.design.widget.CoordinatorLayout>

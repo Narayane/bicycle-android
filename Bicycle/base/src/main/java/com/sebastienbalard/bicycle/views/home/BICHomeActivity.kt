@@ -129,7 +129,6 @@ class BICHomeActivity : SBMapActivity() {
         clusterContracts?.renderer = BICContractAnnotation.Renderer(this, googleMap!!, clusterContracts!!)
         clusterStations = ClusterManager(this, googleMap!!)
         clusterStations?.renderer = BICStationAnnotation.Renderer(this, googleMap!!, clusterStations!!)
-        //googleMap!!.setOnInfoWindowClickListener(clusterStations)
     }
 
     override fun onMapRefreshed(hasLocationPermissions: Boolean) {
@@ -210,7 +209,7 @@ class BICHomeActivity : SBMapActivity() {
                 if (endsWith("station")) {
                     (marker.tag as? BICStation)?.apply {
                         textViewBottomSheetTitle.text = displayName
-                        textViewBottomSheetSubtitle.text = viewModelHome.currentContract?.name ?: ""
+                        textViewBottomSheetSubtitle.text = viewModelHome.currentContract?.name ?: "-"
                         textViewBottomSheetAvailableBikesCount.text = resources.getQuantityString(R.plurals.bic_plurals_available_bikes, availableBikesCount, availableBikesCount)
                         textViewBottomSheetFreeStandsCount.text = resources.getQuantityString(R.plurals.bic_plurals_free_stands, freeStandsCount, freeStandsCount)
                     }
@@ -387,7 +386,7 @@ class BICHomeActivity : SBMapActivity() {
                     }
                     is EventStationList -> {
                         clusterStations?.clearItems()
-                        hideBottomSheet()
+                        //hideBottomSheet()
                         it.stations.map { station ->
                             clusterStations?.addItem(BICStationAnnotation(station))
                         }
