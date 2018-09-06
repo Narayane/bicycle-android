@@ -1,1 +1,1 @@
-include ':ride', ':app', ':base', ':instantapp'
+include /*':ride', */':app', ':base', ':instantapp'

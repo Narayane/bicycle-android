@@ -24,12 +24,13 @@ import com.sebastienbalard.bicycle.R
 import com.sebastienbalard.bicycle.SBActivity
 import com.sebastienbalard.bicycle.SBLog
 import com.sebastienbalard.bicycle.viewmodels.BICOnboardingViewModel
-import com.sebastienbalard.bicycle.viewmodels.EventOnboardingDataPermissionsSet
+import com.sebastienbalard.bicycle.viewmodels.EventDataSendingPermissionsSet
+import com.sebastienbalard.bicycle.viewmodels.EventDataSendingPermissionsLoaded
 import com.sebastienbalard.bicycle.views.home.BICHomeActivity
 import kotlinx.android.synthetic.main.bic_activity_data_permissions.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class BICDataPermissionsActivity : SBActivity() {
+open class BICDataPermissionsActivity : SBActivity() {
 
     companion object : SBLog() {
         fun getIntent(context: Context): Intent {
@@ -37,7 +38,7 @@ class BICDataPermissionsActivity : SBActivity() {
         }
     }
 
-    val viewModel: BICOnboardingViewModel by viewModel()
+    internal open val viewModel: BICOnboardingViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +49,13 @@ class BICDataPermissionsActivity : SBActivity() {
             event?.apply {
                 v("event -> ${this::class.java.simpleName}")
                 when (this) {
-                    is EventOnboardingDataPermissionsSet -> {
+                    is EventDataSendingPermissionsLoaded -> {
+                        d("crash data sending permission: $allowCrashDataSending")
+                        d("use data sending permission: $allowUseDataSending")
+                        switchAllowCrashDataSending.isChecked = allowCrashDataSending
+                        switchAllowUseDataSending.isChecked = allowUseDataSending
+                    }
+                    is EventDataSendingPermissionsSet -> {
                         runOnUiThread {
                             startActivity(BICHomeActivity.getIntent(this@BICDataPermissionsActivity))
                         }
@@ -59,9 +66,11 @@ class BICDataPermissionsActivity : SBActivity() {
         })
 
         buttonValidateDataPermissions.setOnClickListener {
-            i("crash data permission: ${switchAllowCrashDataSending.isChecked}")
-            i("use data permission: ${switchAllowUseDataSending.isChecked}")
-            viewModel.saveDataPermissions(switchAllowCrashDataSending.isChecked, switchAllowUseDataSending.isChecked)
+            i("crash data sending permission: ${switchAllowCrashDataSending.isChecked}")
+            i("use data sending permission: ${switchAllowUseDataSending.isChecked}")
+            viewModel.saveDataSendingPermissions(switchAllowCrashDataSending.isChecked, switchAllowUseDataSending.isChecked)
         }
+
+        viewModel.loadDataSendingPermissions()
     }
 }

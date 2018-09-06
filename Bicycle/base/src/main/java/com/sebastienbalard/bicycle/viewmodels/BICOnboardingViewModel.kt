@@ -21,16 +21,22 @@ import com.sebastienbalard.bicycle.SBLog
 import com.sebastienbalard.bicycle.SBViewModel
 import com.sebastienbalard.bicycle.repositories.BICPreferenceRepository
 
-object EventOnboardingDataPermissionsSet : SBEvent()
+data class EventDataSendingPermissionsLoaded(val allowCrashDataSending: Boolean, val allowUseDataSending: Boolean) : SBEvent()
+object EventDataSendingPermissionsSet : SBEvent()
 
 open class BICOnboardingViewModel(private val preferenceRepository: BICPreferenceRepository) : SBViewModel() {
 
     companion object : SBLog()
 
-    open fun saveDataPermissions(allowCrashData: Boolean, allowUseData: Boolean) {
-        preferenceRepository.isCrashDataSendingAllowed = allowCrashData
-        preferenceRepository.isUseDataSendingAllowed = allowUseData
+    open fun loadDataSendingPermissions() {
+        _events.value = EventDataSendingPermissionsLoaded(preferenceRepository.isCrashDataSendingAllowed,
+                preferenceRepository.isUseDataSendingAllowed)
+    }
+
+    open fun saveDataSendingPermissions(allowCrashDataSending: Boolean, allowUseDataSending: Boolean) {
+        preferenceRepository.isCrashDataSendingAllowed = allowCrashDataSending
+        preferenceRepository.isUseDataSendingAllowed = allowUseDataSending
         preferenceRepository.requestDataSendingPermissions = false
-        _events.value = EventOnboardingDataPermissionsSet
+        _events.value = EventDataSendingPermissionsSet
     }
 }
