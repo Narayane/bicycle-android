@@ -27,7 +27,7 @@ import com.sebastienbalard.bicycle.viewmodels.BICOnboardingViewModel
 import com.sebastienbalard.bicycle.viewmodels.EventDataSendingPermissionsSet
 import com.sebastienbalard.bicycle.viewmodels.EventDataSendingPermissionsLoaded
 import com.sebastienbalard.bicycle.views.home.BICHomeActivity
-import kotlinx.android.synthetic.main.bic_activity_data_permissions.*
+import kotlinx.android.synthetic.main.bic_activity_data_sending_permissions.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
 open class BICDataPermissionsActivity : SBActivity() {
@@ -42,7 +42,7 @@ open class BICDataPermissionsActivity : SBActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.bic_activity_data_permissions)
+        setContentView(R.layout.bic_activity_data_sending_permissions)
         v("onCreate")
 
         viewModel.events.observe(this, Observer { event ->
@@ -50,8 +50,6 @@ open class BICDataPermissionsActivity : SBActivity() {
                 v("event -> ${this::class.java.simpleName}")
                 when (this) {
                     is EventDataSendingPermissionsLoaded -> {
-                        d("crash data sending permission: $allowCrashDataSending")
-                        d("use data sending permission: $allowUseDataSending")
                         switchAllowCrashDataSending.isChecked = allowCrashDataSending
                         switchAllowUseDataSending.isChecked = allowUseDataSending
                     }

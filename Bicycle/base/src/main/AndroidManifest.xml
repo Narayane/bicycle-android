@@ -124,12 +124,6 @@
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
-            android:name=".views.BICHelpActivity"
-            android:label="@string/bic_actions_help"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
-        <activity
             android:name=".views.settings.BICSettingsActivity"
             android:label="@string/bic_actions_settings"
             android:screenOrientation="portrait"
