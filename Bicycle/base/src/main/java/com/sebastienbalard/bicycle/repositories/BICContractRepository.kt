@@ -17,18 +17,18 @@
 package com.sebastienbalard.bicycle.repositories
 
 import com.google.android.gms.maps.model.LatLng
+import com.sebastienbalard.bicycle.SBLog
 import com.sebastienbalard.bicycle.data.BICContract
 import com.sebastienbalard.bicycle.data.BICContractDao
 import com.sebastienbalard.bicycle.extensions.distanceTo
+import com.sebastienbalard.bicycle.extensions.toUTC
 import com.sebastienbalard.bicycle.io.BicycleDataSource
 import com.sebastienbalard.bicycle.io.CityBikesDataSource
-import com.sebastienbalard.bicycle.SBLog
 import com.sebastienbalard.bicycle.models.BICStation
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.experimental.async
-import org.joda.time.DateTime
+import org.threeten.bp.LocalDateTime
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -60,7 +60,7 @@ open class BICContractRepository(private val bicycleDataSource: BicycleDataSourc
                         val contracts = contractDao.findAll()
                         d("load ${contracts.count()} contracts")
                         allContracts.addAll(contracts)
-                        preferenceRepository.contractsLastCheckDate = DateTime.now()
+                        preferenceRepository.contractsLastCheckDate = LocalDateTime.now().toUTC()
                         observer.onSuccess(contracts.count())
                     }, { error ->
                         observer.onError(error)

@@ -93,7 +93,8 @@
         <activity
             android:name=".views.BICSplashActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:noHistory="true">
             <intent-filter android:order="1">
                 <action android:name="android.intent.action.VIEW" />
 
@@ -115,7 +116,8 @@
         <activity
             android:name=".views.onboarding.BICDataPermissionsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:noHistory="true"/>
 
         <activity
             android:name=".views.home.BICHomeActivity"

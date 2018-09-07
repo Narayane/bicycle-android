@@ -17,11 +17,13 @@
 package com.sebastienbalard.bicycle
 
 import android.app.Application
+import com.jakewharton.threetenabp.AndroidThreeTen
 
 class BICTestApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
         setTheme(R.style.AppTheme_NoActionBar)
+        AndroidThreeTen.init(applicationContext)
     }
 }

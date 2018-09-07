@@ -17,10 +17,10 @@
 package com.sebastienbalard.bicycle
 
 import android.app.Application
+import com.jakewharton.threetenabp.AndroidThreeTen
 import com.sebastienbalard.bicycle.data.BICContract
 import com.sebastienbalard.bicycle.di.bicycleApp
 import com.sebastienbalard.bicycle.models.BICStation
-import net.danlew.android.joda.JodaTimeAndroid
 import org.koin.android.ext.android.startKoin
 
 class BICApplication : Application() {
@@ -31,7 +31,7 @@ class BICApplication : Application() {
         super.onCreate()
         v("onCreate")
         startKoin(this, bicycleApp)
-        JodaTimeAndroid.init(applicationContext)
+        AndroidThreeTen.init(applicationContext)
         BICContract.initConstants(applicationContext)
         BICStation.initConstants(applicationContext)
     }

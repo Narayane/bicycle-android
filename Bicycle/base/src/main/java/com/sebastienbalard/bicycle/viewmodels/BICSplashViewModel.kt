@@ -19,12 +19,13 @@ package com.sebastienbalard.bicycle.viewmodels
 import android.content.Context
 import com.sebastienbalard.bicycle.*
 import com.sebastienbalard.bicycle.extensions.formatDate
-import com.sebastienbalard.bicycle.SBLog
+import com.sebastienbalard.bicycle.extensions.toUTC
 import com.sebastienbalard.bicycle.repositories.BICContractRepository
 import com.sebastienbalard.bicycle.repositories.BICPreferenceRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
-import org.joda.time.DateTime
-import org.joda.time.Days
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZonedDateTime
+import org.threeten.bp.temporal.ChronoUnit
 
 object StateSplashConfig : SBState()
 object StateSplashContracts : SBState()
@@ -56,11 +57,11 @@ open class BICSplashViewModel(private val context: Context,
         _states.value = StateSplashContracts
 
         var timeToCheck = true
-        val now = DateTime.now()
+        val now = LocalDateTime.now().toUTC()
 
-        preferenceRepository.contractsLastCheckDate?.let {
-            v("last check: ${it.formatDate(context)}")
-            timeToCheck = Days.daysBetween(it.toLocalDate(), now.toLocalDate()).days > BuildConfig
+        preferenceRepository.contractsLastCheckDate?.let { datetime ->
+            v("last check: ${datetime.formatDate(context)}")
+            timeToCheck = ChronoUnit.DAYS.between(datetime.toLocalDate(), now.toLocalDate()) > BuildConfig
                     .DAYS_BETWEEN_CONTRACTS_CHECK
         }
 

@@ -34,7 +34,7 @@ open class BICDataPermissionsActivity : SBActivity() {
 
     companion object : SBLog() {
         fun getIntent(context: Context): Intent {
-            return Intent(context, BICDataPermissionsActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+            return Intent(context, BICDataPermissionsActivity::class.java)
         }
     }
 

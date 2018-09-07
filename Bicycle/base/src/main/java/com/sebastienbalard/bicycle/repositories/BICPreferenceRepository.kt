@@ -22,7 +22,7 @@ import com.sebastienbalard.bicycle.io.BicycleDataSource
 import com.sebastienbalard.bicycle.io.dtos.BICConfigResponseDto
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import org.joda.time.DateTime
+import org.threeten.bp.*
 
 open class BICPreferenceRepository(private val bicycleDataSource: BicycleDataSource, private val preferences: SharedPreferences) {
 
@@ -68,14 +68,14 @@ open class BICPreferenceRepository(private val bicycleDataSource: BicycleDataSou
             preferences.edit().putInt(PREFERENCE_CONTRACTS_CHECK_DELAY, value).commit()
         }
 
-    open var contractsLastCheckDate: DateTime?
+    open var contractsLastCheckDate: ZonedDateTime?
         get() {
             val millis = preferences.getLong(PREFERENCE_CONTRACTS_LAST_CHECK_DATE, 0)
-            return if (millis != 0L) DateTime(millis) else null
+            return if (millis != 0L) Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC) else null
         }
         set(value) {
-            value?.let {
-                preferences.edit().putLong(PREFERENCE_CONTRACTS_LAST_CHECK_DATE, it.toDate().time).commit()
+            value?.let { datetime ->
+                preferences.edit().putLong(PREFERENCE_CONTRACTS_LAST_CHECK_DATE, datetime.toInstant().toEpochMilli()).commit()
             }
         }
 

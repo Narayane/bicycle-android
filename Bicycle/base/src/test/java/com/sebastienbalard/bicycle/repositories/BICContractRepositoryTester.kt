@@ -33,6 +33,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.*
 import org.junit.runner.RunWith
 import org.mockito.Mockito.*
+import org.mockito.internal.verification.Times
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -59,23 +60,20 @@ class BICContractRepositoryTester {
     @Test
     fun testUpdateContractsWithNewVersion() {
 
-        val contract = BICContract(1, "Toulouse", 0.0, 0.0, BICContract.Provider.CityBikes, 3000.0, "https://")
-        val newContract1 = BICContract(1, "Toulouse", 0.0, 0.0, BICContract.Provider.CityBikes, 5000.0, "https://")
-        val newContract2 = BICContract(2, "Paris", 0.0, 0.0, BICContract.Provider.CityBikes, 10000.0, "https://")
+        val contract = BICContract(1, "Toulouse", 0.0, 0.0, "FR", 10, BICContract.Provider.CityBikes, 3000.0, "https://")
+        val newContract1 = BICContract(1, "Toulouse", 0.0, 0.0, "FR", 10, BICContract.Provider.CityBikes, 5000.0, "https://")
+        val newContract2 = BICContract(2, "Paris", 0.0, 0.0, "FR", 10, BICContract.Provider.CityBikes, 10000.0, "https://")
         val response = BICContractsDataResponseDto(2, arrayListOf(newContract1, newContract2))
 
         `when`(mockBicycleDataSource.getContracts()).thenReturn(Single.just(response))
         `when`(mockPreferenceRepository.contractsVersion).thenReturn(1)
         `when`(mockContractDao.findAll()).thenReturn(arrayListOf(contract))
-        `when`(mockContractDao.getAllCount()).thenReturn(2)
+        `when`(mockContractDao.findAll()).thenReturn(arrayListOf(newContract1, newContract2))
 
         val spy = repository!!.updateContracts().test().await()
 
         verify(mockBicycleDataSource).getContracts()
         verify(mockContractDao, times(2)).findAll()
-        verify(mockContractDao).deleteAll(arrayListOf(contract))
-        verify(mockContractDao).insertAll(arrayListOf(newContract1, newContract2))
-        verify(mockContractDao).getAllCount()
 
         spy.assertValueCount(1)
         spy.assertValue(2)
@@ -84,18 +82,17 @@ class BICContractRepositoryTester {
     @Test
     fun testUpdateContractsWithSameVersion() {
 
-        val contract = BICContract(1, "Toulouse", 0.0, 0.0, BICContract.Provider.CityBikes, 3000.0, "https://")
+        val contract = BICContract(1, "Toulouse", 0.0, 0.0, "FR", 10, BICContract.Provider.CityBikes, 3000.0, "https://")
         val response = BICContractsDataResponseDto(1, arrayListOf(contract))
 
         `when`(mockBicycleDataSource.getContracts()).thenReturn(Single.just(response))
         `when`(mockPreferenceRepository.contractsVersion).thenReturn(1)
         `when`(mockContractDao.findAll()).thenReturn(arrayListOf(contract))
-        `when`(mockContractDao.getAllCount()).thenReturn(1)
 
         val spy = repository!!.updateContracts().test().await()
 
         verify(mockBicycleDataSource).getContracts()
-        verify(mockContractDao).getAllCount()
+        verify(mockContractDao).findAll()
 
         spy.assertValueCount(1)
         spy.assertValue(1)
@@ -104,11 +101,14 @@ class BICContractRepositoryTester {
     @Test
     fun testGetContractCount() {
 
-        `when`(mockContractDao.getAllCount()).thenReturn(2)
+        val newContract1 = BICContract(1, "Toulouse", 0.0, 0.0, "FR", 10, BICContract.Provider.CityBikes, 5000.0, "https://")
+        val newContract2 = BICContract(2, "Paris", 0.0, 0.0, "FR", 10, BICContract.Provider.CityBikes, 10000.0, "https://")
+
+        `when`(mockContractDao.findAll()).thenReturn(arrayListOf(newContract1, newContract2))
 
         val spy = repository!!.getContractCount().test().await()
 
-        verify(mockContractDao).getAllCount()
+        verify(mockContractDao).findAll()
 
         spy.assertValueCount(1)
         spy.assertValue(2)

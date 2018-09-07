@@ -1,6 +1,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
+def signinConfigProperties = new Properties()
+signinConfigProperties.load(new FileInputStream(rootProject.file("local.properties")))
+
 android {
     compileSdkVersion 27
     
@@ -15,11 +18,26 @@ android {
 
 
     }
-
+    signingConfigs {
+        release {
+            storeFile file(signinConfigProperties['signing.config.keystore.path'])
+            storePassword signinConfigProperties['signing.config.keystore.password']
+            keyAlias signinConfigProperties['signing.config.keyalias']
+            keyPassword signinConfigProperties['signing.config.keyalias.password']
+        }
+    }
     buildTypes {
+        debug {
+            testCoverageEnabled false
+        }
        release {
-           minifyEnabled false
+           debuggable false
+           signingConfig signingConfigs.release
+
+           shrinkResources false
+           minifyEnabled true
            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+           zipAlignEnabled true
        }
     }
 

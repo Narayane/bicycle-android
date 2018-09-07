@@ -20,12 +20,12 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule
 import com.sebastienbalard.bicycle.BICTestApplication
 import com.sebastienbalard.bicycle.BuildConfig
 import com.sebastienbalard.bicycle.SBEvent
+import com.sebastienbalard.bicycle.extensions.toUTC
 import com.sebastienbalard.bicycle.repositories.BICContractRepository
 import com.sebastienbalard.bicycle.repositories.BICPreferenceRepository
 import io.reactivex.Completable
 import io.reactivex.Single
 import org.hamcrest.CoreMatchers.*
-import org.joda.time.DateTime
 import org.junit.After
 import org.junit.Assert.assertThat
 import org.junit.Before
@@ -36,6 +36,9 @@ import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.temporal.ChronoUnit
+import org.threeten.bp.temporal.TemporalAmount
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = BICTestApplication::class, constants = BuildConfig::class)
@@ -131,7 +134,7 @@ class BICSplashVMTester {
             }
         }
 
-        `when`(mockPreferenceRepository.contractsLastCheckDate).thenReturn(DateTime.now().minusDays(10))
+        `when`(mockPreferenceRepository.contractsLastCheckDate).thenReturn(LocalDateTime.now().toUTC().minus(10, ChronoUnit.DAYS))
         `when`(mockContractRepository.getContractCount()).thenReturn(Single.just(255))
 
         viewModel!!.loadAllContracts()
@@ -162,7 +165,7 @@ class BICSplashVMTester {
             }
         }
 
-        `when`(mockPreferenceRepository.contractsLastCheckDate).thenReturn(DateTime.now().minusDays(BuildConfig.DAYS_BETWEEN_CONTRACTS_CHECK + 1))
+        `when`(mockPreferenceRepository.contractsLastCheckDate).thenReturn(LocalDateTime.now().toUTC().minus((BuildConfig.DAYS_BETWEEN_CONTRACTS_CHECK + 1).toLong(), ChronoUnit.DAYS))
         `when`(mockContractRepository.updateContracts()).thenReturn(Single.just(608))
 
         viewModel!!.loadAllContracts()

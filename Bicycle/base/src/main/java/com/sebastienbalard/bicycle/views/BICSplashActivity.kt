@@ -36,11 +36,11 @@ class BICSplashActivity : SBActivity() {
 
     companion object : SBLog() {
         fun getIntent(context: Context): Intent {
-            return Intent(context, BICSplashActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+            return Intent(context, BICSplashActivity::class.java)
         }
     }
 
-    val viewModel: BICSplashViewModel by viewModel()
+    internal val viewModel: BICSplashViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

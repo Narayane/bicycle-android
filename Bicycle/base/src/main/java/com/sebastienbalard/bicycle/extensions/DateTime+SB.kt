@@ -17,8 +17,20 @@
 package com.sebastienbalard.bicycle.extensions
 
 import android.content.Context
-import org.joda.time.DateTime
+import org.threeten.bp.DateTimeUtils
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZoneOffset
+import org.threeten.bp.ZonedDateTime
+import java.util.*
 
-fun DateTime.formatDate(context: Context): String {
-    return android.text.format.DateFormat.getDateFormat(context).format(this.toDate())
+fun ZonedDateTime.formatDate(context: Context): String {
+    return android.text.format.DateFormat.getDateFormat(context).format(toDate())
+}
+
+fun ZonedDateTime.toDate(): Date {
+    return DateTimeUtils.toDate(toInstant())
+}
+
+fun LocalDateTime.toUTC(): ZonedDateTime {
+    return atZone(ZoneOffset.UTC)
 }

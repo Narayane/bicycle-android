@@ -34,7 +34,7 @@ val commonModule = module {
 
     single { PreferenceManager.getDefaultSharedPreferences(androidContext()) }
 
-    single { SBAnalytics(androidContext(), get()) }
+    //single { SBAnalytics(androidContext(), get()) }
     single { BicycleDataSource(get()) }
     single { CityBikesDataSource(get()) }
     single { BICPreferenceRepository(get(), get()) }
