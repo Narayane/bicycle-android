@@ -17,15 +17,9 @@
 package com.sebastienbalard.bicycle
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
-import com.crashlytics.android.Crashlytics
-import com.crashlytics.android.answers.Answers
-import com.crashlytics.android.answers.CustomEvent
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.sebastienbalard.bicycle.BuildConfig
 import com.sebastienbalard.bicycle.repositories.BICPreferenceRepository
-import io.fabric.sdk.android.Fabric
 
 open class SBAnalytics(context: Context, private val preferenceRepository: BICPreferenceRepository) {
 
@@ -35,7 +29,7 @@ open class SBAnalytics(context: Context, private val preferenceRepository: BICPr
 
     init {
         if (BuildConfig.BUILD_TYPE == "release") {
-            v("init analytics")
+            d("init analytics")
             analytics = FirebaseAnalytics.getInstance(context)
         }
     }

@@ -40,6 +40,7 @@ class BICSplashActivity : SBActivity() {
     }
 
     internal val viewModel: BICSplashViewModel by viewModel()
+    internal val crashReport: SBCrashReport by inject()
     internal val analytics: SBAnalytics by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +72,9 @@ class BICSplashActivity : SBActivity() {
                     }
                     is EventSplashAvailableContracts -> {
                         textViewSubtitle.text = getString(R.string.bic_messages_info_contracts_loaded, count)
+                        val info = "load $count contracts"
+                        i(info)
+                        crashReport.logMessage("[INFO]", info)
                         viewModel.requestDataSendingPermissions()
                     }
                     is EventSplashRequestDataPermissions -> {

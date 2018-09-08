@@ -20,14 +20,13 @@ import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.sebastienbalard.bicycle.R
-import com.sebastienbalard.bicycle.SBActivity
-import com.sebastienbalard.bicycle.SBLog
+import com.sebastienbalard.bicycle.*
 import com.sebastienbalard.bicycle.viewmodels.BICOnboardingViewModel
 import com.sebastienbalard.bicycle.viewmodels.EventDataSendingPermissionsSet
 import com.sebastienbalard.bicycle.viewmodels.EventDataSendingPermissionsLoaded
 import com.sebastienbalard.bicycle.views.home.BICHomeActivity
 import kotlinx.android.synthetic.main.bic_activity_data_sending_permissions.*
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
 open class BICDataPermissionsActivity : SBActivity() {
@@ -39,6 +38,7 @@ open class BICDataPermissionsActivity : SBActivity() {
     }
 
     internal open val viewModel: BICOnboardingViewModel by viewModel()
+    internal val crashReport: SBCrashReport by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,8 +64,9 @@ open class BICDataPermissionsActivity : SBActivity() {
         })
 
         buttonValidateDataPermissions.setOnClickListener {
-            i("crash data sending permission: ${switchAllowCrashDataSending.isChecked}")
-            i("use data sending permission: ${switchAllowUseDataSending.isChecked}")
+            val info = "set data sending permissions: data (${switchAllowCrashDataSending.isChecked}), use (${switchAllowUseDataSending.isChecked})"
+            i(info)
+            crashReport.logMessage("[INFO]", info)
             viewModel.saveDataSendingPermissions(switchAllowCrashDataSending.isChecked, switchAllowUseDataSending.isChecked)
         }
 

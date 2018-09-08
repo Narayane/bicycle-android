@@ -39,9 +39,12 @@ import com.sebastienbalard.bicycle.data.BICContract
 import com.sebastienbalard.bicycle.models.BICStation
 import com.sebastienbalard.bicycle.viewmodels.*
 import com.sebastienbalard.bicycle.views.BICAboutActivity
+import com.sebastienbalard.bicycle.views.onboarding.BICDataPermissionsActivity
 import com.sebastienbalard.bicycle.views.settings.BICSettingsActivity
+import kotlinx.android.synthetic.main.bic_activity_data_sending_permissions.*
 import kotlinx.android.synthetic.main.bic_activity_home.*
 import kotlinx.android.synthetic.main.sb_widget_appbar.*
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.util.*
 import kotlin.concurrent.timerTask
@@ -56,7 +59,8 @@ class BICHomeActivity : SBMapActivity() {
         }
     }
 
-    private val viewModelHome: BICHomeViewModel by viewModel()
+    internal val viewModelHome: BICHomeViewModel by viewModel()
+    internal val crashReport: SBCrashReport by inject()
 
     private var clusterContracts: ClusterManager<BICContractAnnotation>? = null
     private var clusterStations: ClusterManager<BICStationAnnotation>? = null
@@ -92,12 +96,16 @@ class BICHomeActivity : SBMapActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
             R.id.bic_menu_home_item_settings -> {
-                i("click on menu item: settings")
+                val info = "click on menu item: settings"
+                i(info)
+                crashReport.logMessage("[INFO]", info)
                 startActivity(BICSettingsActivity.getIntent(this))
                 true
             }
             R.id.bic_menu_home_item_about -> {
-                i("click on menu item: about")
+                val info = "click on menu item: about"
+                i(info)
+                crashReport.logMessage("[INFO]", info)
                 startActivity(BICAboutActivity.getIntent(this))
                 //Toast.makeText(this, R.string.bic_messages_available_soon, Toast.LENGTH_LONG).showAsError(this)
                 true

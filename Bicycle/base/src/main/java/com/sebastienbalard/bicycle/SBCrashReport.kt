@@ -31,7 +31,7 @@ class SBCrashReport(context: Context, private val preferenceRepository: BICPrefe
 
     init {
         if (BuildConfig.BUILD_TYPE == "release") {
-            v("init crash report")
+            d("init crash report")
             Fabric.with(context, Crashlytics())
         }
     }
