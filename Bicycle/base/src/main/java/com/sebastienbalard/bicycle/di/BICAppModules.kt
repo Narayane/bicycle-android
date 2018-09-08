@@ -17,7 +17,7 @@
 package com.sebastienbalard.bicycle.di
 
 import android.preference.PreferenceManager
-import com.sebastienbalard.bicycle.SBAnalytics
+import com.sebastienbalard.bicycle.SBCrashReport
 import com.sebastienbalard.bicycle.SBMapViewModel
 import com.sebastienbalard.bicycle.io.BicycleDataSource
 import com.sebastienbalard.bicycle.io.CityBikesDataSource
@@ -31,12 +31,11 @@ import org.koin.android.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
 
 val commonModule = module {
-
-    single { PreferenceManager.getDefaultSharedPreferences(androidContext()) }
-
-    //single { SBAnalytics(androidContext(), get()) }
     single { BicycleDataSource(get()) }
     single { CityBikesDataSource(get()) }
+    single { PreferenceManager.getDefaultSharedPreferences(androidContext()) }
+    single { SBCrashReport(androidContext(), get()) }
+
     single { BICPreferenceRepository(get(), get()) }
     single { BICContractRepository(get(), get(), get(), get()) }
 
@@ -44,13 +43,11 @@ val commonModule = module {
 }
 
 val onboardingModule = module {
-
     viewModel { BICSplashViewModel(get(), get(), get()) }
     viewModel { BICOnboardingViewModel(get()) }
 }
 
 val homeModule = module {
-
     viewModel { BICHomeViewModel(get()) }
 }
 

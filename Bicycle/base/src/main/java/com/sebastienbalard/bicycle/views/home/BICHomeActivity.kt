@@ -277,7 +277,7 @@ class BICHomeActivity : SBMapActivity() {
             timer!!.scheduleAtFixedRate(timerTask {
                 d("timer fired")
                 viewModelHome.currentContract?.let {
-                    d("refresh contract stations: ${it.name} (${it.provider.tag})")
+                    d("refresh contract stations: ${it.name}")
                     viewModelHome.refreshStationsFor(it)
                 }
             }, delay, delay)
@@ -376,7 +376,7 @@ class BICHomeActivity : SBMapActivity() {
                     }
                     is EventNewContract -> {
                         stopTimer()
-                        d("refresh contract stations: ${it.current.name} (${it.current.provider.tag})")
+                        d("refresh contract stations: ${it.current.name})")
                         // refresh current contract stations data
                         viewModelHome.getStationsFor(it.current)
                         startTimer()

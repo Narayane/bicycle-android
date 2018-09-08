@@ -21,7 +21,7 @@ import android.arch.persistence.room.Database
 import android.arch.persistence.room.TypeConverters
 
 @Database(entities = [BICContract::class], version = 1)
-@TypeConverters(BICConverters::class)
+//@TypeConverters(BICConverters::class)
 abstract class BICDatabase : RoomDatabase() {
     abstract fun getContractDao(): BICContractDao
 }

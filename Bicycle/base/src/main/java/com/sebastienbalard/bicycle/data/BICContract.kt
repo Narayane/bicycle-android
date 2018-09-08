@@ -49,7 +49,6 @@ data class BICContract(
         @SerializedName("country") val countryCode: String,
         @ColumnInfo(name = "station_count")
         @SerializedName("station_count") val stationCount: Int,
-        val provider: Provider,
         val radius: Double,
         val url: String) {
 
@@ -75,14 +74,6 @@ data class BICContract(
             val locale = Locale("", countryCode)
             return locale.displayCountry
         }
-
-    enum class Provider(val tag: String) {
-        @SerializedName("CityBikes") CityBikes("CityBikes");
-
-        companion object {
-            fun from(tag: String): Provider = Provider.values().first { it.tag == tag }
-        }
-    }
 
     companion object {
         var size: Int by Delegates.notNull()
