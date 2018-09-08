@@ -17,6 +17,7 @@
 package com.sebastienbalard.bicycle.di
 
 import android.preference.PreferenceManager
+import com.sebastienbalard.bicycle.SBAnalytics
 import com.sebastienbalard.bicycle.SBCrashReport
 import com.sebastienbalard.bicycle.SBMapViewModel
 import com.sebastienbalard.bicycle.io.BicycleDataSource
@@ -35,9 +36,10 @@ val commonModule = module {
     single { CityBikesDataSource(get()) }
     single { PreferenceManager.getDefaultSharedPreferences(androidContext()) }
     single { SBCrashReport(androidContext(), get()) }
+    single { SBAnalytics(androidContext(), get()) }
 
     single { BICPreferenceRepository(get(), get()) }
-    single { BICContractRepository(get(), get(), get(), get()) }
+    factory { BICContractRepository(get(), get(), get(), get()) }
 
     viewModel { SBMapViewModel(get()) }
 }

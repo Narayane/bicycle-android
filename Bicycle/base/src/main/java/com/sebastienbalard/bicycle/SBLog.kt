@@ -33,40 +33,64 @@ abstract class SBLog {
         logger = LoggerFactory.getLogger(accompanied)
     }
 
-    fun v(msg: String) {
-        if (logger.isTraceEnabled) logger.trace(msg)
+    fun v(message: String) {
+        if (logger.isTraceEnabled) {
+            logger.trace(message)
+            //crashReport.logMessage("[TRACE]: ", message)
+        }
     }
 
-    fun d(msg: String) {
-        if (logger.isDebugEnabled) logger.debug(msg)
+    fun d(message: String) {
+        if (logger.isDebugEnabled) {
+            logger.debug(message)
+            //crashReport.logMessage("[DEBUG]: ", message)
+        }
     }
 
-    fun i(msg: String) {
-        if (logger.isInfoEnabled) logger.info(msg)
+    fun i(message: String) {
+        if (logger.isInfoEnabled) {
+            logger.info(message)
+            //crashReport.logMessage("[INFO]: ", message)
+        }
     }
 
-    fun w(msg: String) {
-        if (logger.isWarnEnabled) logger.warn(msg)
+    fun w(message: String) {
+        if (logger.isWarnEnabled) {
+            logger.warn(message)
+            //crashReport.logMessage("[WARN]: ", message)
+        }
     }
 
-    fun w(msg: String, exception: Exception?) {
-        if (logger.isWarnEnabled) logger.warn(msg, exception)
+    fun w(message: String, exception: Exception) {
+        if (logger.isWarnEnabled) {
+            logger.warn(message, exception)
+            /*crashReport.logMessage("[WARN]: ", message)
+            exception.cause?.let { throwable ->
+                crashReport.catchException(throwable)
+            }*/
+        }
     }
 
-    fun e(msg: String) {
-        if (logger.isErrorEnabled) logger.error(msg)
+    fun e(message: String) {
+        if (logger.isErrorEnabled) {
+            logger.error(message)
+            //crashReport.logMessage("[ERROR]: ", message)
+        }
     }
 
-    fun e(msg: String, exception: Exception?) {
-        if (logger.isErrorEnabled) logger.error(msg, exception)
+    fun e(message: String, exception: Exception) {
+        if (logger.isErrorEnabled) {
+            logger.error(message, exception)
+            /*exception.cause?.let { throwable ->
+                crashReport.catchException(throwable)
+            }*/
+        }
     }
 
-    fun e(msg: String, exception: Throwable?) {
-        if (logger.isErrorEnabled) logger.error(msg, exception)
+    fun e(message: String, throwable: Throwable) {
+        if (logger.isErrorEnabled) {
+            logger.error(message, throwable)
+            //crashReport.catchException(throwable)
+        }
     }
-
-    /*inline fun e(msg: () -> String) {
-        if (logger.isErrorEnabled) logger.error(msg())
-    }*/
-
 }

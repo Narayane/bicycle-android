@@ -13,6 +13,7 @@
 -keepattributes *Annotation*,Signature,InnerClasses
 -keepclassmembers enum * { *; }
 -keepattributes SourceFile,LineNumberTable
+-keep public class * extends java.lang.Exception
 
 # kotlin
 -keep class kotlin.** { *; }
@@ -51,7 +52,7 @@
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 -dontwarn okio.**
 
-# support
+# android support
 -keep public class android.support.v7.widget.** { *; }
 -keep public class android.support.v7.internal.widget.** { *; }
 -keep public class android.support.v7.internal.view.menu.** { *; }
@@ -64,3 +65,7 @@
 -keep public class * extends android.support.v14.preference.Preference {
   public <init>(android.content.Context, android.util.AttributeSet);
 }
+
+# crashlytics
+-keep class com.crashlytics.** { *; }
+-dontwarn com.crashlytics.**

@@ -18,34 +18,47 @@ package com.sebastienbalard.bicycle
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.Bundle
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.CustomEvent
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.sebastienbalard.bicycle.BuildConfig
 import com.sebastienbalard.bicycle.repositories.BICPreferenceRepository
 import io.fabric.sdk.android.Fabric
 
-open class SBAnalytics(context: Context, private val preferenceRepository: BICPreferenceRepository) {
+class SBCrashReport(context: Context, private val preferenceRepository: BICPreferenceRepository) {
 
     companion object : SBLog()
 
-    private var analytics: FirebaseAnalytics? = null
-
     init {
         if (BuildConfig.BUILD_TYPE == "release") {
-            v("init analytics")
-            analytics = FirebaseAnalytics.getInstance(context)
+            v("init crash report")
+            Fabric.with(context, Crashlytics())
         }
     }
 
-    open fun sendEvent(name: String, bundle: Bundle? = null) {
-        analytics?.apply {
-            if (preferenceRepository.isUseDataSendingAllowed) {
-                d("log analytics event: $name")
-                logEvent(name, bundle)
-            }
+    fun setUserInformation(userid: String, username: String, email: String) {
+        if (Fabric.isInitialized() && preferenceRepository.isCrashDataSendingAllowed) {
+            Crashlytics.setUserIdentifier(userid)
+            Crashlytics.setUserName(username)
+            Crashlytics.setUserEmail(email)
+        }
+    }
+
+    fun setCustomKey(key: String, value: String) {
+        if (Fabric.isInitialized() && preferenceRepository.isCrashDataSendingAllowed) {
+            Crashlytics.setString(key, value)
+        }
+    }
+
+    fun logMessage(callerName: String, message: String) {
+        if (Fabric.isInitialized() && preferenceRepository.isCrashDataSendingAllowed) {
+            Crashlytics.log("$callerName: $message")
+        }
+    }
+
+    fun catchException(throwable: Throwable) {
+        if (Fabric.isInitialized() && preferenceRepository.isCrashDataSendingAllowed) {
+            Crashlytics.logException(throwable)
         }
     }
 }

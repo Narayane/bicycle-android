@@ -22,14 +22,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import com.sebastienbalard.bicycle.BuildConfig
-import com.sebastienbalard.bicycle.R
-import com.sebastienbalard.bicycle.SBActivity
-import com.sebastienbalard.bicycle.SBLog
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.sebastienbalard.bicycle.*
 import com.sebastienbalard.bicycle.viewmodels.*
 import com.sebastienbalard.bicycle.views.home.BICHomeActivity
 import com.sebastienbalard.bicycle.views.onboarding.BICDataPermissionsActivity
 import kotlinx.android.synthetic.main.bic_activity_splash.*
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class BICSplashActivity : SBActivity() {
@@ -41,11 +40,13 @@ class BICSplashActivity : SBActivity() {
     }
 
     internal val viewModel: BICSplashViewModel by viewModel()
+    internal val analytics: SBAnalytics by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.bic_activity_splash)
         v("onCreate")
+        analytics.sendEvent("app_open")
 
         viewModel.states.observe(this, Observer { state ->
             state?.let {
