@@ -16,30 +16,29 @@
 -->
 <resources>
     <string name="app_name">Bicycle</string>
-    <string name="bic_app_catching">Allez-y en vélo</string>
+    <string name="bic_app_catching">Head there by bike</string>
     <!-- actions -->
-    <string name="bic_actions_allow">Autoriser</string>
-    <string name="bic_actions_settings">Réglages</string>
-    <string name="bic_actions_about">À propos</string>
-    <string name="bic_actions_validate_choices">Valider mes choix</string>
+    <string name="bic_actions_allow">Allow</string>
+    <string name="bic_actions_settings">Settings</string>
+    <string name="bic_actions_about">About</string>
+    <string name="bic_actions_validate_choices">Validate my choices</string>
     <!-- messages -->
-    <string name="bic_messages_info_init">Initialisation</string>
+    <string name="bic_messages_info_init">Initialization</string>
     <string name="bic_messages_info_config">Configuration</string>
-    <string name="bic_messages_info_check_contracts_data_version">Recherche de nouvelles villes</string>
-    <string name="bic_messages_info_update_contracts">Mise à jour des villes</string>
-    <string name="bic_messages_info_contracts_loaded">%1$d villes disponibles</string>
-    <string name="bic_messages_error_no_play_services_installed">Merci de vérifier que les Google Play Services sont
-        bien installés sur votre appareil</string>
-    <string name="bic_messages_warning_request_location_permissions">L\'application fonctionnera en mode dégradé si
-        vous ne lui permettez pas d\'accéder à votre position</string>
-    <string name="bic_messages_warning_get_current_contract_stations">Nous n\'avons pas pu récupérer les données des stations</string>
-    <string name="bic_messages_available_soon">Bientôt disponible</string>
+    <string name="bic_messages_info_check_contracts_data_version">Checking for new cities</string>
+    <string name="bic_messages_info_update_contracts">Updating cities</string>
+    <string name="bic_messages_info_contracts_loaded">%1$d cities available</string>
+    <string name="bic_messages_error_no_play_services_installed">Please check that Google Play Services are installed on your device</string>
+    <string name="bic_messages_warning_request_location_permissions">The app will work in degraded mode if you do not allow it to access your location</string>
+    <string name="bic_messages_warning_get_current_contract_stations">Unable to retrieve station data</string>
+    <string name="bic_messages_warning_no_connectivity">Please, check your Internet connection</string>
+    <string name="bic_messages_available_soon">Available soon</string>
     <!-- onboarding screen -->
-    <string name="bic_onboarding_screen_title">Traitement de vos données</string>
-    <string name="bic_onboarding_screen_personal_data">Bicycle ne collecte aucune de vos données personnelles (nom, email, âge, position, …)</string>
-    <string name="bic_onboarding_screen_warning">Vous pourrez, à tout moment, modifier vos choix ci-dessous dans l\'écran de réglages de l\'application.</string>
-    <string name="bic_onboarding_screen_crash_data_desc">Il se peut en de rares occasions que l\'application s\'arrête pour une raison inexpliquée. Bicycle peut alors envoyer des données anonymes sur l\'état de l\'application au développeur qui l\'aidera à comprendre cette raison et à corriger le problème.</string>
-    <string name="bic_onboarding_screen_crash_data_label">Autoriser l\'envoi de données sur l\'état de l\'application en cas de problème</string>
-    <string name="bic_onboarding_screen_use_data_desc">Pour permettre au développeur d\'améliorer l\'application, Bicycle peut envoyer des données anonymes sur la façon dont vous l\'utiliser.</string>
-    <string name="bic_onboarding_screen_use_data_label">Autoriser l\'envoi de données d\'utilisation à des fins statistiques</string>
+    <string name="bic_onboarding_screen_title">Processing your data</string>
+    <string name="bic_onboarding_screen_personal_data">Bicycle does not collect any of your personal data (name, email, age, location, …)</string>
+    <string name="bic_onboarding_screen_warning">You can, at any time, change your choices below in the settings screen of the application.</string>
+    <string name="bic_onboarding_screen_crash_data_desc">On rare occasions, the application may crash for an unexplained reason. Bicycle can then send anonymous data about its condition to the developer who will help him understand this reason and correct the problem.</string>
+    <string name="bic_onboarding_screen_crash_data_label">Allow application status data sending in case of crash</string>
+    <string name="bic_onboarding_screen_use_data_desc">To allow the developer to improve the app, Bicycle can send anonymous data about how you use it.</string>
+    <string name="bic_onboarding_screen_use_data_label">Allow use data sending for statistical purposes</string>
 </resources>
