@@ -16,15 +16,15 @@
 -->
 <resources>
     <plurals name="bic_plurals_available_bikes">
-        <item quantity="one">%d available bike</item>
-        <item quantity="other">%d available bikes</item>
+        <item quantity="one">%d vélo disponible</item>
+        <item quantity="other">%d vélos disponibles</item>
     </plurals>
     <plurals name="bic_plurals_free_stands">
-        <item quantity="one">%d free stand</item>
-        <item quantity="other">%d free stands</item>
+        <item quantity="one">%d place libre</item>
+        <item quantity="other">%d places libres</item>
     </plurals>
     <plurals name="bic_plurals_bike_stops">
-        <item quantity="one">%d bike stop</item>
-        <item quantity="other">%d bike stops</item>
+        <item quantity="one">%d station</item>
+        <item quantity="other">%d stations</item>
     </plurals>
 </resources>
