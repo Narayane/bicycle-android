@@ -16,24 +16,98 @@
 
 package com.sebastienbalard.bicycle
 
+import android.annotation.SuppressLint
 import android.app.Application
+import android.content.*
+import android.content.res.Configuration
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkRequest
+import android.text.TextUtils
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.sebastienbalard.bicycle.data.BICContract
 import com.sebastienbalard.bicycle.di.bicycleApp
 import com.sebastienbalard.bicycle.models.BICStation
 import org.koin.android.ext.android.startKoin
 
-class BICApplication : Application() {
+open class BICApplication : Application() {
 
-    companion object: SBLog()
+    companion object: SBLog() {
+        lateinit var instance: BICApplication
+    }
+
+    protected var _hasConnectivity: Boolean = true
+    open val hasConnectivity: Boolean
+        get() = _hasConnectivity
 
     override fun onCreate() {
         super.onCreate()
         v("onCreate")
+        instance = this
         startKoin(this, bicycleApp)
         AndroidThreeTen.init(applicationContext)
         BICContract.initConstants(applicationContext)
         BICStation.initConstants(applicationContext)
+        watchConnectivity()
     }
 
+    //region Private methods
+    private fun watchConnectivity() {
+        v("watch connectivity")
+        registerReceiver(broadcastReceiver, IntentFilter(NOTIFICATION_CONNECTIVITY_ACTION))
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), networkCallback)
+        registerComponentCallbacks(callbacks)
+        val isConnected = connectivityManager.activeNetworkInfo?.isConnectedOrConnecting ?: false
+        sendBroadcast(Intent(NOTIFICATION_CONNECTIVITY_ACTION).putExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, !(isConnected)))
+    }
+
+    private fun unwatchConnectivity() {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager.unregisterNetworkCallback(networkCallback)
+    }
+
+    private val broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            intent?.apply {
+                if (TextUtils.equals(action, NOTIFICATION_CONNECTIVITY_ACTION)) {
+                    v("onReceive")
+                    _hasConnectivity = !(intent.extras?.getBoolean(android.net.ConnectivityManager.EXTRA_NO_CONNECTIVITY, false) ?: false)
+                    i("has connectivity: $hasConnectivity")
+                }
+            }
+        }
+    }
+
+    private val callbacks = object : ComponentCallbacks2 {
+        override fun onLowMemory() {
+
+        }
+
+        override fun onConfigurationChanged(configuration: Configuration?) {
+
+        }
+
+        @SuppressLint("SwitchIntDef")
+        override fun onTrimMemory(level: Int) {
+            when (level) {
+                ComponentCallbacks2.TRIM_MEMORY_COMPLETE -> { // app will be killed soon
+                    d("app will be killed")
+                    unwatchConnectivity()
+                }
+                else -> {}
+            }
+        }
+    }
+
+    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        override fun onAvailable(network: Network) {
+            sendBroadcast(Intent(NOTIFICATION_CONNECTIVITY_ACTION).putExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false))
+        }
+
+        override fun onLost(network: Network) {
+            sendBroadcast(Intent(NOTIFICATION_CONNECTIVITY_ACTION).putExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, true))
+        }
+    }
+    //endregion
 }

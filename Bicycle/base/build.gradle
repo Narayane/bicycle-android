@@ -29,10 +29,10 @@ android {
     }
     buildTypes {
         debug {
-            buildConfigField("long", "TIME_BEFORE_REFRESH_STATIONS_DATA_IN_SECONDS", "60")
+            buildConfigField("long", "TIME_BEFORE_REFRESH_STATIONS_DATA_IN_SECONDS", "30")
         }
         release {
-            buildConfigField("long", "TIME_BEFORE_REFRESH_STATIONS_DATA_IN_SECONDS", "120")
+            buildConfigField("long", "TIME_BEFORE_REFRESH_STATIONS_DATA_IN_SECONDS", "180")
         }
     }
     kotlin {

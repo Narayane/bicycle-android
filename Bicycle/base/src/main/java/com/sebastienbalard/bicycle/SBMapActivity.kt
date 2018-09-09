@@ -76,6 +76,7 @@ abstract class SBMapActivity : SBActivity() {
                         onDenied = {
                             refreshMap()
                             showWarningForLocationPermission()
+                            onLocationPermissionRefused()
                         })
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
@@ -113,6 +114,8 @@ abstract class SBMapActivity : SBActivity() {
     protected abstract fun onMapInitialized()
 
     protected abstract fun onMapRefreshed(hasLocationPermissions: Boolean)
+
+    protected abstract fun onLocationPermissionRefused()
 
     protected abstract fun onUserLocationChanged(location: Location?)
 

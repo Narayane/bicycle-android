@@ -28,3 +28,10 @@ fun Toast.showAsError(into: Context) {
     textView.setTextColor(ContextCompat.getColor(into, R.color.bic_color_white))
     show()
 }
+
+fun Toast.showAsWarning(into: Context) {
+    view.setBackgroundColor(ContextCompat.getColor(into, R.color.bic_color_orange))
+    val textView = view.findViewById(android.R.id.message) as TextView
+    textView.setTextColor(ContextCompat.getColor(into, R.color.bic_color_white))
+    show()
+}

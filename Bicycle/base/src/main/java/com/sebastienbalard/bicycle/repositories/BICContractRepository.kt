@@ -16,7 +16,11 @@
 
 package com.sebastienbalard.bicycle.repositories
 
+import android.content.Context
 import com.google.android.gms.maps.model.LatLng
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.sebastienbalard.bicycle.BICApplication
 import com.sebastienbalard.bicycle.SBLog
 import com.sebastienbalard.bicycle.data.BICContract
 import com.sebastienbalard.bicycle.data.BICContractDao
@@ -24,15 +28,19 @@ import com.sebastienbalard.bicycle.extensions.distanceTo
 import com.sebastienbalard.bicycle.extensions.toUTC
 import com.sebastienbalard.bicycle.io.BicycleDataSource
 import com.sebastienbalard.bicycle.io.CityBikesDataSource
+import com.sebastienbalard.bicycle.io.dtos.BICContractsDataResponseDto
 import com.sebastienbalard.bicycle.models.BICStation
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.LocalDateTime
+import java.io.IOException
+import java.nio.charset.Charset
 import java.util.*
 import kotlin.collections.ArrayList
 
-open class BICContractRepository(private val bicycleDataSource: BicycleDataSource,
+open class BICContractRepository(private val context: Context,
+                                 private val bicycleDataSource: BicycleDataSource,
                                  private val cityBikesDataSource: CityBikesDataSource,
                                  private val contractDao: BICContractDao,
                                  private val preferenceRepository: BICPreferenceRepository) {
@@ -44,27 +52,48 @@ open class BICContractRepository(private val bicycleDataSource: BicycleDataSourc
 
     open fun updateContracts(): Single<Int> {
         return Single.create<Int> { observer ->
-            bicycleDataSource.getContracts()
-                    .observeOn(Schedulers.computation())
-                    .subscribe({ response ->
-                        if (response.version > preferenceRepository.contractsVersion) {
-                            val existing = contractDao.findAll()
-                            d("delete ${existing.size} contracts")
-                            contractDao.deleteAll(existing as ArrayList<BICContract>)
-                            contractDao.insertAll(response.values)
-                            d("insert ${response.values.count()} contracts")
-                            preferenceRepository.contractsVersion = response.version
-                        } else {
-                            d("contracts are up-to-date")
-                        }
-                        val contracts = contractDao.findAll()
-                        d("load ${contracts.count()} contracts")
-                        allContracts.addAll(contracts)
-                        preferenceRepository.contractsLastCheckDate = LocalDateTime.now().toUTC()
-                        observer.onSuccess(contracts.count())
-                    }, { error ->
-                        observer.onError(error)
-                    })
+            if (BICApplication.instance.hasConnectivity) {
+                bicycleDataSource.getContracts()
+                        .observeOn(Schedulers.computation())
+                        .subscribe({ response ->
+                            if (response.version > preferenceRepository.contractsVersion) {
+                                val existing = contractDao.findAll()
+                                d("delete ${existing.size} contracts")
+                                contractDao.deleteAll(existing as ArrayList<BICContract>)
+                                contractDao.insertAll(response.values)
+                                d("insert ${response.values.count()} contracts")
+                                preferenceRepository.contractsVersion = response.version
+                            } else {
+                                d("contracts are up-to-date")
+                            }
+                            val contracts = contractDao.findAll()
+                            d("load ${contracts.count()} contracts")
+                            allContracts.addAll(contracts)
+                            preferenceRepository.contractsLastCheckDate = LocalDateTime.now().toUTC()
+                            observer.onSuccess(contracts.count())
+                        }, { error ->
+                            observer.onError(error)
+                        })
+            } else {
+                d("get contracts from assets")
+                try {
+                    val inputStream = context.assets.open("contracts.json")
+                    val size = inputStream.available()
+                    val buffer = ByteArray(size)
+                    inputStream.read(buffer)
+                    inputStream.close()
+                    val json = String(buffer, Charset.forName("UTF-8"))
+
+                    val dto: BICContractsDataResponseDto = Gson().fromJson(json, object : TypeToken<BICContractsDataResponseDto>() {}.type)
+                    val localContracts = dto.values
+                    d("load ${localContracts.count()} contracts")
+                    allContracts.addAll(localContracts)
+                    observer.onSuccess(localContracts.count())
+                } catch (exception: IOException) {
+                    e("fail to load contracts from assets", exception)
+                    observer.onError(exception)
+                }
+            }
         }.subscribeOn(Schedulers.newThread())
     }
 
@@ -128,20 +157,4 @@ open class BICContractRepository(private val bicycleDataSource: BicycleDataSourc
                 }
                 .doOnError { throwable -> e("fail to reload contract stations", throwable) }
     }
-
-    /*private fun loadContracts() {
-        try {
-            val inputStream = BICApplication.context.assets.open("contracts.json")
-            val size = inputStream.available()
-            val buffer = ByteArray(size)
-            inputStream.read(buffer)
-            inputStream.close()
-            val json = String(buffer, Charset.forName("UTF-8"))
-
-            allContracts = Gson().fromJson(json, object : TypeToken<ArrayList<BICContract>>() {}.type)
-            d("${allContracts.size} contracts loaded")
-        } catch (exception: IOException) {
-            e("fail to load contracts from assets", exception)
-        }
-    }*/
 }

@@ -29,6 +29,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
@@ -36,6 +37,8 @@ import com.google.android.gms.maps.model.Marker
 import com.google.maps.android.clustering.ClusterManager
 import com.sebastienbalard.bicycle.*
 import com.sebastienbalard.bicycle.data.BICContract
+import com.sebastienbalard.bicycle.extensions.showAsError
+import com.sebastienbalard.bicycle.extensions.showAsWarning
 import com.sebastienbalard.bicycle.models.BICStation
 import com.sebastienbalard.bicycle.viewmodels.*
 import com.sebastienbalard.bicycle.views.BICAboutActivity
@@ -107,7 +110,6 @@ class BICHomeActivity : SBMapActivity() {
                 i(info)
                 crashReport.logMessage("[INFO]", info)
                 startActivity(BICAboutActivity.getIntent(this))
-                //Toast.makeText(this, R.string.bic_messages_available_soon, Toast.LENGTH_LONG).showAsError(this)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -139,9 +141,17 @@ class BICHomeActivity : SBMapActivity() {
         clusterContracts?.renderer = BICContractAnnotation.Renderer(this, googleMap!!, clusterContracts!!)
         clusterStations = ClusterManager(this, googleMap!!)
         clusterStations?.renderer = BICStationAnnotation.Renderer(this, googleMap!!, clusterStations!!)
+        if (!BICApplication.instance.hasConnectivity) {
+            Toast.makeText(this, R.string.bic_messages_warning_no_connectivity, Toast.LENGTH_LONG).showAsWarning(this)
+        }
+
     }
 
     override fun onMapRefreshed(hasLocationPermissions: Boolean) {
+
+    }
+
+    override fun onLocationPermissionRefused() {
 
     }
 
@@ -350,8 +360,7 @@ class BICHomeActivity : SBMapActivity() {
                         hideBottomSheet()
                         googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(center, 12f))
                     }
-                    else -> {
-                    }
+                    else -> {}
                 }
             }
         }

@@ -27,6 +27,7 @@ import com.sebastienbalard.bicycle.repositories.BICPreferenceRepository
 import com.sebastienbalard.bicycle.viewmodels.BICHomeViewModel
 import com.sebastienbalard.bicycle.viewmodels.BICOnboardingViewModel
 import com.sebastienbalard.bicycle.viewmodels.BICSplashViewModel
+import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
@@ -39,7 +40,7 @@ val commonModule = module {
     single { SBAnalytics(androidContext(), get()) }
 
     single { BICPreferenceRepository(get(), get()) }
-    factory { BICContractRepository(get(), get(), get(), get()) }
+    single { BICContractRepository(androidContext(), get(), get(), get(), get()) }
 
     viewModel { SBMapViewModel(get()) }
 }
