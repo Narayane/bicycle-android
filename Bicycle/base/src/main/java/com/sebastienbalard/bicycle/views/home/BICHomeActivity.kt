@@ -22,6 +22,8 @@ import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
+import android.support.design.widget.BottomSheetBehavior.STATE_EXPANDED
+import android.support.design.widget.BottomSheetBehavior.STATE_HIDDEN
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.NestedScrollView
@@ -180,6 +182,11 @@ class BICHomeActivity : SBMapActivity() {
     //region Private methods
 
     private fun showBottomSheet(marker: Marker) {
+        selectedMarker?.let { selected ->
+            if (selected.tag == marker.tag) {
+                return
+            }
+        }
         v("showBottomSheet")
         deselectMarker(selectedMarker)
         if (marker.snippet == null) {
@@ -189,14 +196,14 @@ class BICHomeActivity : SBMapActivity() {
                     else -> fabContractZoom.visibility = View.GONE
                 }
             }
-            if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            if (bottomSheetBehavior.state != STATE_HIDDEN) {
+                bottomSheetBehavior.state = STATE_HIDDEN
             }
             selectedMarker = null
         } else {
             refreshBottomSheetLayout(marker)
-            if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            if (bottomSheetBehavior.state != STATE_EXPANDED) {
+                bottomSheetBehavior.state = STATE_EXPANDED
             }
             selectMarker(marker)
             viewModelHome.states.value?.apply {
@@ -218,8 +225,8 @@ class BICHomeActivity : SBMapActivity() {
                 }
             }
             deselectMarker(selectedMarker)
-            if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            if (bottomSheetBehavior.state != STATE_HIDDEN) {
+                bottomSheetBehavior.state = STATE_HIDDEN
             }
             selectedMarker = null
         }
@@ -355,7 +362,8 @@ class BICHomeActivity : SBMapActivity() {
 
     private fun initLayout() {
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        bottomSheetBehavior.setBottomSheetCallback(bottomSheetCallback)
+        bottomSheetBehavior.state = STATE_HIDDEN
         fabContractZoom.setOnClickListener {
             selectedMarker?.tag?.apply {
                 when (this) {
@@ -367,6 +375,30 @@ class BICHomeActivity : SBMapActivity() {
                 }
             }
         }
+    }
+
+    private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+
+        private var isSliding = false
+
+        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            isSliding = true
+        }
+
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            if (isSliding && newState == STATE_HIDDEN) {
+                viewModelHome.states.value?.apply {
+                    when (this) {
+                        is StateShowContracts -> fabContractZoom.visibility = View.INVISIBLE
+                        else -> fabContractZoom.visibility = View.GONE
+                    }
+                }
+                deselectMarker(selectedMarker)
+                selectedMarker = null
+                isSliding = false
+            }
+        }
+
     }
 
     private fun initObservers() {
