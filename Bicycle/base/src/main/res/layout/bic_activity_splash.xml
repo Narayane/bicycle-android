@@ -43,6 +43,7 @@
             android:layout_centerInParent="true"
             android:textSize="56sp"
             android:textColor="@color/bic_color_white"
+            android:textStyle="bold"
             android:text="@string/app_name"/>
 
         <android.support.v7.widget.AppCompatTextView
@@ -51,6 +52,7 @@
             android:layout_below="@id/textViewLogoText"
             android:layout_centerHorizontal="true"
             android:textSize="@dimen/bic_size_font_headline"
+            android:fontFamily="sans-serif-condensed"
             android:textColor="@color/bic_color_white"
             android:text="@string/bic_app_catching"/>
 

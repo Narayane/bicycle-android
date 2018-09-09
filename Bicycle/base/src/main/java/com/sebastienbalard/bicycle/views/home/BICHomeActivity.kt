@@ -209,18 +209,20 @@ class BICHomeActivity : SBMapActivity() {
     }
 
     private fun hideBottomSheet() {
-        v("hideBottomSheet")
-        viewModelHome.states.value?.apply {
-            when (this) {
-                is StateShowContracts -> fabContractZoom.visibility = View.INVISIBLE
-                else -> fabContractZoom.visibility = View.GONE
+        runOnUiThread {
+            v("hideBottomSheet")
+            viewModelHome.states.value?.apply {
+                when (this) {
+                    is StateShowContracts -> fabContractZoom.visibility = View.INVISIBLE
+                    else -> fabContractZoom.visibility = View.GONE
+                }
             }
+            deselectMarker(selectedMarker)
+            if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            }
+            selectedMarker = null
         }
-        deselectMarker(selectedMarker)
-        if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        }
-        selectedMarker = null
     }
 
     private fun refreshBottomSheetLayout(marker: Marker) {
@@ -298,6 +300,7 @@ class BICHomeActivity : SBMapActivity() {
                     d("refresh contract stations: ${it.name}")
                     viewModelHome.refreshStationsFor(it)
                 }
+                hideBottomSheet()
             }, delay, delay)
         }
     }
