@@ -59,15 +59,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/bic_color_white"
-                android:textSize="@dimen/bic_size_font_subhead"
-                android:fontFamily="sans-serif-black"
-                android:layout_marginTop="@dimen/bic_margin_vertical_default"
-                android:text="@string/bic_onboarding_screen_warning"/>
-
-            <android.support.v7.widget.AppCompatTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/bic_color_white"
                 android:textSize="@dimen/bic_size_font_body"
                 android:layout_marginTop="@dimen/bic_margin_vertical_default"
                 android:text="@string/bic_onboarding_screen_crash_data_desc"/>
@@ -98,10 +89,19 @@
                 android:textColor="@color/bic_color_white"
                 android:textSize="@dimen/bic_size_font_subhead"
                 android:layout_marginTop="@dimen/bic_margin_half"
-                android:layout_marginBottom="@dimen/bic_margin_vertical_default"
                 android:fontFamily="sans-serif-medium"
                 android:checked="true"
                 android:text="@string/bic_onboarding_screen_use_data_label"/>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/bic_color_white"
+                android:textSize="@dimen/bic_size_font_subhead"
+                android:fontFamily="sans-serif-black"
+                android:layout_marginTop="@dimen/bic_margin_vertical_default"
+                android:layout_marginBottom="@dimen/bic_margin_vertical_default"
+                android:text="@string/bic_onboarding_screen_warning"/>
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/buttonValidateDataPermissions"

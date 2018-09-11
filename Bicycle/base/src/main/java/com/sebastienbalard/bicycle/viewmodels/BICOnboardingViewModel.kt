@@ -40,12 +40,13 @@ open class BICOnboardingViewModel(private val preferenceRepository: BICPreferenc
         preferenceRepository.isUseDataSendingAllowed = allowUseDataSending
         preferenceRepository.requestDataSendingPermissions = false
         var bundle = Bundle()
-        bundle.putBoolean("value", allowCrashDataSending)
-        bundle.putBoolean("is_initial", true)
+        bundle.putInt("value", if (allowCrashDataSending) 1 else 0)
+        bundle.putInt("is_initial", 1)
         analytics.sendEvent("permission_crash_data_sending_set", bundle)
         bundle = Bundle()
-        bundle.putBoolean("value", allowUseDataSending)
-        bundle.putBoolean("is_initial", true)
+
+        bundle.putInt("value", if (allowUseDataSending) 1 else 0)
+        bundle.putInt("is_initial", 1)
         analytics.sendEvent("permission_use_data_sending_set", bundle)
         _events.value = EventDataSendingPermissionsSet
     }

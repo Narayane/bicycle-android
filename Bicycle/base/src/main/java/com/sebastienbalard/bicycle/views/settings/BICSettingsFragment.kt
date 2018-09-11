@@ -41,8 +41,8 @@ open class BICSettingsFragment : PreferenceFragmentCompat() {
                 val isChecked = (preference as SwitchPreferenceCompat).isChecked
                 i(crashReport.logMessage("[INFO]", "set crash data sending: $isChecked"))
                 val bundle = Bundle()
-                bundle.putBoolean("value", isChecked)
-                bundle.putBoolean("is_initial", false)
+                bundle.putInt("value", if (isChecked) 1 else 0)
+                bundle.putInt("is_initial", 0)
                 analytics.sendEvent("permission_crash_data_sending_set", bundle)
                 true
             }
@@ -50,8 +50,8 @@ open class BICSettingsFragment : PreferenceFragmentCompat() {
                 val isChecked = (preference as SwitchPreferenceCompat).isChecked
                 i(crashReport.logMessage("[INFO]", "set use data sending: $isChecked"))
                 val bundle = Bundle()
-                bundle.putBoolean("value", isChecked)
-                bundle.putBoolean("is_initial", false)
+                bundle.putInt("value", if (isChecked) 1 else 0)
+                bundle.putInt("is_initial", 0)
                 analytics.sendEvent("permission_use_data_sending_set", bundle)
                 true
             }
