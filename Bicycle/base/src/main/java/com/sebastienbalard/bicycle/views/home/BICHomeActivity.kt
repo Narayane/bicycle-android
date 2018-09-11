@@ -241,7 +241,7 @@ class BICHomeActivity : SBMapActivity() {
                         textViewBottomSheetTitle.text = name
                         textViewBottomSheetSubtitle.text = countryName
                         textViewBottomSheetAvailableBikesCount.text = ""
-                        textViewBottomSheetFreeStandsCount.text = resources.getQuantityString(R.plurals.bic_plurals_bike_stops, stationCount, stationCount)
+                        textViewBottomSheetFreeStandsCount.text = resources.getQuantityString(R.plurals.bic_plurals_stations, stationCount, stationCount)
                     }
                 }
             }

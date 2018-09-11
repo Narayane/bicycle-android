@@ -23,8 +23,8 @@
         <item quantity="one">%d free stand</item>
         <item quantity="other">%d free stands</item>
     </plurals>
-    <plurals name="bic_plurals_bike_stops">
-        <item quantity="one">%d bike stop</item>
-        <item quantity="other">%d bike stops</item>
+    <plurals name="bic_plurals_stations">
+        <item quantity="one">%d bike station</item>
+        <item quantity="other">%d bike stations</item>
     </plurals>
 </resources>
