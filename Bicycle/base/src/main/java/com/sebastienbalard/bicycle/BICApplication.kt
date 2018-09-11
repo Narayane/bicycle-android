@@ -28,13 +28,15 @@ import com.jakewharton.threetenabp.AndroidThreeTen
 import com.sebastienbalard.bicycle.data.BICContract
 import com.sebastienbalard.bicycle.di.bicycleApp
 import com.sebastienbalard.bicycle.models.BICStation
+import com.sebastienbalard.bicycle.views.home.BICHomeActivity
+import org.koin.android.ext.android.inject
 import org.koin.android.ext.android.startKoin
 
 open class BICApplication : Application() {
 
-    companion object: SBLog() {
-        lateinit var instance: BICApplication
-    }
+    companion object: SBLog()
+
+    internal val crashReport: SBCrashReport by inject()
 
     protected var _hasConnectivity: Boolean = true
     open val hasConnectivity: Boolean
@@ -43,7 +45,6 @@ open class BICApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         v("onCreate")
-        instance = this
         startKoin(this, bicycleApp)
         AndroidThreeTen.init(applicationContext)
         BICContract.initConstants(applicationContext)
@@ -73,7 +74,7 @@ open class BICApplication : Application() {
                 if (TextUtils.equals(action, NOTIFICATION_CONNECTIVITY_ACTION)) {
                     v("onReceive")
                     _hasConnectivity = !(intent.extras?.getBoolean(android.net.ConnectivityManager.EXTRA_NO_CONNECTIVITY, false) ?: false)
-                    i("has connectivity: $hasConnectivity")
+                    i(crashReport.logMessage("[INFO]", "has connectivity: $hasConnectivity"))
                 }
             }
         }

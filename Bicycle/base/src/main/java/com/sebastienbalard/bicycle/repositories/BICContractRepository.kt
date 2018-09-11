@@ -16,11 +16,11 @@
 
 package com.sebastienbalard.bicycle.repositories
 
-import android.content.Context
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.sebastienbalard.bicycle.BICApplication
+import com.sebastienbalard.bicycle.SBCrashReport
 import com.sebastienbalard.bicycle.SBLog
 import com.sebastienbalard.bicycle.data.BICContract
 import com.sebastienbalard.bicycle.data.BICContractDao
@@ -39,11 +39,12 @@ import java.nio.charset.Charset
 import java.util.*
 import kotlin.collections.ArrayList
 
-open class BICContractRepository(private val context: Context,
+open class BICContractRepository(private val application: BICApplication,
                                  private val bicycleDataSource: BicycleDataSource,
                                  private val cityBikesDataSource: CityBikesDataSource,
                                  private val contractDao: BICContractDao,
-                                 private val preferenceRepository: BICPreferenceRepository) {
+                                 private val preferenceRepository: BICPreferenceRepository,
+                                 private val crashReport: SBCrashReport) {
 
     companion object : SBLog()
 
@@ -52,7 +53,7 @@ open class BICContractRepository(private val context: Context,
 
     open fun updateContracts(): Single<Int> {
         return Single.create<Int> { observer ->
-            if (BICApplication.instance.hasConnectivity) {
+            if (application.hasConnectivity) {
                 bicycleDataSource.getContracts()
                         .observeOn(Schedulers.computation())
                         .subscribe({ response ->
@@ -77,7 +78,7 @@ open class BICContractRepository(private val context: Context,
             } else {
                 d("get contracts from assets")
                 try {
-                    val inputStream = context.assets.open("contracts.json")
+                    val inputStream = application.applicationContext.assets.open("contracts.json")
                     val size = inputStream.available()
                     val buffer = ByteArray(size)
                     inputStream.read(buffer)
@@ -90,7 +91,7 @@ open class BICContractRepository(private val context: Context,
                     allContracts.addAll(localContracts)
                     observer.onSuccess(localContracts.count())
                 } catch (exception: IOException) {
-                    e("fail to load contracts from assets", exception)
+                    e("fail to load contracts from assets", crashReport.catchException(exception))
                     observer.onError(exception)
                 }
             }
@@ -155,6 +156,8 @@ open class BICContractRepository(private val context: Context,
                 .doOnSuccess { stations ->
                     cacheStations[contract.name] = stations
                 }
-                .doOnError { throwable -> e("fail to reload contract stations", throwable) }
+                .doOnError { throwable ->
+                    e("fail to reload contract stations", crashReport.catchException(throwable))
+                }
     }
 }

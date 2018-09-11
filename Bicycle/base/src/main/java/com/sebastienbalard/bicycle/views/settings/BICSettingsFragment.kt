@@ -20,14 +20,16 @@ import android.os.Bundle
 import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceFragmentCompat
 import android.support.v7.preference.SwitchPreferenceCompat
-import com.sebastienbalard.bicycle.PREFERENCE_CRASH_DATA_SENDING_PERMISSION
-import com.sebastienbalard.bicycle.PREFERENCE_USE_DATA_SENDING_PERMISSION
-import com.sebastienbalard.bicycle.R
-import com.sebastienbalard.bicycle.SBLog
+import com.sebastienbalard.bicycle.*
+import com.sebastienbalard.bicycle.views.BICSplashActivity
+import org.koin.android.ext.android.inject
 
 open class BICSettingsFragment : PreferenceFragmentCompat() {
 
     companion object : SBLog()
+
+    internal val crashReport: SBCrashReport by inject()
+    internal val analytics: SBAnalytics by inject()
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.bic_preferences)
@@ -36,11 +38,21 @@ open class BICSettingsFragment : PreferenceFragmentCompat() {
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         return when (preference?.key) {
             PREFERENCE_CRASH_DATA_SENDING_PERMISSION -> {
-                i("crash data permission: ${(preference as SwitchPreferenceCompat).isChecked}")
+                val isChecked = (preference as SwitchPreferenceCompat).isChecked
+                i(crashReport.logMessage("[INFO]", "set crash data sending: $isChecked"))
+                val bundle = Bundle()
+                bundle.putBoolean("value", isChecked)
+                bundle.putBoolean("is_initial", false)
+                analytics.sendEvent("permission_crash_data_sending_set", bundle)
                 true
             }
             PREFERENCE_USE_DATA_SENDING_PERMISSION -> {
-                i("use data permission: ${(preference as SwitchPreferenceCompat).isChecked}")
+                val isChecked = (preference as SwitchPreferenceCompat).isChecked
+                i(crashReport.logMessage("[INFO]", "set use data sending: $isChecked"))
+                val bundle = Bundle()
+                bundle.putBoolean("value", isChecked)
+                bundle.putBoolean("is_initial", false)
+                analytics.sendEvent("permission_use_data_sending_set", bundle)
                 true
             }
             else -> super.onPreferenceTreeClick(preference)

@@ -36,28 +36,24 @@ abstract class SBLog {
     fun v(message: String) {
         if (logger.isTraceEnabled) {
             logger.trace(message)
-            //crashReport.logMessage("[TRACE]: ", message)
         }
     }
 
     fun d(message: String) {
         if (logger.isDebugEnabled) {
             logger.debug(message)
-            //crashReport.logMessage("[DEBUG]: ", message)
         }
     }
 
     fun i(message: String) {
         if (logger.isInfoEnabled) {
             logger.info(message)
-            //crashReport.logMessage("[INFO]: ", message)
         }
     }
 
     fun w(message: String) {
         if (logger.isWarnEnabled) {
             logger.warn(message)
-            //crashReport.logMessage("[WARN]: ", message)
         }
     }
 

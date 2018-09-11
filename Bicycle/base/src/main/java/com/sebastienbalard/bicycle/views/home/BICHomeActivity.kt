@@ -39,14 +39,11 @@ import com.google.android.gms.maps.model.Marker
 import com.google.maps.android.clustering.ClusterManager
 import com.sebastienbalard.bicycle.*
 import com.sebastienbalard.bicycle.data.BICContract
-import com.sebastienbalard.bicycle.extensions.showAsError
 import com.sebastienbalard.bicycle.extensions.showAsWarning
 import com.sebastienbalard.bicycle.models.BICStation
 import com.sebastienbalard.bicycle.viewmodels.*
 import com.sebastienbalard.bicycle.views.BICAboutActivity
-import com.sebastienbalard.bicycle.views.onboarding.BICDataPermissionsActivity
 import com.sebastienbalard.bicycle.views.settings.BICSettingsActivity
-import kotlinx.android.synthetic.main.bic_activity_data_sending_permissions.*
 import kotlinx.android.synthetic.main.bic_activity_home.*
 import kotlinx.android.synthetic.main.sb_widget_appbar.*
 import org.koin.android.ext.android.inject
@@ -66,6 +63,7 @@ class BICHomeActivity : SBMapActivity() {
 
     internal val viewModelHome: BICHomeViewModel by viewModel()
     internal val crashReport: SBCrashReport by inject()
+    internal val application: BICApplication by inject()
 
     private var clusterContracts: ClusterManager<BICContractAnnotation>? = null
     private var clusterStations: ClusterManager<BICStationAnnotation>? = null
@@ -101,16 +99,12 @@ class BICHomeActivity : SBMapActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
             R.id.bic_menu_home_item_settings -> {
-                val info = "click on menu item: settings"
-                i(info)
-                crashReport.logMessage("[INFO]", info)
+                i(crashReport.logMessage("[INFO]", "click on menu item: settings"))
                 startActivity(BICSettingsActivity.getIntent(this))
                 true
             }
             R.id.bic_menu_home_item_about -> {
-                val info = "click on menu item: about"
-                i(info)
-                crashReport.logMessage("[INFO]", info)
+                i(crashReport.logMessage("[INFO]", "click on menu item: about"))
                 startActivity(BICAboutActivity.getIntent(this))
                 true
             }
@@ -143,7 +137,7 @@ class BICHomeActivity : SBMapActivity() {
         clusterContracts?.renderer = BICContractAnnotation.Renderer(this, googleMap!!, clusterContracts!!)
         clusterStations = ClusterManager(this, googleMap!!)
         clusterStations?.renderer = BICStationAnnotation.Renderer(this, googleMap!!, clusterStations!!)
-        if (!BICApplication.instance.hasConnectivity) {
+        if (!application.hasConnectivity) {
             Toast.makeText(this, R.string.bic_messages_warning_no_connectivity, Toast.LENGTH_LONG).showAsWarning(this)
         }
 
@@ -247,7 +241,7 @@ class BICHomeActivity : SBMapActivity() {
                         textViewBottomSheetTitle.text = name
                         textViewBottomSheetSubtitle.text = countryName
                         textViewBottomSheetAvailableBikesCount.text = ""
-                        textViewBottomSheetFreeStandsCount.text = resources.getQuantityString(R.plurals.bic_plurals_station_count, stationCount, stationCount)
+                        textViewBottomSheetFreeStandsCount.text = resources.getQuantityString(R.plurals.bic_plurals_bike_stops, stationCount, stationCount)
                     }
                 }
             }

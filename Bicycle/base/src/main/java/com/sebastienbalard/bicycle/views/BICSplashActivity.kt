@@ -72,9 +72,7 @@ class BICSplashActivity : SBActivity() {
                     }
                     is EventSplashAvailableContracts -> {
                         textViewSubtitle.text = getString(R.string.bic_messages_info_contracts_loaded, count)
-                        val info = "load $count contracts"
-                        i(info)
-                        crashReport.logMessage("[INFO]", info)
+                        i(crashReport.logMessage("[INFO]", "load $count contracts"))
                         viewModel.requestDataSendingPermissions()
                     }
                     is EventSplashRequestDataPermissions -> {

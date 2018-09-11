@@ -17,11 +17,7 @@
 package com.sebastienbalard.bicycle
 
 import android.content.Context
-import android.content.SharedPreferences
 import com.crashlytics.android.Crashlytics
-import com.crashlytics.android.answers.Answers
-import com.crashlytics.android.answers.CustomEvent
-import com.sebastienbalard.bicycle.BuildConfig
 import com.sebastienbalard.bicycle.repositories.BICPreferenceRepository
 import io.fabric.sdk.android.Fabric
 
@@ -50,15 +46,26 @@ class SBCrashReport(context: Context, private val preferenceRepository: BICPrefe
         }
     }
 
-    fun logMessage(callerName: String, message: String) {
+    fun logMessage(callerName: String, message: String): String {
         if (Fabric.isInitialized() && preferenceRepository.isCrashDataSendingAllowed) {
             Crashlytics.log("$callerName: $message")
         }
+        return message
     }
 
-    fun catchException(throwable: Throwable) {
+    fun catchException(exception: Exception): Exception {
+        if (Fabric.isInitialized() && preferenceRepository.isCrashDataSendingAllowed) {
+            exception.cause?.let { throwable ->
+                Crashlytics.logException(throwable)
+            }
+        }
+        return exception
+    }
+
+    fun catchException(throwable: Throwable): Throwable {
         if (Fabric.isInitialized() && preferenceRepository.isCrashDataSendingAllowed) {
             Crashlytics.logException(throwable)
         }
+        return throwable
     }
 }

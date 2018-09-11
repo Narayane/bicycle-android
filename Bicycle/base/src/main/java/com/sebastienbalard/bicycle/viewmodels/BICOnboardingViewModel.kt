@@ -16,6 +16,8 @@
 
 package com.sebastienbalard.bicycle.viewmodels
 
+import android.os.Bundle
+import com.sebastienbalard.bicycle.SBAnalytics
 import com.sebastienbalard.bicycle.SBEvent
 import com.sebastienbalard.bicycle.SBLog
 import com.sebastienbalard.bicycle.SBViewModel
@@ -24,7 +26,7 @@ import com.sebastienbalard.bicycle.repositories.BICPreferenceRepository
 data class EventDataSendingPermissionsLoaded(val allowCrashDataSending: Boolean, val allowUseDataSending: Boolean) : SBEvent()
 object EventDataSendingPermissionsSet : SBEvent()
 
-open class BICOnboardingViewModel(private val preferenceRepository: BICPreferenceRepository) : SBViewModel() {
+open class BICOnboardingViewModel(private val preferenceRepository: BICPreferenceRepository, private val analytics: SBAnalytics) : SBViewModel() {
 
     companion object : SBLog()
 
@@ -37,6 +39,14 @@ open class BICOnboardingViewModel(private val preferenceRepository: BICPreferenc
         preferenceRepository.isCrashDataSendingAllowed = allowCrashDataSending
         preferenceRepository.isUseDataSendingAllowed = allowUseDataSending
         preferenceRepository.requestDataSendingPermissions = false
+        var bundle = Bundle()
+        bundle.putBoolean("value", allowCrashDataSending)
+        bundle.putBoolean("is_initial", true)
+        analytics.sendEvent("permission_crash_data_sending_set", bundle)
+        bundle = Bundle()
+        bundle.putBoolean("value", allowUseDataSending)
+        bundle.putBoolean("is_initial", true)
+        analytics.sendEvent("permission_use_data_sending_set", bundle)
         _events.value = EventDataSendingPermissionsSet
     }
 }
