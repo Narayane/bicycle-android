@@ -59,8 +59,7 @@ open class BICSplashViewModel(private val application: BICApplication,
 
         preferenceRepository.contractsLastCheckDate?.let { datetime ->
             v("last check: ${datetime.formatDate(application.applicationContext)}")
-            timeToCheck = ChronoUnit.DAYS.between(datetime.toLocalDate(), now.toLocalDate()) > BuildConfig
-                    .DAYS_BETWEEN_CONTRACTS_CHECK
+            timeToCheck = ChronoUnit.DAYS.between(datetime.toLocalDate(), now.toLocalDate()) > preferenceRepository.contractsCheckDelay
         }
 
         return if (timeToCheck) {

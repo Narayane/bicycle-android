@@ -109,9 +109,7 @@ open class BICContractRepository(private val application: BICApplication,
 
     open fun loadAllContracts(): Single<List<BICContract>> {
         d("get contracts from local")
-        return Single.create<List<BICContract>> { observer ->
-            observer.onSuccess(allContracts)
-        }.subscribeOn(Schedulers.newThread())
+        return Single.just(allContracts)
     }
 
     /*fun getContractBy(location: Location): BICContract? {

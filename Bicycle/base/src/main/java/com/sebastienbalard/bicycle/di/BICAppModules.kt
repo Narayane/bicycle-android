@@ -30,9 +30,8 @@ import com.sebastienbalard.bicycle.viewmodels.BICOnboardingViewModel
 import com.sebastienbalard.bicycle.viewmodels.BICSplashViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
-import org.koin.android.viewmodel.ext.koin.viewModel
+import org.koin.android.viewmodel.experimental.builder.viewModel
 import org.koin.dsl.module.module
-import org.koin.experimental.builder.create
 import org.koin.experimental.builder.single
 
 val commonModule = module {
@@ -45,16 +44,16 @@ val commonModule = module {
     single<BICPreferenceRepository>()
     single<BICContractRepository>()
 
-    viewModel { create<SBMapViewModel>() }
+    viewModel<SBMapViewModel>()
 }
 
 val onboardingModule = module {
-    viewModel { create<BICSplashViewModel>() }
-    viewModel { create<BICOnboardingViewModel>() }
+    viewModel<BICSplashViewModel>()
+    viewModel<BICOnboardingViewModel>()
 }
 
 val homeModule = module {
-    viewModel { create<BICHomeViewModel>() }
+    viewModel<BICHomeViewModel>()
 }
 
 val bicycleApp = listOf(remoteDataSourceModule, localDataSourceModule, commonModule, onboardingModule, homeModule)
