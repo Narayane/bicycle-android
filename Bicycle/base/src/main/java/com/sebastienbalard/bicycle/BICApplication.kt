@@ -28,7 +28,6 @@ import com.jakewharton.threetenabp.AndroidThreeTen
 import com.sebastienbalard.bicycle.data.BICContract
 import com.sebastienbalard.bicycle.di.bicycleApp
 import com.sebastienbalard.bicycle.models.BICStation
-import com.sebastienbalard.bicycle.views.home.BICHomeActivity
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.android.startKoin
 

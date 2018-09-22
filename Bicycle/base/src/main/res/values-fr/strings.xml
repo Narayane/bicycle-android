@@ -22,6 +22,9 @@
     <string name="bic_actions_settings">Réglages</string>
     <string name="bic_actions_about">À propos</string>
     <string name="bic_actions_validate_choices">Valider mes choix</string>
+    <string name="bic_actions_upgrade">Mettre à jour</string>
+    <!-- dialogs -->
+    <string name="bic_dialogs_title_info">Information</string>
     <!-- messages -->
     <string name="bic_messages_info_init">Initialisation</string>
     <string name="bic_messages_info_config">Configuration</string>
@@ -35,6 +38,7 @@
     <string name="bic_messages_warning_get_current_contract_stations">Nous n\'avons pas pu récupérer les données des stations</string>
     <string name="bic_messages_warning_no_connectivity">Veuillez vérifiez votre connexion internet</string>
     <string name="bic_messages_available_soon">Bientôt disponible</string>
+    <string name="bic_messages_info_app_newer_version">Une nouvelle version est disponible, veuillez mettre à jour l\'application :)</string>
     <!-- onboarding screen -->
     <string name="bic_onboarding_screen_title">Traitement de vos données</string>
     <string name="bic_onboarding_screen_personal_data">Bicycle ne collecte aucune de vos données personnelles (nom, email, âge, position, …)</string>

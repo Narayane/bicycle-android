@@ -91,6 +91,7 @@ dependencies {
     implementation 'com.google.maps.android:android-maps-utils:0.4.4'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinx_coroutines_version"
+    implementation 'org.apache.maven:maven-artifact:3.5.4'
 
     // tests
     testImplementation 'junit:junit:4.12'

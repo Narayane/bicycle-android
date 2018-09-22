@@ -16,13 +16,19 @@
 
 package com.sebastienbalard.bicycle.views
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.arch.lifecycle.Observer
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import com.google.firebase.analytics.FirebaseAnalytics
+import android.support.v4.content.ContextCompat
+import android.util.TypedValue
+import android.widget.TextView
 import com.sebastienbalard.bicycle.*
 import com.sebastienbalard.bicycle.viewmodels.*
 import com.sebastienbalard.bicycle.views.home.BICHomeActivity
@@ -64,6 +70,9 @@ class BICSplashActivity : SBActivity() {
             event?.apply {
                 v("event -> ${this::class.java.simpleName}")
                 when (this) {
+                    is EventSplashForceUpdate -> {
+                        launchPlayStoreApp()
+                    }
                     is EventSplashConfigLoaded, is EventSplashLoadConfigFailed -> {
                         viewModel.loadAllContracts()
                     }
@@ -90,5 +99,31 @@ class BICSplashActivity : SBActivity() {
         })
 
         viewModel.loadConfig()
+    }
+
+    private fun launchPlayStoreApp() {
+        runOnUiThread {
+            val alert = AlertDialog.Builder(this@BICSplashActivity)
+                    .setTitle(R.string.bic_dialogs_title_info)
+                    .setMessage(R.string.bic_messages_info_app_newer_version)
+                    .setPositiveButton(R.string.bic_actions_upgrade) { _, _ ->
+                        i("display app store sheet")
+                        val appPackageName = "com.sebastien.balard.android.squareup" //packageName
+                        try {
+                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$appPackageName")))
+                        } catch (exception: ActivityNotFoundException) {
+                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName")))
+                        }
+                    }.create()
+            alert.setOnShowListener { dialogInterface ->
+                val dialog = dialogInterface as Dialog
+                val titleView = dialog.findViewById(resources.getIdentifier("android:id/alertTitle", null, null)) as TextView
+                titleView.setTextColor(ContextCompat.getColor(dialog.context, R.color.bic_color_purple_dark))
+                titleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.bic_size_font_headline))
+
+            }
+            alert.show()
+            alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this@BICSplashActivity, R.color.bic_color_accent))
+        }
     }
 }

@@ -19,8 +19,10 @@ package com.sebastienbalard.bicycle.repositories
 import android.content.SharedPreferences
 import com.sebastienbalard.bicycle.*
 import com.sebastienbalard.bicycle.io.BicycleDataSource
+import com.sebastienbalard.bicycle.io.dtos.BICConfigAndroidDto
 import com.sebastienbalard.bicycle.io.dtos.BICConfigResponseDto
 import io.reactivex.Completable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import org.threeten.bp.*
 
@@ -60,6 +62,17 @@ open class BICPreferenceRepository(private val bicycleDataSource: BicycleDataSou
             preferences.edit().putInt(PREFERENCE_APP_CHECK_DELAY, value).commit()
         }
 
+    open var appLastCheckDate: ZonedDateTime?
+        get() {
+            val millis = preferences.getLong(PREFERENCE_APP_LAST_CHECK_DATE, 0)
+            return if (millis != 0L) Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC) else null
+        }
+        set(value) {
+            value?.let { datetime ->
+                preferences.edit().putLong(PREFERENCE_APP_LAST_CHECK_DATE, datetime.toInstant().toEpochMilli()).commit()
+            }
+        }
+
     open var contractsCheckDelay: Int
         get() {
             return preferences.getInt(PREFERENCE_CONTRACTS_CHECK_DELAY, 30)
@@ -87,13 +100,13 @@ open class BICPreferenceRepository(private val bicycleDataSource: BicycleDataSou
             preferences.edit().putInt(PREFERENCE_CONTRACTS_VERSION, value).commit()
         }
 
-    open fun loadConfig(): Completable {
-        return Completable.create { observer ->
+    open fun loadConfig(): Single<BICConfigAndroidDto> {
+        return Single.create { observer ->
             bicycleDataSource.getConfig()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ response ->
                         setConfig(response)
-                        observer.onComplete()
+                        observer.onSuccess(response.apps.android)
                     }, { error ->
                        observer.onError(error)
                     })

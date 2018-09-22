@@ -19,15 +19,18 @@ package com.sebastienbalard.bicycle.viewmodels
 import com.sebastienbalard.bicycle.*
 import com.sebastienbalard.bicycle.extensions.formatDate
 import com.sebastienbalard.bicycle.extensions.toUTC
+import com.sebastienbalard.bicycle.io.dtos.BICConfigAndroidDto
 import com.sebastienbalard.bicycle.repositories.BICContractRepository
 import com.sebastienbalard.bicycle.repositories.BICPreferenceRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.temporal.ChronoUnit
 
 object StateSplashConfig : SBState()
 object StateSplashContracts : SBState()
 
+object EventSplashForceUpdate : SBEvent()
 object EventSplashConfigLoaded : SBEvent()
 data class EventSplashLoadConfigFailed(val error: Throwable) : SBEvent()
 object EventSplashCheckContracts : SBEvent()
@@ -43,8 +46,12 @@ open class BICSplashViewModel(private val application: BICApplication,
     open fun loadConfig() {
         _states.value = StateSplashConfig
         launch {
-            preferenceRepository.loadConfig().subscribe({
-                _events.value = EventSplashConfigLoaded
+            preferenceRepository.loadConfig().subscribe({ androidConfig ->
+                if (checkForceUpdate(androidConfig)) {
+                    _events.value = EventSplashForceUpdate
+                } else {
+                    _events.value = EventSplashConfigLoaded
+                }
             }, { error ->
                 _events.value = EventSplashLoadConfigFailed(error)
             })
@@ -58,7 +65,7 @@ open class BICSplashViewModel(private val application: BICApplication,
         val now = LocalDateTime.now().toUTC()
 
         preferenceRepository.contractsLastCheckDate?.let { datetime ->
-            v("last check: ${datetime.formatDate(application.applicationContext)}")
+            v("contracts last check: ${datetime.formatDate(application.applicationContext)}")
             timeToCheck = ChronoUnit.DAYS.between(datetime.toLocalDate(), now.toLocalDate()) > preferenceRepository.contractsCheckDelay
         }
 
@@ -91,5 +98,35 @@ open class BICSplashViewModel(private val application: BICApplication,
 
     open fun requestDataSendingPermissions() {
         _events.value = EventSplashRequestDataPermissions(preferenceRepository.requestDataSendingPermissions)
+    }
+
+    private fun checkForceUpdate(androidConfig: BICConfigAndroidDto): Boolean {
+
+        var timeToCheck = true
+        val now = LocalDateTime.now().toUTC()
+
+        preferenceRepository.appLastCheckDate?.let { datetime ->
+            v("app last check: ${datetime.formatDate(application.applicationContext)}")
+            timeToCheck = ChronoUnit.DAYS.between(datetime.toLocalDate(), now.toLocalDate()) > preferenceRepository.contractsCheckDelay
+        }
+
+        if (timeToCheck) {
+            d("check app version")
+
+            val lastVersion = DefaultArtifactVersion(androidConfig.version)
+            d("last version: $lastVersion")
+            val currentVersion = DefaultArtifactVersion(BuildConfig.VERSION_NAME)
+            d("current version: $currentVersion")
+
+            if (currentVersion.compareTo(lastVersion) == -1) {
+                return androidConfig.forceUpdate
+            } else {
+                d("app is up-to-date")
+                preferenceRepository.appLastCheckDate = LocalDateTime.now().toUTC()
+            }
+        } else {
+            v("no need to check again")
+        }
+        return false
     }
 }

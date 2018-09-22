@@ -21,6 +21,7 @@
         <item name="colorAccent">@color/bic_color_accent</item>
         <item name="android:textSize">@dimen/bic_size_font_body</item>
         <item name="android:textColor">@color/bic_color_text_primary</item>
+        <item name="android:colorControlHighlight">@color/bic_color_accent</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
