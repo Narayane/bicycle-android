@@ -4,11 +4,11 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     baseFeature true
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         vectorDrawables.useSupportLibrary = true
@@ -32,11 +32,6 @@ android {
         }
         release {
             buildConfigField("long", "TIME_BEFORE_REFRESH_STATIONS_DATA_IN_SECONDS", "180")
-        }
-    }
-    kotlin {
-        experimental {
-            coroutines 'enable'
         }
     }
     compileOptions {
@@ -99,7 +94,7 @@ dependencies {
     testImplementation "org.robolectric:robolectric:$robolectric_version"
     testImplementation "org.robolectric:annotations:$robolectric_version"
     testImplementation "org.robolectric:shadows-supportv4:$robolectric_version"
-    testImplementation 'org.mockito:mockito-core:2.20.1'
+    testImplementation 'org.mockito:mockito-core:2.21.0'
     testImplementation "android.arch.core:core-testing:$arch_version"
     testImplementation 'com.jakewharton.threetenabp:threetenabp:1.1.0'
 }

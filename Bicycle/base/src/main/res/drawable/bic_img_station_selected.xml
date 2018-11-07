@@ -11,5 +11,5 @@
         android:fillColor="@color/bic_color_orange"/>
     <path
         android:pathData="M55.2,41.63c-6.99,-6.99 -18.37,-6.99 -25.37,-0c-6.99,6.99 -6.99,18.37 -0,25.37L42.52,79.68l12.68,-12.68C62.2,60 62.2,48.62 55.2,41.63z"
-        android:fillColor="#58585A"/>
+        android:fillColor="@color/bic_color_text_primary"/>
 </vector>

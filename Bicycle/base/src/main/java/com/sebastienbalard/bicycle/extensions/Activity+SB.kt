@@ -68,6 +68,6 @@ fun Activity.showSoftInput() {
 fun Activity.hideSoftInput() {
     val vImm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     if (vImm.isActive) {
-        vImm.hideSoftInputFromWindow(currentFocus.windowToken, 0)
+        vImm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
     }
 }

@@ -58,7 +58,7 @@ open class BICApplication : Application() {
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), networkCallback)
         registerComponentCallbacks(callbacks)
-        val isConnected = connectivityManager.activeNetworkInfo?.isConnectedOrConnecting ?: false
+        val isConnected = connectivityManager.activeNetworkInfo?.isConnected ?: false
         sendBroadcast(Intent(NOTIFICATION_CONNECTIVITY_ACTION).putExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, !(isConnected)))
     }
 
