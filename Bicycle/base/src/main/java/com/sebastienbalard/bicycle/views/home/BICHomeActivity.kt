@@ -16,6 +16,7 @@
 
 package com.sebastienbalard.bicycle.views.home
 
+import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
@@ -51,6 +52,7 @@ import org.koin.android.viewmodel.ext.android.viewModel
 import java.util.*
 import kotlin.concurrent.timerTask
 
+@SuppressLint("RestrictedApi")
 class BICHomeActivity : SBMapActivity() {
 
     companion object : SBLog() {
@@ -260,6 +262,7 @@ class BICHomeActivity : SBMapActivity() {
                         marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconSelected))
                     }
                 }
+                marker.zIndex = 1.0f
                 selectedMarker = marker
             }
         }
@@ -277,6 +280,7 @@ class BICHomeActivity : SBMapActivity() {
                         marker.setIcon(BitmapDescriptorFactory.fromBitmap(icon))
                     }
                 }
+                marker.zIndex = 0.0f
             }
         }
     }
