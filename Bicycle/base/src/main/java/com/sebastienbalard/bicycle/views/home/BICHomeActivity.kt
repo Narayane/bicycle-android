@@ -101,12 +101,12 @@ class BICHomeActivity : SBMapActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
             R.id.bic_menu_home_item_settings -> {
-                i(crashReport.logMessage("[INFO]", "click on menu item: settings"))
+                crashReport.logInfo(BICHomeActivity::class.java.simpleName, "click on menu item: settings")
                 startActivity(BICSettingsActivity.getIntent(this))
                 true
             }
             R.id.bic_menu_home_item_about -> {
-                i(crashReport.logMessage("[INFO]", "click on menu item: about"))
+                crashReport.logInfo(BICHomeActivity::class.java.simpleName, "click on menu item: about")
                 startActivity(BICAboutActivity.getIntent(this))
                 true
             }

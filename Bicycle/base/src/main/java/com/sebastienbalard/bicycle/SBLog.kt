@@ -18,7 +18,6 @@ package com.sebastienbalard.bicycle
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.lang.Exception
 
 abstract class SBLog {
 
@@ -60,33 +59,24 @@ abstract class SBLog {
     fun w(message: String, exception: Exception) {
         if (logger.isWarnEnabled) {
             logger.warn(message, exception)
-            /*crashReport.logMessage("[WARN]: ", message)
-            exception.cause?.let { throwable ->
-                crashReport.catchException(throwable)
-            }*/
         }
     }
 
     fun e(message: String) {
         if (logger.isErrorEnabled) {
             logger.error(message)
-            //crashReport.logMessage("[ERROR]: ", message)
         }
     }
 
     fun e(message: String, exception: Exception) {
         if (logger.isErrorEnabled) {
             logger.error(message, exception)
-            /*exception.cause?.let { throwable ->
-                crashReport.catchException(throwable)
-            }*/
         }
     }
 
     fun e(message: String, throwable: Throwable) {
         if (logger.isErrorEnabled) {
             logger.error(message, throwable)
-            //crashReport.catchException(throwable)
         }
     }
 }

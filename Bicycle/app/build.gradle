@@ -1,23 +1,19 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
+apply plugin: 'com.google.firebase.firebase-perf'
 
 def signinConfigProperties = new Properties()
 signinConfigProperties.load(new FileInputStream(rootProject.file("local.properties")))
 
 android {
     compileSdkVersion 28
-    
-
-
     defaultConfig {
         applicationId "com.sebastienbalard.bicycle.app"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-
-
     }
     signingConfigs {
         release {
@@ -41,13 +37,11 @@ android {
            zipAlignEnabled true
        }
     }
-
 }
 
 dependencies {
     //implementation project(':ride')
     implementation project(':base')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 repositories {
     mavenCentral()

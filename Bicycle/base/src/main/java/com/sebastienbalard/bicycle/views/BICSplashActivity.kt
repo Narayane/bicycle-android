@@ -45,6 +45,7 @@ class BICSplashActivity : SBActivity() {
         }
     }
 
+    internal val application: BICApplication by inject()
     internal val viewModel: BICSplashViewModel by viewModel()
     internal val crashReport: SBCrashReport by inject()
     internal val analytics: SBAnalytics by inject()
@@ -74,14 +75,14 @@ class BICSplashActivity : SBActivity() {
                         launchPlayStoreApp()
                     }
                     is EventSplashConfigLoaded, is EventSplashLoadConfigFailed -> {
-                        viewModel.loadAllContracts()
+                        viewModel.loadAllContracts(application.hasConnectivity)
                     }
                     is EventSplashCheckContracts -> {
                         textViewSubtitle.text = getString(R.string.bic_messages_info_check_contracts_data_version)
                     }
                     is EventSplashAvailableContracts -> {
                         textViewSubtitle.text = getString(R.string.bic_messages_info_contracts_loaded, count)
-                        i(crashReport.logMessage("[INFO]", "load $count contracts"))
+                        crashReport.logInfo(BICSplashActivity::class.java.simpleName, "load $count contracts")
                         viewModel.requestDataSendingPermissions()
                     }
                     is EventSplashRequestDataPermissions -> {

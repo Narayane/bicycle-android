@@ -16,6 +16,7 @@
 
 package com.sebastienbalard.bicycle.repositories
 
+import android.content.Context
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -39,7 +40,7 @@ import java.nio.charset.Charset
 import java.util.*
 import kotlin.collections.ArrayList
 
-open class BICContractRepository(private val application: BICApplication,
+open class BICContractRepository(private val context: Context,
                                  private val bicycleDataSource: BicycleDataSource,
                                  private val cityBikesDataSource: CityBikesDataSource,
                                  private val contractDao: BICContractDao,
@@ -51,9 +52,9 @@ open class BICContractRepository(private val application: BICApplication,
     private var allContracts = ArrayList<BICContract>()
     private var cacheStations = HashMap<String, List<BICStation>>()
 
-    open fun updateContracts(): Single<Int> {
+    open fun updateContracts(hasConnectivity: Boolean): Single<Int> {
         return Single.create<Int> { observer ->
-            if (application.hasConnectivity) {
+            if (hasConnectivity) {
                 bicycleDataSource.getContracts()
                         .observeOn(Schedulers.computation())
                         .subscribe({ response ->
@@ -78,7 +79,7 @@ open class BICContractRepository(private val application: BICApplication,
             } else {
                 d("get contracts from assets")
                 try {
-                    val inputStream = application.applicationContext.assets.open("contracts.json")
+                    val inputStream = context.assets.open("contracts.json")
                     val size = inputStream.available()
                     val buffer = ByteArray(size)
                     inputStream.read(buffer)
@@ -91,7 +92,7 @@ open class BICContractRepository(private val application: BICApplication,
                     allContracts.addAll(localContracts)
                     observer.onSuccess(localContracts.count())
                 } catch (exception: IOException) {
-                    e("fail to load contracts from assets", crashReport.catchException(exception))
+                    crashReport.catchException(BICContractRepository::class.java.simpleName, "fail to load contracts from assets", exception)
                     observer.onError(exception)
                 }
             }
@@ -155,7 +156,7 @@ open class BICContractRepository(private val application: BICApplication,
                     cacheStations[contract.name] = stations
                 }
                 .doOnError { throwable ->
-                    e("fail to reload contract stations", crashReport.catchException(throwable))
+                    crashReport.catchException(BICContractRepository::class.java.simpleName, "fail to reload contract stations", throwable)
                 }
     }
 }

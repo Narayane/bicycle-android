@@ -25,21 +25,19 @@ open class SBAnalytics(context: Context, private val preferenceRepository: BICPr
 
     companion object : SBLog()
 
-    private var analytics: FirebaseAnalytics? = null
+    private lateinit var analytics: FirebaseAnalytics
 
     init {
         if (BuildConfig.BUILD_TYPE == "release") {
-            d("init analytics")
+            i("init analytics")
             analytics = FirebaseAnalytics.getInstance(context)
         }
     }
 
     open fun sendEvent(name: String, bundle: Bundle? = null) {
-        analytics?.apply {
-            if (preferenceRepository.isUseDataSendingAllowed) {
-                d("log analytics event: $name")
-                logEvent(name, bundle)
-            }
+        d("log analytics event: $name")
+        if (BuildConfig.BUILD_TYPE == "release" && preferenceRepository.isUseDataSendingAllowed) {
+            analytics.logEvent(name, bundle)
         }
     }
 }

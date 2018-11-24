@@ -35,7 +35,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(application = BICTestApplication::class, constants = BuildConfig::class)
+@Config(application = BICTestApplication::class)
 class BICPreferenceRepositoryTester {
 
     @Rule

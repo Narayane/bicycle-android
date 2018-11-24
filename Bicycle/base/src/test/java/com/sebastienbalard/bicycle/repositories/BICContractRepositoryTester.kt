@@ -18,7 +18,7 @@ package com.sebastienbalard.bicycle.repositories
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import com.sebastienbalard.bicycle.BICTestApplication
-import com.sebastienbalard.bicycle.BuildConfig
+import com.sebastienbalard.bicycle.SBCrashReport
 import com.sebastienbalard.bicycle.data.BICContract
 import com.sebastienbalard.bicycle.data.BICContractDao
 import com.sebastienbalard.bicycle.io.BicycleDataSource
@@ -33,12 +33,13 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.*
 import org.junit.runner.RunWith
 import org.mockito.Mockito.*
-import org.mockito.internal.verification.Times
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.RuntimeEnvironment
+import org.robolectric.RuntimeEnvironment.application
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(application = BICTestApplication::class, constants = BuildConfig::class)
+@Config(application = BICTestApplication::class)
 class BICContractRepositoryTester {
 
     @Rule
@@ -49,6 +50,7 @@ class BICContractRepositoryTester {
     private val mockCityBikesDataSource = mock(CityBikesDataSource::class.java)
     private val mockContractDao = mock(BICContractDao::class.java)
     private val mockPreferenceRepository = mock(BICPreferenceRepository::class.java)
+    private val mockCrashReport = mock(SBCrashReport::class.java)
 
     private var repository: BICContractRepository? = null
 
@@ -60,9 +62,9 @@ class BICContractRepositoryTester {
     @Test
     fun testUpdateContractsWithNewVersion() {
 
-        val contract = BICContract(1, "Toulouse", 0.0, 0.0, "FR", 10, BICContract.Provider.CityBikes, 3000.0, "https://")
-        val newContract1 = BICContract(1, "Toulouse", 0.0, 0.0, "FR", 10, BICContract.Provider.CityBikes, 5000.0, "https://")
-        val newContract2 = BICContract(2, "Paris", 0.0, 0.0, "FR", 10, BICContract.Provider.CityBikes, 10000.0, "https://")
+        val contract = BICContract(1, "Toulouse", 0.0, 0.0, "FR", 10,3000.0, "https://")
+        val newContract1 = BICContract(1, "Toulouse", 0.0, 0.0, "FR", 10, 5000.0, "https://")
+        val newContract2 = BICContract(2, "Paris", 0.0, 0.0, "FR", 10, 10000.0, "https://")
         val response = BICContractsDataResponseDto(2, arrayListOf(newContract1, newContract2))
 
         `when`(mockBicycleDataSource.getContracts()).thenReturn(Single.just(response))
@@ -70,7 +72,7 @@ class BICContractRepositoryTester {
         `when`(mockContractDao.findAll()).thenReturn(arrayListOf(contract))
         `when`(mockContractDao.findAll()).thenReturn(arrayListOf(newContract1, newContract2))
 
-        val spy = repository!!.updateContracts().test().await()
+        val spy = repository!!.updateContracts(true).test().await()
 
         verify(mockBicycleDataSource).getContracts()
         verify(mockContractDao, times(2)).findAll()
@@ -82,14 +84,14 @@ class BICContractRepositoryTester {
     @Test
     fun testUpdateContractsWithSameVersion() {
 
-        val contract = BICContract(1, "Toulouse", 0.0, 0.0, "FR", 10, BICContract.Provider.CityBikes, 3000.0, "https://")
+        val contract = BICContract(1, "Toulouse", 0.0, 0.0, "FR", 10, 3000.0, "https://")
         val response = BICContractsDataResponseDto(1, arrayListOf(contract))
 
         `when`(mockBicycleDataSource.getContracts()).thenReturn(Single.just(response))
         `when`(mockPreferenceRepository.contractsVersion).thenReturn(1)
         `when`(mockContractDao.findAll()).thenReturn(arrayListOf(contract))
 
-        val spy = repository!!.updateContracts().test().await()
+        val spy = repository!!.updateContracts(true).test().await()
 
         verify(mockBicycleDataSource).getContracts()
         verify(mockContractDao).findAll()
@@ -101,8 +103,8 @@ class BICContractRepositoryTester {
     @Test
     fun testGetContractCount() {
 
-        val newContract1 = BICContract(1, "Toulouse", 0.0, 0.0, "FR", 10, BICContract.Provider.CityBikes, 5000.0, "https://")
-        val newContract2 = BICContract(2, "Paris", 0.0, 0.0, "FR", 10, BICContract.Provider.CityBikes, 10000.0, "https://")
+        val newContract1 = BICContract(1, "Toulouse", 0.0, 0.0, "FR", 10, 5000.0, "https://")
+        val newContract2 = BICContract(2, "Paris", 0.0, 0.0, "FR", 10, 10000.0, "https://")
 
         `when`(mockContractDao.findAll()).thenReturn(arrayListOf(newContract1, newContract2))
 
@@ -116,7 +118,7 @@ class BICContractRepositoryTester {
 
     @Before
     fun setUp() {
-        repository = BICContractRepository(mockBicycleDataSource, mockCityBikesDataSource, mockContractDao, mockPreferenceRepository)
+        repository = BICContractRepository(application.applicationContext, mockBicycleDataSource, mockCityBikesDataSource, mockContractDao, mockPreferenceRepository, mockCrashReport)
     }
 
     @After

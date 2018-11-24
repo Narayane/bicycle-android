@@ -38,7 +38,7 @@ import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(application = BICTestApplication::class, constants = BuildConfig::class/*, shadows = [BICShadowDrawableResourcesImpl::class], sdk = [27]*/)
+@Config(application = BICTestApplication::class)
 class BICSplashActivityTester {
 
     private var activity: BICSplashActivity? = null

@@ -21,51 +21,76 @@ import com.crashlytics.android.Crashlytics
 import com.sebastienbalard.bicycle.repositories.BICPreferenceRepository
 import io.fabric.sdk.android.Fabric
 
-class SBCrashReport(context: Context, private val preferenceRepository: BICPreferenceRepository) {
+open class SBCrashReport(context: Context, private val preferenceRepository: BICPreferenceRepository) {
 
     companion object : SBLog()
 
     init {
         if (BuildConfig.BUILD_TYPE == "release") {
-            d("init crash report")
+            i("init crash report")
             Fabric.with(context, Crashlytics())
         }
     }
 
-    fun setUserInformation(userid: String, username: String, email: String) {
-        if (Fabric.isInitialized() && preferenceRepository.isCrashDataSendingAllowed) {
-            Crashlytics.setUserIdentifier(userid)
-            Crashlytics.setUserName(username)
+    open fun setUserInformation(userId: String, userName: String, email: String) {
+        if (BuildConfig.BUILD_TYPE == "release" && preferenceRepository.isCrashDataSendingAllowed) {
+            Crashlytics.setUserIdentifier(userId)
+            Crashlytics.setUserName(userName)
             Crashlytics.setUserEmail(email)
         }
     }
 
-    fun setCustomKey(key: String, value: String) {
-        if (Fabric.isInitialized() && preferenceRepository.isCrashDataSendingAllowed) {
+    open fun setCustomKey(key: String, value: String) {
+        if (BuildConfig.BUILD_TYPE == "release" && preferenceRepository.isCrashDataSendingAllowed) {
             Crashlytics.setString(key, value)
         }
     }
 
-    fun logMessage(callerName: String, message: String): String {
-        if (Fabric.isInitialized() && preferenceRepository.isCrashDataSendingAllowed) {
-            Crashlytics.log("$callerName: $message")
+    open fun logDebug(callerName: String, message: String) {
+        d(message)
+        if (BuildConfig.BUILD_TYPE == "release" && preferenceRepository.isCrashDataSendingAllowed) {
+            Crashlytics.log("[DEBUG] | $callerName: $message")
         }
-        return message
     }
 
-    fun catchException(exception: Exception): Exception {
-        if (Fabric.isInitialized() && preferenceRepository.isCrashDataSendingAllowed) {
-            exception.cause?.let { throwable ->
-                Crashlytics.logException(throwable)
-            }
+    open fun logInfo(callerName: String, message: String) {
+        i(message)
+        if (BuildConfig.BUILD_TYPE == "release" && preferenceRepository.isCrashDataSendingAllowed) {
+            Crashlytics.log("[INFO] | $callerName: $message")
         }
-        return exception
     }
 
-    fun catchException(throwable: Throwable): Throwable {
-        if (Fabric.isInitialized() && preferenceRepository.isCrashDataSendingAllowed) {
+    open fun logWarning(callerName: String, message: String) {
+        w(message)
+        if (BuildConfig.BUILD_TYPE == "release" && preferenceRepository.isCrashDataSendingAllowed) {
+            Crashlytics.log("[WARN] | $callerName: $message")
+        }
+    }
+
+    open fun logError(callerName: String, message: String) {
+        e(message)
+        if (BuildConfig.BUILD_TYPE == "release" && preferenceRepository.isCrashDataSendingAllowed) {
+            Crashlytics.log("[ERROR] | $callerName: $message")
+        }
+    }
+
+    open fun catchException(callerName: String, message: String, exception: Exception) {
+        exception.cause?.let { throwable ->
+            catchException(callerName, message, throwable)
+        }
+    }
+
+    open fun catchException(callerName: String, message: String, throwable: Throwable) {
+        logError(callerName, message)
+        if (BuildConfig.BUILD_TYPE == "release" && preferenceRepository.isCrashDataSendingAllowed) {
             Crashlytics.logException(throwable)
         }
-        return throwable
+    }
+
+    open fun crash() {
+        w("crash with non fatal")
+        if (BuildConfig.BUILD_TYPE == "release" && preferenceRepository.isCrashDataSendingAllowed) {
+            Crashlytics.getInstance().crash()
+        }
     }
 }

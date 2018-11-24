@@ -16,6 +16,7 @@
 
 package com.sebastienbalard.bicycle.viewmodels
 
+import android.content.Context
 import com.sebastienbalard.bicycle.*
 import com.sebastienbalard.bicycle.extensions.formatDate
 import com.sebastienbalard.bicycle.extensions.toUTC
@@ -37,7 +38,7 @@ object EventSplashCheckContracts : SBEvent()
 data class EventSplashAvailableContracts(val count: Int) : SBEvent()
 data class EventSplashRequestDataPermissions(val needed: Boolean) : SBEvent()
 
-open class BICSplashViewModel(private val application: BICApplication,
+open class BICSplashViewModel(private val context: Context,
                               private val preferenceRepository: BICPreferenceRepository,
                               private val contractRepository: BICContractRepository) : SBViewModel() {
 
@@ -58,14 +59,14 @@ open class BICSplashViewModel(private val application: BICApplication,
         }
     }
 
-    open fun loadAllContracts() {
+    open fun loadAllContracts(hasConnectivity: Boolean) {
         _states.value = StateSplashContracts
 
         var timeToCheck = true
         val now = LocalDateTime.now().toUTC()
 
         preferenceRepository.contractsLastCheckDate?.let { datetime ->
-            v("contracts last check: ${datetime.formatDate(application.applicationContext)}")
+            v("contracts last check: ${datetime.formatDate(context)}")
             timeToCheck = ChronoUnit.DAYS.between(datetime.toLocalDate(), now.toLocalDate()) > preferenceRepository.contractsCheckDelay
         }
 
@@ -73,7 +74,7 @@ open class BICSplashViewModel(private val application: BICApplication,
             d("get contracts from remote")
             _events.value = EventSplashCheckContracts
             launch {
-                contractRepository.updateContracts()
+                contractRepository.updateContracts(hasConnectivity)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({ count ->
                             _events.value = EventSplashAvailableContracts(count)
@@ -106,7 +107,7 @@ open class BICSplashViewModel(private val application: BICApplication,
         val now = LocalDateTime.now().toUTC()
 
         preferenceRepository.appLastCheckDate?.let { datetime ->
-            v("app last check: ${datetime.formatDate(application.applicationContext)}")
+            v("app last check: ${datetime.formatDate(context)}")
             timeToCheck = ChronoUnit.DAYS.between(datetime.toLocalDate(), now.toLocalDate()) > preferenceRepository.contractsCheckDelay
         }
 

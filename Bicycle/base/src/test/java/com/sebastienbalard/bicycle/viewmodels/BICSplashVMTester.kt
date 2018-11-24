@@ -17,10 +17,12 @@
 package com.sebastienbalard.bicycle.viewmodels
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
+import com.sebastienbalard.bicycle.BICApplication
 import com.sebastienbalard.bicycle.BICTestApplication
 import com.sebastienbalard.bicycle.BuildConfig
 import com.sebastienbalard.bicycle.SBEvent
 import com.sebastienbalard.bicycle.extensions.toUTC
+import com.sebastienbalard.bicycle.io.dtos.BICConfigAndroidDto
 import com.sebastienbalard.bicycle.repositories.BICContractRepository
 import com.sebastienbalard.bicycle.repositories.BICPreferenceRepository
 import io.reactivex.Completable
@@ -34,14 +36,13 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
+import org.robolectric.RuntimeEnvironment.application
 import org.robolectric.annotation.Config
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.temporal.ChronoUnit
-import org.threeten.bp.temporal.TemporalAmount
 
 @RunWith(RobolectricTestRunner::class)
-@Config(application = BICTestApplication::class, constants = BuildConfig::class)
+@Config(application = BICTestApplication::class)
 class BICSplashVMTester {
 
     @Rule
@@ -63,7 +64,7 @@ class BICSplashVMTester {
     @Test
     fun testLoadConfig() {
 
-        `when`(mockPreferenceRepository.loadConfig()).thenReturn(Completable.complete())
+        `when`(mockPreferenceRepository.loadConfig()).thenReturn(Single.just(BICConfigAndroidDto("1.0", false)))
 
         viewModel!!.loadConfig()
 
@@ -79,7 +80,7 @@ class BICSplashVMTester {
     @Test
     fun testLoadConfigWithError() {
 
-        `when`(mockPreferenceRepository.loadConfig()).thenReturn(Completable.error(RuntimeException()))
+        `when`(mockPreferenceRepository.loadConfig()).thenReturn(Single.error(RuntimeException()))
 
         viewModel!!.loadConfig()
 
@@ -103,12 +104,12 @@ class BICSplashVMTester {
         }
 
         `when`(mockPreferenceRepository.contractsLastCheckDate).thenReturn(null)
-        `when`(mockContractRepository.updateContracts()).thenReturn(Single.just(523))
+        `when`(mockContractRepository.updateContracts(true)).thenReturn(Single.just(523))
 
-        viewModel!!.loadAllContracts()
+        viewModel!!.loadAllContracts(true)
 
         verify(mockPreferenceRepository).contractsLastCheckDate
-        verify(mockContractRepository).updateContracts()
+        verify(mockContractRepository).updateContracts(true)
 
         assertThat(events.size, `is`(equalTo(2)))
 
@@ -137,7 +138,7 @@ class BICSplashVMTester {
         `when`(mockPreferenceRepository.contractsLastCheckDate).thenReturn(LocalDateTime.now().toUTC().minus(10, ChronoUnit.DAYS))
         `when`(mockContractRepository.getContractCount()).thenReturn(Single.just(255))
 
-        viewModel!!.loadAllContracts()
+        viewModel!!.loadAllContracts(true)
 
         verify(mockPreferenceRepository).contractsLastCheckDate
         verify(mockContractRepository).getContractCount()
@@ -165,13 +166,13 @@ class BICSplashVMTester {
             }
         }
 
-        `when`(mockPreferenceRepository.contractsLastCheckDate).thenReturn(LocalDateTime.now().toUTC().minus((BuildConfig.DAYS_BETWEEN_CONTRACTS_CHECK + 1).toLong(), ChronoUnit.DAYS))
-        `when`(mockContractRepository.updateContracts()).thenReturn(Single.just(608))
+        `when`(mockPreferenceRepository.contractsLastCheckDate).thenReturn(LocalDateTime.now().toUTC().minus(7, ChronoUnit.DAYS))
+        `when`(mockContractRepository.updateContracts(true)).thenReturn(Single.just(608))
 
-        viewModel!!.loadAllContracts()
+        viewModel!!.loadAllContracts(true)
 
         verify(mockPreferenceRepository).contractsLastCheckDate
-        verify(mockContractRepository).updateContracts()
+        verify(mockContractRepository).updateContracts(true)
 
         assertThat(events.size, `is`(equalTo(2)))
 
@@ -189,7 +190,7 @@ class BICSplashVMTester {
 
     @Before
     fun setUp() {
-        viewModel = BICSplashViewModel(RuntimeEnvironment.application.applicationContext, mockPreferenceRepository, mockContractRepository)
+        viewModel = BICSplashViewModel(application.applicationContext, mockPreferenceRepository, mockContractRepository)
     }
 
     @After

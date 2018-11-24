@@ -2,7 +2,7 @@
 
 buildscript {
 
-    ext.kotlin_version = '1.3.0'
+    ext.kotlin_version = '1.3.10'
     ext.support_version = '28.0.0'
     ext.play_services_version = '16.0.0'
     ext.crashlytics_version = '2.9.6'
@@ -12,7 +12,7 @@ buildscript {
     ext.jodatime_version = '2.9.9'
     ext.retrofit_version = '2.3.0'
     ext.kotlinx_coroutines_version = '1.0.0'
-    ext.robolectric_version = '3.8'
+    ext.robolectric_version = '4.0-beta-1'
     ext.firebase_version = '16.0.5'
 
     repositories {
@@ -21,13 +21,13 @@ buildscript {
         maven {
             url 'https://maven.fabric.io/public'
         }
-
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.gms:google-services:4.2.0'
-        classpath 'io.fabric.tools:gradle:1.25.4'
+        classpath 'io.fabric.tools:gradle:1.26.1'
+        classpath 'com.google.firebase:firebase-plugins:1.1.5'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

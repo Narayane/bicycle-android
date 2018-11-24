@@ -37,17 +37,17 @@ import org.robolectric.annotation.Config
 import java.util.concurrent.TimeoutException
 
 @RunWith(RobolectricTestRunner::class)
-@Config(application = BICTestApplication::class, constants = BuildConfig::class)
+@Config(application = BICTestApplication::class)
 class BICHomeVMTester {
 
     @Rule
     @JvmField
     val execRule = InstantTaskExecutorRule()
 
-    private val contractToulouse = BICContract(1, "Toulouse", 43.604652, 1.444209, "FR", 10, BICContract.Provider.CityBikes, 6000.0, "https://")
-    private val contractParis = BICContract(2, "Paris", 48.856614, 2.3522219, "FR", 10, BICContract.Provider.CityBikes, 10000.0, "https://")
-    private val contractColomiers = BICContract(3, "Colomiers", 43.610580, 1.334670, "FR", 10, BICContract.Provider.CityBikes, 2000.0, "https://")
-    private val contractBassoCambo = BICContract(4, "Basso Cambo", 43.570932, 1.392268, "FR", 10, BICContract.Provider.CityBikes, 250.0, "https://")
+    private val contractToulouse = BICContract(1, "Toulouse", 43.604652, 1.444209, "FR", 10, 6000.0, "https://")
+    private val contractParis = BICContract(2, "Paris", 48.856614, 2.3522219, "FR", 10, 10000.0, "https://")
+    private val contractColomiers = BICContract(3, "Colomiers", 43.610580, 1.334670, "FR", 10, 2000.0, "https://")
+    private val contractBassoCambo = BICContract(4, "Basso Cambo", 43.570932, 1.392268, "FR", 10, 250.0, "https://")
     private val station1 = BICStation("Bréguet", 0.0, 0.0, 5, 15)
     private val station2 = BICStation("Ormeau", 0.0, 0.0, 9, 11)
 

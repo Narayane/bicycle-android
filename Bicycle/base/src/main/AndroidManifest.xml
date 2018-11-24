@@ -138,9 +138,6 @@
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="7988e6ed164e770bc103a2ffd3a6037c24bbc405" />
-        <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <meta-data
