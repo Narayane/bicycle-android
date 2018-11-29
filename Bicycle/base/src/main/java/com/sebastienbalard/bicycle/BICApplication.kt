@@ -73,7 +73,7 @@ open class BICApplication : Application() {
                 if (TextUtils.equals(action, NOTIFICATION_CONNECTIVITY_ACTION)) {
                     v("onReceive")
                     _hasConnectivity = !(intent.extras?.getBoolean(android.net.ConnectivityManager.EXTRA_NO_CONNECTIVITY, false) ?: false)
-                    crashReport.logInfo(BICApplication::class.java.simpleName, "has connectivity: $hasConnectivity")
+                    i(crashReport.logInfo(BICApplication::class.java.simpleName, "has connectivity: $hasConnectivity"))
                 }
             }
         }

@@ -37,7 +37,7 @@ import kotlinx.android.synthetic.main.bic_activity_splash.*
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class BICSplashActivity : SBActivity() {
+open class BICSplashActivity : SBActivity() {
 
     companion object : SBLog() {
         fun getIntent(context: Context): Intent {
@@ -82,7 +82,7 @@ class BICSplashActivity : SBActivity() {
                     }
                     is EventSplashAvailableContracts -> {
                         textViewSubtitle.text = getString(R.string.bic_messages_info_contracts_loaded, count)
-                        crashReport.logInfo(BICSplashActivity::class.java.simpleName, "load $count contracts")
+                        i(crashReport.logInfo(BICSplashActivity::class.java.simpleName, "load $count contracts"))
                         viewModel.requestDataSendingPermissions()
                     }
                     is EventSplashRequestDataPermissions -> {

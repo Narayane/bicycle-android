@@ -135,7 +135,8 @@ class BICSplashVMTester {
             }
         }
 
-        `when`(mockPreferenceRepository.contractsLastCheckDate).thenReturn(LocalDateTime.now().toUTC().minus(10, ChronoUnit.DAYS))
+        `when`(mockPreferenceRepository.contractsLastCheckDate).thenReturn(LocalDateTime.now().toUTC().minus(2, ChronoUnit.DAYS))
+        `when`(mockPreferenceRepository.contractsCheckDelay).thenReturn(7)
         `when`(mockContractRepository.getContractCount()).thenReturn(Single.just(255))
 
         viewModel!!.loadAllContracts(true)
@@ -166,12 +167,14 @@ class BICSplashVMTester {
             }
         }
 
-        `when`(mockPreferenceRepository.contractsLastCheckDate).thenReturn(LocalDateTime.now().toUTC().minus(7, ChronoUnit.DAYS))
+        `when`(mockPreferenceRepository.contractsLastCheckDate).thenReturn(LocalDateTime.now().toUTC().minus(8, ChronoUnit.DAYS))
+        `when`(mockPreferenceRepository.contractsCheckDelay).thenReturn(7)
         `when`(mockContractRepository.updateContracts(true)).thenReturn(Single.just(608))
 
         viewModel!!.loadAllContracts(true)
 
         verify(mockPreferenceRepository).contractsLastCheckDate
+        verify(mockPreferenceRepository).contractsCheckDelay
         verify(mockContractRepository).updateContracts(true)
 
         assertThat(events.size, `is`(equalTo(2)))
@@ -180,7 +183,7 @@ class BICSplashVMTester {
         assertThat(viewModel!!.states.value, instanceOf(StateSplashContracts::class.java))
 
         assertThat(events, notNullValue())
-        assertThat(events[0], instanceOf(EventSplashCheckContracts::class.java))
+        assertThat(events.first(), instanceOf(EventSplashCheckContracts::class.java))
         assertThat(events[1], instanceOf(EventSplashAvailableContracts::class.java))
 
         val event = events[1] as EventSplashAvailableContracts

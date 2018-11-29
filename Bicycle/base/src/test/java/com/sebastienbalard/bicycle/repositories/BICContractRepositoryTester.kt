@@ -34,7 +34,6 @@ import org.junit.*
 import org.junit.runner.RunWith
 import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
 import org.robolectric.RuntimeEnvironment.application
 import org.robolectric.annotation.Config
 

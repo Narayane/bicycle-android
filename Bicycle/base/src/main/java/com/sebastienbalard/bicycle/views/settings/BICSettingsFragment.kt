@@ -39,7 +39,7 @@ open class BICSettingsFragment : PreferenceFragmentCompat() {
         return when (preference?.key) {
             PREFERENCE_CRASH_DATA_SENDING_PERMISSION -> {
                 val isChecked = (preference as SwitchPreferenceCompat).isChecked
-                crashReport.logInfo(BICSettingsFragment::class.java.simpleName, "set crash data sending: $isChecked")
+                i(crashReport.logInfo(BICSettingsFragment::class.java.simpleName, "set crash data sending: $isChecked"))
                 val bundle = Bundle()
                 bundle.putInt("value", if (isChecked) 1 else 0)
                 bundle.putInt("is_initial", 0)
@@ -48,7 +48,7 @@ open class BICSettingsFragment : PreferenceFragmentCompat() {
             }
             PREFERENCE_USE_DATA_SENDING_PERMISSION -> {
                 val isChecked = (preference as SwitchPreferenceCompat).isChecked
-                crashReport.logInfo(BICSettingsFragment::class.java.simpleName, "set use data sending: $isChecked")
+                i(crashReport.logInfo(BICSettingsFragment::class.java.simpleName, "set use data sending: $isChecked"))
                 val bundle = Bundle()
                 bundle.putInt("value", if (isChecked) 1 else 0)
                 bundle.putInt("is_initial", 0)

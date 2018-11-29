@@ -64,7 +64,7 @@ open class BICDataPermissionsActivity : SBActivity() {
         })
 
         buttonValidateDataPermissions.setOnClickListener {
-            crashReport.logInfo(BICDataPermissionsActivity::class.java.simpleName, "set initial data sending permissions: crash (${switchAllowCrashDataSending.isChecked}), use (${switchAllowUseDataSending.isChecked}")
+            i(crashReport.logInfo(BICDataPermissionsActivity::class.java.simpleName, "set initial data sending permissions: crash (${switchAllowCrashDataSending.isChecked}), use (${switchAllowUseDataSending.isChecked})"))
             viewModel.saveDataSendingPermissions(switchAllowCrashDataSending.isChecked, switchAllowUseDataSending.isChecked)
         }
 

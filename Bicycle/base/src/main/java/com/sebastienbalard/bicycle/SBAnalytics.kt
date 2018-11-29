@@ -35,7 +35,7 @@ open class SBAnalytics(context: Context, private val preferenceRepository: BICPr
     }
 
     open fun sendEvent(name: String, bundle: Bundle? = null) {
-        d("log analytics event: $name")
+        d("send analytics event: $name")
         if (BuildConfig.BUILD_TYPE == "release" && preferenceRepository.isUseDataSendingAllowed) {
             analytics.logEvent(name, bundle)
         }

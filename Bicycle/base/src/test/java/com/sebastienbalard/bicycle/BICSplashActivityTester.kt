@@ -30,10 +30,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.standalone.StandAloneContext.loadKoinModules
 import org.koin.standalone.StandAloneContext.stopKoin
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.*
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
 
@@ -41,43 +41,48 @@ import org.robolectric.annotation.Config
 @Config(application = BICTestApplication::class)
 class BICSplashActivityTester {
 
-    private var activity: BICSplashActivity? = null
-    //private lateinit var controller: ActivityController<BICSplashActivity>
+    private lateinit var activity: BICSplashActivity
+    private lateinit var controller: ActivityController<BICSplashActivity>
 
     @Test
     fun testOnCreate() {
 
         val state = MutableLiveData<SBState>()
         state.postValue(StateSplashConfig)
-        `when`(activity!!.viewModel.states).thenReturn(state)
+        `when`(activity.viewModel.states).thenReturn(state)
 
         val events = MutableLiveData<SBEvent>()
         events.postValue(EventSplashConfigLoaded)
-        `when`(activity!!.viewModel.events).thenReturn(events)
+        `when`(activity.viewModel.events).thenReturn(events)
 
         assertThat(activity, notNullValue())
-        assertThat(activity!!.viewModel, notNullValue())
-        assertThat(activity!!.viewModel.states, notNullValue())
+        assertThat(activity.viewModel, notNullValue())
+        assertThat(activity.viewModel.states, notNullValue())
 
-        verify(activity!!.viewModel).loadConfig()
+        verify(activity.viewModel).loadConfig()
 
-        assertThat(activity!!.textViewTitle, notNullValue())
-        assertThat(activity!!.textViewTitle.visibility, `is`(equalTo(View.VISIBLE)))
+        assertThat(activity.textViewTitle, notNullValue())
+        assertThat(activity.textViewTitle.visibility, `is`(equalTo(View.VISIBLE)))
         //assertThat(activity!!.textViewTitle.text, `is`(equalTo(RuntimeEnvironment.application.getString(R.string.bic_messages_info_init))))
-        assertThat(activity!!.textViewSubtitle, notNullValue())
-        assertThat(activity!!.textViewSubtitle.visibility, `is`(equalTo(View.VISIBLE)))
+        assertThat(activity.textViewSubtitle, notNullValue())
+        assertThat(activity.textViewSubtitle.visibility, `is`(equalTo(View.VISIBLE)))
         //assertThat(activity!!.textViewSubtitle.text, `is`(equalTo("")))
     }
 
     @Before
     fun setUp() {
         loadKoinModules(commonTestModule)
-        activity = Robolectric.setupActivity(BICSplashActivity::class.java)
+        controller = Robolectric.buildActivity(
+                BICSplashActivity::class.java,
+                BICSplashActivity.getIntent(RuntimeEnvironment.application.applicationContext))
+        activity = spy(controller.get())
+        `when`(activity.viewModel.states).thenReturn(MutableLiveData<SBState>())
+        `when`(activity.viewModel.events).thenReturn(MutableLiveData<SBEvent>())
+        activity = spy(controller.create().start().resume().visible().get())
     }
 
     @After
     fun tearDown() {
-        activity?.finish()
         stopKoin()
     }
 }

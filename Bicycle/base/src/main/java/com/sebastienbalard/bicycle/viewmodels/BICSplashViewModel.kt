@@ -26,6 +26,7 @@ import com.sebastienbalard.bicycle.repositories.BICPreferenceRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
 import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.temporal.ChronoUnit
 
 object StateSplashConfig : SBState()

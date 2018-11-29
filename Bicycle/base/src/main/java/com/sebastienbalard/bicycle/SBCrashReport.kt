@@ -46,51 +46,53 @@ open class SBCrashReport(context: Context, private val preferenceRepository: BIC
         }
     }
 
-    open fun logDebug(callerName: String, message: String) {
-        d(message)
+    open fun logDebug(callerName: String, message: String): String {
         if (BuildConfig.BUILD_TYPE == "release" && preferenceRepository.isCrashDataSendingAllowed) {
             Crashlytics.log("[DEBUG] | $callerName: $message")
         }
+        return message
     }
 
-    open fun logInfo(callerName: String, message: String) {
-        i(message)
+    open fun logInfo(callerName: String, message: String): String {
         if (BuildConfig.BUILD_TYPE == "release" && preferenceRepository.isCrashDataSendingAllowed) {
             Crashlytics.log("[INFO] | $callerName: $message")
         }
+        return message
     }
 
-    open fun logWarning(callerName: String, message: String) {
-        w(message)
+    open fun logWarning(callerName: String, message: String): String {
         if (BuildConfig.BUILD_TYPE == "release" && preferenceRepository.isCrashDataSendingAllowed) {
             Crashlytics.log("[WARN] | $callerName: $message")
         }
+        return message
     }
 
-    open fun logError(callerName: String, message: String) {
-        e(message)
+    open fun logError(callerName: String, message: String): String {
         if (BuildConfig.BUILD_TYPE == "release" && preferenceRepository.isCrashDataSendingAllowed) {
             Crashlytics.log("[ERROR] | $callerName: $message")
         }
+        return message
     }
 
-    open fun catchException(callerName: String, message: String, exception: Exception) {
+    open fun catchException(callerName: String, message: String, exception: Exception): String  {
         exception.cause?.let { throwable ->
-            catchException(callerName, message, throwable)
+            return catchException(callerName, message, throwable)
         }
+        return message
     }
 
-    open fun catchException(callerName: String, message: String, throwable: Throwable) {
+    open fun catchException(callerName: String, message: String, throwable: Throwable): String  {
         logError(callerName, message)
         if (BuildConfig.BUILD_TYPE == "release" && preferenceRepository.isCrashDataSendingAllowed) {
             Crashlytics.logException(throwable)
         }
+        return message
     }
 
-    open fun crash() {
-        w("crash with non fatal")
-        if (BuildConfig.BUILD_TYPE == "release" && preferenceRepository.isCrashDataSendingAllowed) {
+    open fun crash(): String {
+        if (BuildConfig.BUILD_TYPE == "release") {
             Crashlytics.getInstance().crash()
         }
+        return "force crash"
     }
 }
