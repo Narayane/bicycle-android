@@ -35,7 +35,7 @@
         bien installés sur votre appareil</string>
     <string name="bic_messages_warning_request_location_permissions">L\'application fonctionnera en mode dégradé si
         vous ne lui permettez pas d\'accéder à votre position</string>
-    <string name="bic_messages_warning_get_current_contract_stations">Nous n\'avons pas pu récupérer les données des stations</string>
+    <string name="bic_messages_warning_get_current_contract_stations">Nous n\'avons pas pu récupérer les données des stations de %1$s</string>
     <string name="bic_messages_warning_no_connectivity">Veuillez vérifiez votre connexion internet</string>
     <string name="bic_messages_available_soon">Bientôt disponible</string>
     <string name="bic_messages_info_app_newer_version">Une nouvelle version est disponible, veuillez mettre à jour l\'application :)</string>

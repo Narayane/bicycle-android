@@ -33,7 +33,7 @@
     <string name="bic_messages_info_contracts_loaded">%1$d cities available</string>
     <string name="bic_messages_error_no_play_services_installed">Please check that Google Play Services are installed on your device</string>
     <string name="bic_messages_warning_request_location_permissions">The app will work in degraded mode if you do not allow it to access your location</string>
-    <string name="bic_messages_warning_get_current_contract_stations">Unable to retrieve station data</string>
+    <string name="bic_messages_warning_get_current_contract_stations">Unable to retrieve station data of %1$s</string>
     <string name="bic_messages_warning_no_connectivity">Please, check your Internet connection</string>
     <string name="bic_messages_available_soon">Available soon</string>
     <string name="bic_messages_info_app_newer_version">A new version is available, please update the application :)</string>

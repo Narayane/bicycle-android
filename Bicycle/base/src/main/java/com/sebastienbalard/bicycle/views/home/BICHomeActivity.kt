@@ -285,8 +285,9 @@ class BICHomeActivity : SBMapActivity() {
         }
     }
 
-    private fun showErrorForCurrentContractStation() {
-        val snackbar = Snackbar.make(toolbar, R.string.bic_messages_warning_get_current_contract_stations, Snackbar.LENGTH_LONG)
+    private fun showErrorForCurrentContractStation(contractName: String) {
+        val label = getString(R.string.bic_messages_warning_get_current_contract_stations, contractName)
+        val snackbar = Snackbar.make(toolbar, label, Snackbar.LENGTH_LONG)
         snackbar.view.setBackgroundColor(ContextCompat.getColor(this, R.color.bic_color_red))
         val textView = snackbar.view.findViewById(android.support.design.R.id.snackbar_text) as TextView
         textView.setTextColor(ContextCompat.getColor(this, R.color.bic_color_white))
@@ -328,19 +329,22 @@ class BICHomeActivity : SBMapActivity() {
             }
             previousZoomLevel = zoomLevel
             if (zoomLevel >= 10) {
-                if (!haveStationAnnotations()) {
+                if (haveContractAnnotations()) {
                     clusterContracts?.clearItems()
                     clusterContracts?.cluster()
                 }
                 viewModelHome.determineCurrentContract(visibleRegion!!.latLngBounds)
             } else {
                 stopTimer()
-                if (!haveContractAnnotations()) {
+                if (haveStationAnnotations()) {
                     clusterStations?.clearItems()
                     clusterStations?.cluster()
-                    viewModelHome.getAllContracts()
                 } else {
-                    clusterContracts?.cluster()
+                    if (!haveContractAnnotations()) {
+                        viewModelHome.getAllContracts()
+                    } else {
+                        clusterContracts?.cluster()
+                    }
                 }
             }
         }
@@ -426,7 +430,7 @@ class BICHomeActivity : SBMapActivity() {
                     }
                     is EventNewContract -> {
                         stopTimer()
-                        d("refresh contract stations: ${it.current.name})")
+                        d("refresh contract stations: ${it.current.name}")
                         // refresh current contract stations data
                         viewModelHome.getStationsFor(it.current)
                         startTimer()
@@ -439,8 +443,14 @@ class BICHomeActivity : SBMapActivity() {
                     is EventStationList -> {
                         clusterStations?.clearItems()
                         //hideBottomSheet()
-                        it.stations.map { station ->
-                            clusterStations?.addItem(BICStationAnnotation(station))
+                        if (it.stations.isEmpty()) {
+                            viewModelHome.currentContract?.name?.let { name ->
+                                showErrorForCurrentContractStation(name)
+                            }
+                        } else {
+                            it.stations.map { station ->
+                                clusterStations?.addItem(BICStationAnnotation(station))
+                            }
                         }
                         clusterStations?.cluster()
                     }
@@ -455,7 +465,9 @@ class BICHomeActivity : SBMapActivity() {
                                 is StateShowStations -> {
                                     clusterStations?.clearItems()
                                     hideBottomSheet()
-                                    showErrorForCurrentContractStation()
+                                    viewModelHome.currentContract?.name?.let { name ->
+                                        showErrorForCurrentContractStation(name)
+                                    }
                                 }
                                 else -> w("unexpected state")
                             }
