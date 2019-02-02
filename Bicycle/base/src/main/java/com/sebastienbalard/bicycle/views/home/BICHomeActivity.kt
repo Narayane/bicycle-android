@@ -339,12 +339,11 @@ class BICHomeActivity : SBMapActivity() {
                 if (haveStationAnnotations()) {
                     clusterStations?.clearItems()
                     clusterStations?.cluster()
+                }
+                if (!haveContractAnnotations()) {
+                    viewModelHome.getAllContracts()
                 } else {
-                    if (!haveContractAnnotations()) {
-                        viewModelHome.getAllContracts()
-                    } else {
-                        clusterContracts?.cluster()
-                    }
+                    clusterContracts?.cluster()
                 }
             }
         }

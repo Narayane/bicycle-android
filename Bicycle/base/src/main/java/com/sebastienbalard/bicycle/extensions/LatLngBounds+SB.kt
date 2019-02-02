@@ -23,5 +23,5 @@ fun LatLngBounds.intersect(bounds: LatLngBounds): Boolean {
     val latIntersects = (bounds.northeast.latitude >= southwest.latitude) && (bounds.southwest.latitude <= northeast.latitude)
     val lngIntersects = (bounds.northeast.longitude >= southwest.longitude) && (bounds.southwest.longitude <= northeast.longitude)
 
-    return latIntersects && lngIntersects
+    return latIntersects and lngIntersects
 }

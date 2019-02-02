@@ -18,20 +18,17 @@ package com.sebastienbalard.bicycle.data
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
-import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.PrimaryKey
 import android.content.Context
 import android.graphics.Bitmap
 import android.support.annotation.NonNull
-import android.support.v4.content.ContextCompat
-import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.gson.annotations.SerializedName
-import com.google.maps.android.SphericalUtil
 import com.sebastienbalard.bicycle.R
+import com.sebastienbalard.bicycle.extensions.computeNorthEastBoundsCorner
+import com.sebastienbalard.bicycle.extensions.computeSouthWestBoundsCorner
 import com.sebastienbalard.bicycle.extensions.getBitmap
-import com.sebastienbalard.bicycle.extensions.getBitmapDescriptor
 import java.lang.Math.sqrt
 import java.util.*
 import kotlin.properties.Delegates
@@ -58,8 +55,8 @@ data class BICContract(
     val bounds: LatLngBounds
         get() {
             val distanceFromCenterToCorner = radius * sqrt(2.0)
-            val southwestCorner = SphericalUtil.computeOffset(center, distanceFromCenterToCorner, 225.0)
-            val northeastCorner = SphericalUtil.computeOffset(center, distanceFromCenterToCorner, 45.0)
+            val southwestCorner = center.computeSouthWestBoundsCorner(distanceFromCenterToCorner)
+            val northeastCorner = center.computeNorthEastBoundsCorner(distanceFromCenterToCorner)
             return LatLngBounds(southwestCorner, northeastCorner)
         }
 

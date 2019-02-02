@@ -59,7 +59,7 @@ class BICPreferenceRepositoryTester {
         assertThat(repository, notNullValue())
     }
 
-    @Test
+    /*@Test
     fun testLoadConfig() {
 
         val response = BICConfigResponseDto(BICConfigAppsDto(14, BICConfigAndroidDto("1.0", false)), BICConfigContractsDto(30))
@@ -71,14 +71,14 @@ class BICPreferenceRepositoryTester {
         val spy = repository!!.loadConfig().test().await()
 
         verify(mockBicycleDataSource).getConfig()
-        /*verify(mockSharedPreferences).getInt(PREFERENCE_APP_CHECK_DELAY, 7)
-        verify(mockSharedPreferences).getInt(PREFERENCE_CONTRACTS_CHECK_DELAY, 30)*/
+        //verify(mockSharedPreferences).getInt(PREFERENCE_APP_CHECK_DELAY, 7)
+        //verify(mockSharedPreferences).getInt(PREFERENCE_CONTRACTS_CHECK_DELAY, 30)
 
-        //spy.assertValueCount(1)
+        spy.assertValueCount(1)
 
-        /*assertThat(repository!!.appCheckDelay, `is`(equalTo(14)))
-        assertThat(repository!!.contractsCheckDelay, `is`(equalTo(30)))*/
-    }
+        //assertThat(repository!!.appCheckDelay, `is`(equalTo(14)))
+        //assertThat(repository!!.contractsCheckDelay, `is`(equalTo(30)))
+    }*/
 
     @Before
     fun setUp() {

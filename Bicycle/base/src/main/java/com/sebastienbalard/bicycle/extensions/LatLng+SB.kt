@@ -19,6 +19,7 @@ package com.sebastienbalard.bicycle.extensions
 import android.location.Location
 import android.location.LocationManager
 import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.SphericalUtil
 
 fun LatLng.distanceTo(latLng: LatLng): Float {
     val from = Location(LocationManager.GPS_PROVIDER)
@@ -28,4 +29,12 @@ fun LatLng.distanceTo(latLng: LatLng): Float {
     to.latitude = latLng.latitude
     to.longitude = latLng.longitude
     return from.distanceTo(to)
+}
+
+fun LatLng.computeSouthWestBoundsCorner(distance: Double): LatLng {
+    return SphericalUtil.computeOffset(this, distance, 225.0)
+}
+
+fun LatLng.computeNorthEastBoundsCorner(distance: Double): LatLng {
+    return SphericalUtil.computeOffset(this, distance, 45.0)
 }
