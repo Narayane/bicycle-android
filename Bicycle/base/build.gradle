@@ -70,7 +70,7 @@ dependencies {
     // tools
     implementation "com.google.firebase:firebase-core:$firebase_version"
     implementation "com.crashlytics.sdk.android:crashlytics:$crashlytics_version"
-    implementation 'com.google.firebase:firebase-perf:16.2.0'
+    implementation 'com.google.firebase:firebase-perf:16.2.3'
     // logs
     implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation "com.github.tony19:logback-android:$logback_version"
@@ -85,7 +85,7 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
     implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1'
-    implementation 'com.google.maps.android:android-maps-utils:0.4.4'
+    implementation 'com.google.maps.android:android-maps-utils:0.5'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinx_coroutines_version"
     implementation 'org.apache.maven:maven-artifact:3.5.4'
@@ -100,6 +100,7 @@ dependencies {
     testImplementation "android.arch.core:core-testing:$arch_version"
     testImplementation 'com.jakewharton.threetenabp:threetenabp:1.1.0'
 }
+
 repositories {
     mavenCentral()
 }
