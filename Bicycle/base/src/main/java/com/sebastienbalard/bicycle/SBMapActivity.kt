@@ -18,11 +18,11 @@ package com.sebastienbalard.bicycle
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.Observer
 import android.location.Location
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
+import androidx.core.content.ContextCompat
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.google.android.gms.maps.GoogleMap
@@ -31,7 +31,7 @@ import com.google.android.gms.maps.model.VisibleRegion
 import com.sebastienbalard.bicycle.extensions.*
 import kotlinx.android.synthetic.main.sb_widget_appbar.*
 import kotlinx.android.synthetic.main.sb_widget_mapview.*
-import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 abstract class SBMapActivity : SBActivity() {
 
@@ -170,7 +170,7 @@ abstract class SBMapActivity : SBActivity() {
             startActivityForResult(getIntentForApplicationSettings(), NOTIFICATION_REQUEST_PERMISSION_LOCATION)
         }.setActionTextColor(ContextCompat.getColor(this, R.color.bic_color_white))
         snackbar.view.setBackgroundColor(ContextCompat.getColor(this, R.color.bic_color_red))
-        val textView = snackbar.view.findViewById(android.support.design.R.id.snackbar_text) as TextView
+        val textView = snackbar.view.findViewById(com.google.android.material.R.id.snackbar_text) as TextView
         textView.setTextColor(ContextCompat.getColor(this, R.color.bic_color_white))
         snackbar.show()
     }

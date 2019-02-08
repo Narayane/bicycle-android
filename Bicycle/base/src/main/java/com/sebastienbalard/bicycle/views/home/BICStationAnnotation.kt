@@ -32,6 +32,14 @@ import com.sebastienbalard.bicycle.models.BICStation
 
 open class BICStationAnnotation(val station: BICStation) : ClusterItem {
 
+    override fun getSnippet(): String {
+        return ""
+    }
+
+    override fun getTitle(): String {
+        return ""
+    }
+
     override fun getPosition(): LatLng {
         return station.location
     }

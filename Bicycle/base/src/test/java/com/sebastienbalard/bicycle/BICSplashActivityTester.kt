@@ -16,7 +16,7 @@
 
 package com.sebastienbalard.bicycle
 
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.MutableLiveData
 import android.view.View
 import com.sebastienbalard.bicycle.viewmodels.EventSplashConfigLoaded
 import com.sebastienbalard.bicycle.viewmodels.StateSplashConfig

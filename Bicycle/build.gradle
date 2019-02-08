@@ -2,17 +2,16 @@
 
 buildscript {
 
-    ext.kotlin_version = '1.3.11'
-    ext.support_version = '28.0.0'
+    ext.kotlin_version = '1.3.21'
+    ext.androidx_version = '2.0.0'
+    ext.androidx_legacy_version = '1.0.0'
     ext.play_services_version = '16.0.0'
     ext.crashlytics_version = '2.9.8'
     ext.koin_version = '1.0.2'
-    ext.arch_version = '1.1.1'
     ext.logback_version = '1.1.1-12'
-    ext.jodatime_version = '2.9.9'
     ext.retrofit_version = '2.3.0'
     ext.kotlinx_coroutines_version = '1.0.0'
-    ext.robolectric_version = '4.0.2'
+    ext.robolectric_version = '4.1'
     ext.firebase_version = '16.0.7'
 
     repositories {
@@ -45,9 +44,9 @@ allprojects {
     configurations {
         all {
             resolutionStrategy {
-                force "android.arch.lifecycle:runtime:$arch_version"
-                force "android.arch.lifecycle:livedata-core:$arch_version"
-                force "android.arch.lifecycle:viewmodel:$arch_version"
+                force "android.arch.lifecycle:runtime:$androidx_version"
+                force "android.arch.lifecycle:livedata-core:$androidx_version"
+                force "android.arch.lifecycle:viewmodel:$androidx_version"
             }
         }
     }

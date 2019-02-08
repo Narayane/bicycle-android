@@ -17,7 +17,7 @@
 package com.sebastienbalard.bicycle.extensions
 
 import android.content.Context
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.widget.TextView
 import android.widget.Toast
 import com.sebastienbalard.bicycle.R

@@ -16,9 +16,9 @@
 
 package com.sebastienbalard.bicycle.data
 
-import android.arch.persistence.room.RoomDatabase
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.TypeConverters
+import androidx.room.RoomDatabase
+import androidx.room.Database
+import androidx.room.TypeConverters
 
 @Database(entities = [BICContract::class], version = 1)
 //@TypeConverters(BICConverters::class)

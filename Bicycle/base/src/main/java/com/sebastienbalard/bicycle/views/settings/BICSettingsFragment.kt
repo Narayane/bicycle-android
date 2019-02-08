@@ -17,9 +17,9 @@
 package com.sebastienbalard.bicycle.views.settings
 
 import android.os.Bundle
-import android.support.v7.preference.Preference
-import android.support.v7.preference.PreferenceFragmentCompat
-import android.support.v7.preference.SwitchPreferenceCompat
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreferenceCompat
 import com.sebastienbalard.bicycle.*
 import com.sebastienbalard.bicycle.views.BICSplashActivity
 import org.koin.android.ext.android.inject

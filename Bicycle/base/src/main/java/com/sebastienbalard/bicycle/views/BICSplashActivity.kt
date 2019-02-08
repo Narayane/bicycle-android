@@ -18,7 +18,6 @@ package com.sebastienbalard.bicycle.views
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.arch.lifecycle.Observer
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -26,16 +25,17 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.support.v4.content.ContextCompat
 import android.util.TypedValue
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import com.sebastienbalard.bicycle.*
 import com.sebastienbalard.bicycle.viewmodels.*
 import com.sebastienbalard.bicycle.views.home.BICHomeActivity
 import com.sebastienbalard.bicycle.views.onboarding.BICDataPermissionsActivity
 import kotlinx.android.synthetic.main.bic_activity_splash.*
 import org.koin.android.ext.android.inject
-import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 open class BICSplashActivity : SBActivity() {
 

@@ -17,17 +17,17 @@
 package com.sebastienbalard.bicycle.views.home
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
-import android.support.design.widget.BottomSheetBehavior
-import android.support.design.widget.BottomSheetBehavior.STATE_EXPANDED
-import android.support.design.widget.BottomSheetBehavior.STATE_HIDDEN
-import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
-import android.support.v4.widget.NestedScrollView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
+import com.google.android.material.snackbar.Snackbar
+import androidx.core.content.ContextCompat
+import androidx.core.widget.NestedScrollView
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -48,7 +48,7 @@ import com.sebastienbalard.bicycle.views.settings.BICSettingsActivity
 import kotlinx.android.synthetic.main.bic_activity_home.*
 import kotlinx.android.synthetic.main.sb_widget_appbar.*
 import org.koin.android.ext.android.inject
-import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 import kotlin.concurrent.timerTask
 
@@ -289,7 +289,7 @@ class BICHomeActivity : SBMapActivity() {
         val label = getString(R.string.bic_messages_warning_get_current_contract_stations, contractName)
         val snackbar = Snackbar.make(toolbar, label, Snackbar.LENGTH_LONG)
         snackbar.view.setBackgroundColor(ContextCompat.getColor(this, R.color.bic_color_red))
-        val textView = snackbar.view.findViewById(android.support.design.R.id.snackbar_text) as TextView
+        val textView = snackbar.view.findViewById(com.google.android.material.R.id.snackbar_text) as TextView
         textView.setTextColor(ContextCompat.getColor(this, R.color.bic_color_white))
         snackbar.show()
     }

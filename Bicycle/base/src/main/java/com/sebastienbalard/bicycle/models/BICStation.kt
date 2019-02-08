@@ -18,7 +18,7 @@ package com.sebastienbalard.bicycle.models
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.annotations.SerializedName
 import com.sebastienbalard.bicycle.R

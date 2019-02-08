@@ -16,7 +16,7 @@
 
 package com.sebastienbalard.bicycle.di
 
-import android.arch.persistence.room.Room
+import androidx.room.Room
 import com.sebastienbalard.bicycle.BuildConfig
 import com.sebastienbalard.bicycle.data.BICDatabase
 import org.koin.android.ext.koin.androidContext

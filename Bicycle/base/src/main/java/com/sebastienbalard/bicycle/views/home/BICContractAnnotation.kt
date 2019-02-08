@@ -30,6 +30,14 @@ import com.sebastienbalard.bicycle.data.BICContract
 
 open class BICContractAnnotation(val contract: BICContract) : ClusterItem {
 
+    override fun getSnippet(): String {
+        return ""
+    }
+
+    override fun getTitle(): String {
+        return ""
+    }
+
     override fun getPosition(): LatLng {
         return contract.center
     }

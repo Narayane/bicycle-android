@@ -14,7 +14,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -23,7 +23,7 @@
 
     <include layout="@layout/sb_widget_appbar_gone" />
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -35,7 +35,7 @@
             android:orientation="vertical"
             android:padding="@dimen/bic_margin_horizontal_default">
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/bic_color_white"
@@ -46,7 +46,7 @@
                 android:layout_marginBottom="@dimen/bic_margin_vertical_default"
                 android:text="@string/bic_onboarding_screen_title"/>
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/bic_color_white"
@@ -55,7 +55,7 @@
                 android:layout_marginTop="@dimen/bic_margin_vertical_default"
                 android:text="@string/bic_onboarding_screen_personal_data"/>
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/bic_color_white"
@@ -74,7 +74,7 @@
                 android:checked="true"
                 android:text="@string/bic_onboarding_screen_crash_data_label"/>
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/bic_color_white"
@@ -93,7 +93,7 @@
                 android:checked="true"
                 android:text="@string/bic_onboarding_screen_use_data_label"/>
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/bic_color_white"
@@ -103,7 +103,7 @@
                 android:layout_marginBottom="@dimen/bic_margin_vertical_default"
                 android:text="@string/bic_onboarding_screen_warning"/>
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/buttonValidateDataPermissions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -115,6 +115,6 @@
 
         </LinearLayout>
 
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

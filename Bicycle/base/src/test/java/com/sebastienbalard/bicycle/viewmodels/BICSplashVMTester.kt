@@ -16,7 +16,7 @@
 
 package com.sebastienbalard.bicycle.viewmodels
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.sebastienbalard.bicycle.BICApplication
 import com.sebastienbalard.bicycle.BICTestApplication
 import com.sebastienbalard.bicycle.BuildConfig

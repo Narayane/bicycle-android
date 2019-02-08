@@ -16,7 +16,7 @@
 
 package com.sebastienbalard.bicycle.repositories
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import android.content.Context
 import android.content.SharedPreferences
 import com.sebastienbalard.bicycle.BICTestApplication

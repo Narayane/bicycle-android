@@ -16,7 +16,7 @@
 
 package com.sebastienbalard.bicycle.data
 
-import android.arch.persistence.room.*
+import androidx.room.*
 
 @Dao
 interface BICContractDao {
