@@ -304,6 +304,9 @@ class BICHomeActivity : SBMapActivity() {
                 d("timer fired")
                 viewModelHome.currentContract?.let {
                     d("refresh contract stations: ${it.name}")
+                    runOnUiThread {
+                        progressBar.visibility = View.VISIBLE
+                    }
                     viewModelHome.refreshStationsFor(it)
                 }
                 hideBottomSheet()
@@ -431,6 +434,7 @@ class BICHomeActivity : SBMapActivity() {
                         stopTimer()
                         d("refresh contract stations: ${it.current.name}")
                         // refresh current contract stations data
+                        progressBar.visibility = View.VISIBLE
                         viewModelHome.getStationsFor(it.current)
                         startTimer()
                     }
@@ -440,6 +444,7 @@ class BICHomeActivity : SBMapActivity() {
                         clusterStations?.cluster()
                     }
                     is EventStationList -> {
+                        progressBar.visibility = View.GONE
                         clusterStations?.clearItems()
                         //hideBottomSheet()
                         if (it.stations.isEmpty()) {
@@ -462,6 +467,7 @@ class BICHomeActivity : SBMapActivity() {
                                     //TODO: display error message
                                 }
                                 is StateShowStations -> {
+                                    progressBar.visibility = View.GONE
                                     clusterStations?.clearItems()
                                     hideBottomSheet()
                                     viewModelHome.currentContract?.name?.let { name ->
