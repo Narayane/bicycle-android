@@ -17,15 +17,12 @@
 package com.sebastienbalard.bicycle.viewmodels
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.sebastienbalard.bicycle.BICApplication
 import com.sebastienbalard.bicycle.BICTestApplication
-import com.sebastienbalard.bicycle.BuildConfig
 import com.sebastienbalard.bicycle.SBEvent
 import com.sebastienbalard.bicycle.extensions.toUTC
 import com.sebastienbalard.bicycle.io.dtos.BICConfigAndroidDto
 import com.sebastienbalard.bicycle.repositories.BICContractRepository
 import com.sebastienbalard.bicycle.repositories.BICPreferenceRepository
-import io.reactivex.Completable
 import io.reactivex.Single
 import org.hamcrest.CoreMatchers.*
 import org.junit.After
@@ -137,12 +134,12 @@ class BICSplashVMTester {
 
         `when`(mockPreferenceRepository.contractsLastCheckDate).thenReturn(LocalDateTime.now().toUTC().minus(2, ChronoUnit.DAYS))
         `when`(mockPreferenceRepository.contractsCheckDelay).thenReturn(7)
-        `when`(mockContractRepository.getContractCount()).thenReturn(Single.just(255))
+        `when`(mockContractRepository.loadContracts()).thenReturn(Single.just(255))
 
         viewModel!!.loadAllContracts(true)
 
         verify(mockPreferenceRepository).contractsLastCheckDate
-        verify(mockContractRepository).getContractCount()
+        verify(mockContractRepository).loadContracts()
 
         assertThat(events.size, `is`(equalTo(1)))
 

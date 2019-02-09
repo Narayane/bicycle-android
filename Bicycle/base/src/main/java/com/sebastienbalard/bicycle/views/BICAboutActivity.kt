@@ -23,9 +23,13 @@ import com.sebastienbalard.bicycle.BuildConfig
 import com.sebastienbalard.bicycle.R
 import com.sebastienbalard.bicycle.SBActivity
 import com.sebastienbalard.bicycle.SBLog
+import com.sebastienbalard.bicycle.repositories.BICContractRepository
 import kotlinx.android.synthetic.main.bic_activity_about.*
+import org.koin.android.ext.android.inject
 
 class BICAboutActivity : SBActivity() {
+
+    internal val contractRepository: BICContractRepository by inject()
 
     companion object : SBLog() {
         fun getIntent(context: Context): Intent {
@@ -38,6 +42,8 @@ class BICAboutActivity : SBActivity() {
         setContentView(R.layout.bic_activity_about)
         v("onCreate")
         initToolbar()
+        val count = contractRepository.contractsCount
+        textViewAvailableCitiesCount.text = getString(R.string.bic_messages_info_contracts_loaded, count)
         textViewAppVersion.text = getString(R.string.bic_app_version_label, BuildConfig.VERSION_NAME, BuildConfig
                 .VERSION_CODE)
     }

@@ -57,6 +57,17 @@
             android:text="@string/bic_app_catching"/>
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewAvailableCitiesCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/textViewAppVersion"
+            android:layout_centerHorizontal="true"
+            android:textSize="@dimen/bic_size_font_body"
+            android:layout_marginBottom="@dimen/bic_margin_half"
+            android:textColor="@color/bic_color_primary_dark"
+            tools:text="310 villes disponibles"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/textViewAppVersion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -64,6 +75,8 @@
             android:layout_centerHorizontal="true"
             android:textSize="@dimen/bic_size_font_subhead"
             android:layout_marginBottom="@dimen/bic_margin_vertical_default"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-condensed"
             android:textColor="@color/bic_color_primary_dark"
             tools:text="v1.0-alpha"/>
 

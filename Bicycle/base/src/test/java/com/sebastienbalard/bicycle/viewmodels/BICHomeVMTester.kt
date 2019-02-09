@@ -64,11 +64,11 @@ class BICHomeVMTester {
     @Test
     fun testGetAllContracts() {
 
-        `when`(mockContractRepository.loadAllContracts()).thenReturn(Single.just(arrayListOf(contractToulouse, contractParis)))
+        `when`(mockContractRepository.getContracts()).thenReturn(Single.just(arrayListOf(contractToulouse, contractParis)))
 
         viewModel!!.getAllContracts()
 
-        verify(mockContractRepository).loadAllContracts()
+        verify(mockContractRepository).getContracts()
 
         assertThat(viewModel!!.states.value, notNullValue())
         assertThat(viewModel!!.states.value, instanceOf(StateShowContracts::class.java))
@@ -80,11 +80,11 @@ class BICHomeVMTester {
     @Test
     fun testGetAllContractsWithError() {
 
-        `when`(mockContractRepository.loadAllContracts()).thenReturn(Single.error(TimeoutException()))
+        `when`(mockContractRepository.getContracts()).thenReturn(Single.error(TimeoutException()))
 
         viewModel!!.getAllContracts()
 
-        verify(mockContractRepository).loadAllContracts()
+        verify(mockContractRepository).getContracts()
 
         assertThat(viewModel!!.states.value, notNullValue())
         assertThat(viewModel!!.states.value, instanceOf(StateShowContracts::class.java))
@@ -96,11 +96,11 @@ class BICHomeVMTester {
     @Test
     fun testGetStationsForContract() {
 
-        `when`(mockContractRepository.loadStationsBy(contractToulouse)).thenReturn(Single.just(arrayListOf(station1, station2)))
+        `when`(mockContractRepository.getStationsBy(contractToulouse)).thenReturn(Single.just(arrayListOf(station1, station2)))
 
         viewModel!!.getStationsFor(contractToulouse)
 
-        verify(mockContractRepository).loadStationsBy(contractToulouse)
+        verify(mockContractRepository).getStationsBy(contractToulouse)
 
         assertThat(viewModel!!.states.value, notNullValue())
         assertThat(viewModel!!.states.value, instanceOf(StateShowStations::class.java))
@@ -115,11 +115,11 @@ class BICHomeVMTester {
     @Test
     fun testGetStationsForContractWithError() {
 
-        `when`(mockContractRepository.loadStationsBy(contractToulouse)).thenReturn(Single.error(TimeoutException()))
+        `when`(mockContractRepository.getStationsBy(contractToulouse)).thenReturn(Single.error(TimeoutException()))
 
         viewModel!!.getStationsFor(contractToulouse)
 
-        verify(mockContractRepository).loadStationsBy(contractToulouse)
+        verify(mockContractRepository).getStationsBy(contractToulouse)
 
         assertThat(viewModel!!.states.value, notNullValue())
         assertThat(viewModel!!.states.value, instanceOf(StateShowStations::class.java))
@@ -131,11 +131,11 @@ class BICHomeVMTester {
     @Test
     fun testRefreshStationsForContract() {
 
-        `when`(mockContractRepository.reloadStationsBy(contractToulouse)).thenReturn(Single.just(arrayListOf(station1, station2)))
+        `when`(mockContractRepository.loadStationsBy(contractToulouse)).thenReturn(Single.just(arrayListOf(station1, station2)))
 
         viewModel!!.refreshStationsFor(contractToulouse)
 
-        verify(mockContractRepository).reloadStationsBy(contractToulouse)
+        verify(mockContractRepository).loadStationsBy(contractToulouse)
 
         assertThat(viewModel!!.states.value, nullValue())
 
@@ -149,11 +149,11 @@ class BICHomeVMTester {
     @Test
     fun testRefreshStationsForContractWithError() {
 
-        `when`(mockContractRepository.reloadStationsBy(contractToulouse)).thenReturn(Single.error(TimeoutException()))
+        `when`(mockContractRepository.loadStationsBy(contractToulouse)).thenReturn(Single.error(TimeoutException()))
 
         viewModel!!.refreshStationsFor(contractToulouse)
 
-        verify(mockContractRepository).reloadStationsBy(contractToulouse)
+        verify(mockContractRepository).loadStationsBy(contractToulouse)
 
         assertThat(viewModel!!.states.value, nullValue())
 

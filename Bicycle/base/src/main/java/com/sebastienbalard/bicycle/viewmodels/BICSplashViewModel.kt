@@ -26,7 +26,6 @@ import com.sebastienbalard.bicycle.repositories.BICPreferenceRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
 import org.threeten.bp.LocalDateTime
-import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.temporal.ChronoUnit
 
 object StateSplashConfig : SBState()
@@ -87,11 +86,11 @@ open class BICSplashViewModel(private val context: Context,
             d("contracts are up-to-date")
             preferenceRepository.contractsLastCheckDate = now
             launch {
-                contractRepository.getContractCount()
+                contractRepository.loadContracts()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({ count ->
                             _events.value = EventSplashAvailableContracts(count)
-                        }, { _ ->
+                        }, {
 
                         })
             }

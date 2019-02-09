@@ -20,7 +20,6 @@ import android.content.Context
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.sebastienbalard.bicycle.BICApplication
 import com.sebastienbalard.bicycle.SBCrashReport
 import com.sebastienbalard.bicycle.SBLog
 import com.sebastienbalard.bicycle.data.BICContract
@@ -51,6 +50,8 @@ open class BICContractRepository(private val context: Context,
 
     private var allContracts = ArrayList<BICContract>()
     private var cacheStations = HashMap<String, List<BICStation>>()
+    val contractsCount: Int
+        get() = allContracts.size
 
     open fun updateContracts(hasConnectivity: Boolean): Single<Int> {
         return Single.create<Int> { observer ->
@@ -92,14 +93,14 @@ open class BICContractRepository(private val context: Context,
                     allContracts.addAll(localContracts)
                     observer.onSuccess(localContracts.count())
                 } catch (exception: IOException) {
-                    crashReport.catchException(BICContractRepository::class.java.simpleName, "fail to load contracts from assets", exception)
+                    e(crashReport.catchException(BICContractRepository::class.java.simpleName, "fail to get contracts from assets", exception))
                     observer.onError(exception)
                 }
             }
         }.subscribeOn(Schedulers.newThread())
     }
 
-    open fun getContractCount(): Single<Int> {
+    open fun loadContracts(): Single<Int> {
         return Single.create<Int> { observer ->
             val contracts = contractDao.findAll()
             d("load ${contracts.count()} contracts")
@@ -108,7 +109,7 @@ open class BICContractRepository(private val context: Context,
         }.subscribeOn(Schedulers.newThread())
     }
 
-    open fun loadAllContracts(): Single<List<BICContract>> {
+    open fun getContracts(): Single<List<BICContract>> {
         d("get contracts from local")
         return Single.just(allContracts)
     }
@@ -142,21 +143,21 @@ open class BICContractRepository(private val context: Context,
         return rightContract
     }
 
-    open fun loadStationsBy(contract: BICContract): Single<List<BICStation>> {
+    open fun getStationsBy(contract: BICContract): Single<List<BICStation>> {
         return if (cacheStations.containsKey(contract.name)) {
             Single.fromObservable(Observable.fromArray(cacheStations.getValue(contract.name))).subscribeOn(Schedulers.newThread())
         } else {
-            reloadStationsBy(contract)
+            loadStationsBy(contract)
         }
     }
 
-    open fun reloadStationsBy(contract: BICContract): Single<List<BICStation>> {
+    open fun loadStationsBy(contract: BICContract): Single<List<BICStation>> {
         return cityBikesDataSource.getStationsBy(contract)
                 .doOnSuccess { stations ->
                     cacheStations[contract.name] = stations
                 }
                 .doOnError { throwable ->
-                    crashReport.catchException(BICContractRepository::class.java.simpleName, "fail to reload contract stations", throwable)
+                    e(crashReport.catchException(BICContractRepository::class.java.simpleName, "fail to load stations of ${contract.name} (${contract.countryName})", throwable))
                 }
     }
 }

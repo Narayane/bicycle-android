@@ -37,7 +37,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/bic_margin_horizontal_default">
+            android:layout_margin="@dimen/bic_margin_half">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/textViewBottomSheetTitle"

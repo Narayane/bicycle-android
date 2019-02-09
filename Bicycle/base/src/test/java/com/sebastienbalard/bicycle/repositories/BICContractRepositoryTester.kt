@@ -107,7 +107,7 @@ class BICContractRepositoryTester {
 
         `when`(mockContractDao.findAll()).thenReturn(arrayListOf(newContract1, newContract2))
 
-        val spy = repository!!.getContractCount().test().await()
+        val spy = repository!!.loadContracts().test().await()
 
         verify(mockContractDao).findAll()
 

@@ -44,7 +44,7 @@ class BICHomeViewModel(private val contractRepository: BICContractRepository) : 
         _states.value = StateShowContracts
         currentContract = null
         launch {
-            contractRepository.loadAllContracts()
+            contractRepository.getContracts()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ contracts ->
                         _events.value = EventContractList(contracts)
@@ -57,7 +57,7 @@ class BICHomeViewModel(private val contractRepository: BICContractRepository) : 
     fun getStationsFor(contract: BICContract) {
         _states.value = StateShowStations
         launch {
-            contractRepository.loadStationsBy(contract)
+            contractRepository.getStationsBy(contract)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ stations ->
                         _events.value = EventStationList(stations)
@@ -69,7 +69,7 @@ class BICHomeViewModel(private val contractRepository: BICContractRepository) : 
 
     fun refreshStationsFor(contract: BICContract) {
         launch {
-            contractRepository.reloadStationsBy(contract)
+            contractRepository.loadStationsBy(contract)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ stations ->
                         _events.value = EventStationList(stations)

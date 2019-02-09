@@ -21,7 +21,6 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import com.sebastienbalard.bicycle.*
-import com.sebastienbalard.bicycle.views.BICSplashActivity
 import org.koin.android.ext.android.inject
 
 open class BICSettingsFragment : PreferenceFragmentCompat() {
@@ -38,21 +37,21 @@ open class BICSettingsFragment : PreferenceFragmentCompat() {
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         return when (preference?.key) {
             PREFERENCE_CRASH_DATA_SENDING_PERMISSION -> {
-                val isChecked = (preference as SwitchPreferenceCompat).isChecked
-                i(crashReport.logInfo(BICSettingsFragment::class.java.simpleName, "set crash data sending: $isChecked"))
+                val allowCrashDataSending = (preference as SwitchPreferenceCompat).isChecked
+                i(crashReport.logInfo(BICSettingsFragment::class.java.simpleName, "set crash data sending: $allowCrashDataSending"))
                 val bundle = Bundle()
-                bundle.putInt("value", if (isChecked) 1 else 0)
-                bundle.putInt("is_initial", 0)
-                analytics.sendEvent("permission_crash_data_sending_set", bundle)
+                bundle.putInt("allowed", if (allowCrashDataSending) 1 else 0)
+                bundle.putInt("is_onboarding", 1)
+                analytics.sendEvent("crash_data_sending", bundle)
                 true
             }
             PREFERENCE_USE_DATA_SENDING_PERMISSION -> {
-                val isChecked = (preference as SwitchPreferenceCompat).isChecked
-                i(crashReport.logInfo(BICSettingsFragment::class.java.simpleName, "set use data sending: $isChecked"))
+                val allowUseDataSending = (preference as SwitchPreferenceCompat).isChecked
+                i(crashReport.logInfo(BICSettingsFragment::class.java.simpleName, "set use data sending: $allowUseDataSending"))
                 val bundle = Bundle()
-                bundle.putInt("value", if (isChecked) 1 else 0)
-                bundle.putInt("is_initial", 0)
-                analytics.sendEvent("permission_use_data_sending_set", bundle)
+                bundle.putInt("allowed", if (allowUseDataSending) 1 else 0)
+                bundle.putInt("is_onboarding", 1)
+                analytics.sendEvent("use_data_sending", bundle)
                 true
             }
             else -> super.onPreferenceTreeClick(preference)
